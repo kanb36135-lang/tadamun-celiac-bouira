@@ -3,672 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="تضامن – سيلياك البويرة | Plateforme numérique solidaire pour les malades cœliaques | Digital solidarity platform for celiac patients">
-    <meta name="keywords" content="سيلياك, celiac, Bouira, تضامن, sans gluten, gluten-free, Algérie, solidarity">
-    <meta name="author" content="مركز التكوين المهني والتمهين الشرفة">
     <title>تضامن – سيلياك البويرة | Tadamun Celiac Bouira</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>">
-
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b' },
-                        orange: { 50: '#fff7ed', 100: '#ffedd5', 400: '#fb923c', 500: '#f97316', 600: '#ea580c' }
-                    },
-                    fontFamily: { 'arabic': ['Noto Sans Arabic', 'sans-serif'], 'inter': ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        * { scroll-behavior: smooth; }
-        [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
-        [dir="ltr"] .rtl-flip { transform: scaleX(1); }
-        .gradient-hero { background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%); }
-        .gradient-card { background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%); }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
-        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        .counter-bar { transition: width 1.5s ease-out; }
-        .nav-link { position: relative; }
-        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #10b981; transition: width 0.3s ease; }
-        .nav-link:hover::after { width: 100%; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(5, 150, 105, 0.15); }
-        .btn-primary { background: linear-gradient(135deg, #059669 0%, #047857 100%); transition: all 0.3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4); }
-        .btn-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); transition: all 0.3s ease; }
-        .btn-orange:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4); }
-        .section-reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-        .section-reveal.visible { opacity: 1; transform: translateY(0); }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #047857; }
-        .map-container { height: 400px; border-radius: 1rem; overflow: hidden; }
-        #map { height: 100%; width: 100%; }
-        .step-connector { position: absolute; top: 50%; width: 100%; height: 2px; background: linear-gradient(90deg, #10b981, #34d399); z-index: 0; }
-        @media (max-width: 768px) { .step-connector { display: none; } }
+        body { font-family: 'Cairo', sans-serif; }
+        .font-arabic { font-family: 'Cairo', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        
+        .section-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        .section-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #map { height: 400px; width: 100%; z-index: 10; }
     </style>
-
-<base target="_blank">
 </head>
-<body class="bg-gray-50 font-arabic text-gray-800 antialiased">
+<body class="bg-slate-50 text-slate-800 font-arabic">
 
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="glass-effect border-b border-gray-200/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16 lg:h-20">
-                    <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">ت</div>
-                        <div class="hidden sm:block">
-                            <h1 class="font-bold text-emerald-800 text-sm lg:text-base leading-tight" data-key="brandName">تضامن – سيلياك البويرة</h1>
-                            <p class="text-xs text-emerald-600">Tadamun Celiac Bouira</p>
-                        </div>
+    <!-- NAVBAR -->
+    <nav id="navbar" class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-emerald-200">
+                        🌱
                     </div>
-                    <div class="hidden lg:flex items-center gap-8">
-                        <a href="#home" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navHome">الرئيسية</a>
-                        <a href="#services" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navServices">الخدمات</a>
-                        <a href="#counter" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navCounter">العداد</a>
-                        <a href="#map-section" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navMap">الخريطة</a>
-                        <a href="#partners" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navPartners">الشركاء</a>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <select id="langSelect" onchange="changeLanguage()" class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs lg:text-sm rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer font-medium">
-                                <option value="ar">🇩🇿 العربية</option>
-                                <option value="fr">🇫🇷 Français</option>
-                                <option value="en">🇬🇧 English</option>
-                            </select>
-                        </div>
-                        <button onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
-                            <span data-key="login">تسجيل الدخول</span>
-                        </button>
-                        <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-gray-600 hover:text-emerald-600 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        </button>
-                    </div>
+                    <span data-key="brandName" class="text-xl font-bold text-slate-900">تضامن – سيلياك البويرة</span>
+                </div>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-8 space-x-reverse font-semibold text-slate-600">
+                    <a href="#home" data-key="navHome" class="hover:text-emerald-600 transition">الرئيسية</a>
+                    <a href="#services" data-key="navServices" class="hover:text-emerald-600 transition">الخدمات</a>
+                    <a href="#counter" data-key="navCounter" class="hover:text-emerald-600 transition">العداد</a>
+                    <a href="#map-section" data-key="navMap" class="hover:text-emerald-600 transition">الخريطة</a>
+                    <a href="#partners" data-key="navPartners" class="hover:text-emerald-600 transition">الشركاء</a>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <!-- Language Selector -->
+                    <select id="langSelect" onchange="changeLanguage()" class="bg-slate-100 border border-slate-200 text-slate-700 text-sm rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="ar">العربية</option>
+                        <option value="fr">Français</option>
+                        <option value="en">English</option>
+                    </select>
+
+                    <button onclick="openModal('loginModal')" data-key="login" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl transition shadow-md shadow-emerald-200 font-semibold">
+                        تسجيل الدخول
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center space-x-2 space-x-reverse">
+                    <select id="langSelectMobile" onchange="document.getElementById('langSelect').value=this.value; changeLanguage();" class="bg-slate-100 text-sm rounded-lg px-2 py-1">
+                        <option value="ar">AR</option>
+                        <option value="fr">FR</option>
+                        <option value="en">EN</option>
+                    </select>
+                    <button onclick="toggleMobileMenu()" class="p-2 text-slate-600 text-xl focus:outline-none">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
             </div>
         </div>
-        <div id="mobileMenu" class="hidden lg:hidden glass-effect border-b border-gray-200">
-            <div class="px-4 py-3 space-y-2">
-                <a href="#home" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navHome">الرئيسية</a>
-                <a href="#services" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navServices">الخدمات</a>
-                <a href="#counter" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navCounter">العداد</a>
-                <a href="#map-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navMap">الخريطة</a>
-                <a href="#partners" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navPartners">الشركاء</a>
-            </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
+            <a href="#home" onclick="toggleMobileMenu()" data-key="navHome" class="block py-2 text-slate-700 font-medium">الرئيسية</a>
+            <a href="#services" onclick="toggleMobileMenu()" data-key="navServices" class="block py-2 text-slate-700 font-medium">الخدمات</a>
+            <a href="#counter" onclick="toggleMobileMenu()" data-key="navCounter" class="block py-2 text-slate-700 font-medium">العداد</a>
+            <a href="#map-section" onclick="toggleMobileMenu()" data-key="navMap" class="block py-2 text-slate-700 font-medium">الخريطة</a>
+            <a href="#partners" onclick="toggleMobileMenu()" data-key="navPartners" class="block py-2 text-slate-700 font-medium">الشركاء</a>
+            <button onclick="toggleMobileMenu(); openModal('loginModal')" data-key="login" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold mt-2">
+                تسجيل الدخول
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="pt-24 lg:pt-32 pb-16 lg:pb-24 gradient-hero relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="text-center lg:text-right">
-                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                        <span class="text-white text-sm font-medium" data-key="badge">منصة رقمية تضامنية</span>
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight" data-key="heroTitle">معاً لدعم<br>مرضى السيلياك</h1>
-                    <p class="text-emerald-100 text-base lg:text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed" data-key="heroSubtitle">منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="openModal('patientModal')" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
-                            <span>👨‍👩‍👧</span><span data-key="btnPatient">دخول كعائلة مريض</span>
-                        </button>
-                        <button onclick="openModal('volunteerModal')" class="btn-orange text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
-                            <span>🤝</span><span data-key="btnVolunteer">دخول كمتطوع</span>
-                        </button>
-                    </div>
-                    <div class="mt-10 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">350+</div>
-                            <div class="text-xs text-emerald-200" data-key="statFamilies">عائلة مسجلة</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">45</div>
-                            <div class="text-xs text-emerald-200" data-key="statVolunteers">متطوع نشط</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">12</div>
-                            <div class="text-xs text-emerald-200" data-key="statCommunes">بلدية مغطاة</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hidden lg:flex justify-center items-center">
-                    <div class="relative animate-float">
-                        <div class="w-80 h-80 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl">
-                            <div class="text-center">
-                                <div class="text-8xl mb-4">🌾</div>
-                                <div class="text-white font-bold text-xl">خالٍ من الغلوتين</div>
-                                <div class="text-emerald-200 text-sm mt-2">Gluten-Free | Sans Gluten</div>
-                            </div>
-                        </div>
-                        <div class="absolute -top-4 -right-4 w-20 h-20 bg-orange-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg animate-pulse-slow">🎁</div>
-                        <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-emerald-400 rounded-2xl flex items-center justify-center text-2xl shadow-lg">🗺️</div>
-                        <div class="absolute top-1/2 -right-8 w-14 h-14 bg-white rounded-xl flex items-center justify-center text-xl shadow-lg">📱</div>
-                    </div>
-                </div>
+    <!-- HERO SECTION -->
+    <section id="home" class="relative py-16 lg:py-24 overflow-hidden bg-gradient-to-b from-emerald-50/50 to-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span data-key="badge" class="inline-block bg-emerald-100 text-emerald-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+                منصة رقمية تضامنية
+            </span>
+            <h1 data-key="heroTitle" class="text-4xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6">
+                معاً لدعم<br>مرضى السيلياك
+            </h1>
+            <p data-key="heroSubtitle" class="max-w-3xl mx-auto text-lg lg:text-xl text-slate-600 mb-10 leading-relaxed">
+                منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="openModal('patientModal')" data-key="btnPatient" class="bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-200 transition">
+                    دخول كعائلة مريض
+                </button>
+                <button onclick="openModal('volunteerModal')" data-key="btnVolunteer" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-lg font-bold px-8 py-4 rounded-xl transition">
+                    دخول كمتطوع
+                </button>
             </div>
-        </div>
-        <div class="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#f9fafb"/>
-            </svg>
-        </div>
-    </section>
 
-    <!-- Live Counter Section -->
-    <section id="counter" class="py-16 lg:py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="section-reveal bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 lg:p-6 flex justify-between items-center">
-                    <h2 class="text-white font-bold text-lg lg:text-xl flex items-center gap-2">
-                        <span class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></span>
-                        <span data-key="counterTitle">العداد الجماعي الحي</span>
-                    </h2>
-                    <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full" data-key="liveBadge">مباشر</span>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="text-3xl font-extrabold text-emerald-600 mb-1">1,250+</div>
+                    <div data-key="statFamilies" class="text-slate-500 font-medium">عائلة مسجلة</div>
                 </div>
-                <div class="p-6 lg:p-8">
-                    <div class="grid lg:grid-cols-3 gap-6 items-center">
-                        <div class="lg:col-span-2">
-                            <div class="flex justify-between items-end mb-3">
-                                <div>
-                                    <p class="text-sm text-gray-500 mb-1" data-key="productName">دقيق الأرز — مصنع الأمل</p>
-                                    <div class="flex items-baseline gap-2">
-                                        <span class="text-3xl lg:text-4xl font-extrabold text-emerald-700">350</span>
-                                        <span class="text-gray-400">/</span>
-                                        <span class="text-xl text-gray-500">500 <span data-key="bags">كيس</span></span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm text-gray-500" data-key="priceLabel">السعر الجماعي</p>
-                                    <p class="text-2xl font-bold text-emerald-600">450 <span class="text-sm">دج</span></p>
-                                </div>
-                            </div>
-                            <div class="bg-gray-100 rounded-full h-4 lg:h-5 overflow-hidden mb-4">
-                                <div id="counterBar" class="counter-bar bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-emerald-700 font-semibold"><span data-key="ordered">تم الطلب:</span> 350 <span data-key="bags">كيس</span></span>
-                                <span class="text-orange-600 font-semibold"><span data-key="remaining">متبقي:</span> 150 <span data-key="bags">كيس</span></span>
-                            </div>
-                        </div>
-                        <div class="text-center lg:text-left">
-                            <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
-                                <div class="text-4xl font-extrabold text-emerald-700 mb-1">70%</div>
-                                <p class="text-sm text-emerald-600 mb-4" data-key="progressLabel">نسبة الإكتمال</p>
-                                <button onclick="openModal('orderModal')" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-sm shadow-md">
-                                    <span data-key="btnJoinCounter">أضف طلبك →</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="text-3xl font-extrabold text-emerald-600 mb-1">85</div>
+                    <div data-key="statVolunteers" class="text-slate-500 font-medium">متطوع نشط</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="text-3xl font-extrabold text-emerald-600 mb-1">45</div>
+                    <div data-key="statCommunes" class="text-slate-500 font-medium">بلدية مغطاة</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-16 lg:py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="servicesTitle">خدماتنا الرئيسية</h2>
-                <p class="text-gray-500 max-w-2xl mx-auto" data-key="servicesSubtitle">حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة</p>
-            </div>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-emerald-100 shadow-sm cursor-pointer" onclick="openModal('orderModal')">
-                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service1Title">الشراء الجماعي</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service1Desc">اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي</p>
+    <!-- LIVE COUNTER SECTION -->
+    <section id="counter" class="py-16 bg-white section-reveal">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="bg-slate-900 text-white rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 data-key="counterTitle" class="text-2xl lg:text-3xl font-bold">العداد الجماعي الحي</h2>
+                    <span data-key="liveBadge" class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">LIVE</span>
                 </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-orange-100 shadow-sm cursor-pointer" onclick="openModal('basketModal')">
-                    <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🎁</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service2Title">قفة السيلياك</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service2Desc">دعم تضامني مجاني للأسر المعوزة المسجلة</p>
+                
+                <div class="bg-slate-800 rounded-2xl p-6 mb-8 border border-slate-700">
+                    <div class="text-xl font-bold text-emerald-400 mb-2" data-key="productName">دقيق الأرز — مصنع الأمل</div>
+                    <div class="flex justify-between text-sm text-slate-300 mb-3">
+                        <span><span data-key="ordered">تم الطلب:</span> <strong class="text-white">700</strong> / 1000 <span data-key="bags">كيس</span></span>
+                        <span><span data-key="remaining">متبقي:</span> <strong class="text-emerald-400">300</strong></span>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-700 h-4 rounded-full overflow-hidden">
+                        <div id="counterBar" class="bg-emerald-500 h-full w-0 transition-all duration-1000 ease-out"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400 mt-2">
+                        <span data-key="progressLabel">نسبة الإكتمال</span>
+                        <span class="font-bold text-emerald-400">70%</span>
+                    </div>
                 </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-blue-100 shadow-sm cursor-pointer" onclick="document.getElementById('map-section').scrollIntoView({behavior:'smooth'})">
-                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🗺️</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service3Title">خريطة التوزيع</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service3Desc">اعثر على أقرب نقطة استلام معتمدة في بلديتك</p>
-                </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-purple-100 shadow-sm cursor-pointer" onclick="openModal('volunteerModal')">
-                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🤝</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service4Title">التطوع</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service4Desc">انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- How It Works -->
-    <section class="py-16 lg:py-20 bg-emerald-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="howItWorks">كيف تعمل المنصة؟</h2>
-                <p class="text-gray-500">ثلاث خطوات بسيطة للاستفادة من خدماتنا</p>
-            </div>
-            <div class="relative">
-                <div class="step-connector hidden lg:block"></div>
-                <div class="grid lg:grid-cols-3 gap-8 relative z-10">
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">1</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step1Title">سجّل كعائلة مريض أو متطوع</h3>
-                        <p class="text-sm text-gray-500" data-key="step1Desc">أنشئ هويتك الرقمية بخطوات بسيطة مع التحقق عبر SMS</p>
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <span data-key="priceLabel" class="text-slate-400 text-sm block">السعر الجماعي</span>
+                        <span class="text-3xl font-extrabold text-white">450 دج <span class="text-xs text-slate-400 line-through">750 دج</span></span>
                     </div>
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">2</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step2Title">شارك في العداد الجماعي</h3>
-                        <p class="text-sm text-gray-500" data-key="step2Desc">انضم لطلبات الشراء الجماعي بسعر المصنع</p>
-                    </div>
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">3</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step3Title">استلم طلبيتك من نقطة التوزيع</h3>
-                        <p class="text-sm text-gray-500" data-key="step3Desc">تواصل مع المتطوع واستلم منتجاتك النظيفة الخالية من الغلوتين</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Map Section -->
-    <section id="map-section" class="py-16 lg:py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="mapTitle">نقاط الاستلام واللوجستيك التضامني</h2>
-                <p class="text-gray-500">البحث عن أقرب نقطة توزيع معتمدة في بلديتك</p>
-            </div>
-            <div class="grid lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 section-reveal">
-                    <div class="map-container shadow-xl border border-gray-200">
-                        <div id="map"></div>
-                    </div>
-                </div>
-                <div class="space-y-4 section-reveal">
-                    <h3 class="font-bold text-gray-800 mb-4" data-key="pickupPoints">نقاط الاستلام</h3>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.375, 3.896)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">1</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مقر جمعية البركة</p>
-                                <p class="text-xs text-gray-500">الشرفة — المتطوع: فاطمة زهرة</p>
-                                <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.433, 3.864)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">2</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مركز التكوين المهني</p>
-                                <p class="text-xs text-gray-500">البويرة — المتطوع: أحمد بن علي</p>
-                                <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.350, 3.950)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-700 font-bold text-sm shrink-0">3</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مسجد النور</p>
-                                <p class="text-xs text-gray-500">الحيزر — المتطوع: محمد سعيد</p>
-                                <span class="inline-block mt-1 bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">يغلق قريباً</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="openModal('volunteerModal')" class="w-full border-2 border-dashed border-emerald-300 rounded-xl p-4 text-emerald-600 font-semibold text-sm hover:bg-emerald-50 transition">
-                        + <span data-key="becomeVolunteer">كن أنت نقطة الاستلام القادمة</span>
+                    <button onclick="openModal('orderModal')" data-key="btnJoinCounter" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-8 py-3.5 rounded-xl transition">
+                        أضف طلبك ←
                     </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Partners Section -->
-    <section id="partners" class="py-16 lg:py-20 bg-gray-50">
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-16 bg-slate-50 section-reveal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="partnersTitle">شركاؤنا وداعمونا</h2>
-                <p class="text-gray-500">نفتخر بشراكاتنا المؤسساتية والمجتمعية</p>
+            <div class="text-center mb-16">
+                <h2 data-key="servicesTitle" class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">خدماتنا الرئيسية</h2>
+                <p data-key="servicesSubtitle" class="text-slate-600 max-w-2xl mx-auto">حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة</p>
             </div>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏛️</div>
-                    <h3 class="font-bold text-gray-800 mb-1">CNAS / CASNOS</h3>
-                    <p class="text-sm text-gray-500" data-key="partner1Desc">اتفاقية رعاية صحية ووقائية لخفض كلفة التكفل</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-6">🛒</div>
+                    <h3 data-key="service1Title" class="text-xl font-bold mb-3">الشراء الجماعي</h3>
+                    <p data-key="service1Desc" class="text-slate-600 text-sm leading-relaxed">اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي</p>
                 </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner2Title">مطاحن الوطنية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner2Desc">رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين</p>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-6">🎁</div>
+                    <h3 data-key="service2Title" class="text-xl font-bold mb-3">قفة السيلياك</h3>
+                    <p data-key="service2Desc" class="text-slate-600 text-sm leading-relaxed">دعم تضامني مجاني للأسر المعوزة المسجلة</p>
+                    <button onclick="openModal('basketModal')" class="mt-4 text-emerald-600 font-bold text-sm hover:underline">طلب القفة ←</button>
                 </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🔬</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner3Title">مخابر التحاليل الطبية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner3Desc">فحوصات تشخيصية مدعومة للكشف المبكر عن السيلياك</p>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-6">📍</div>
+                    <h3 data-key="service3Title" class="text-xl font-bold mb-3">خريطة التوزيع</h3>
+                    <p data-key="service3Desc" class="text-slate-600 text-sm leading-relaxed">اعثر على أقرب نقطة استلام معتمدة في بلديتك</p>
                 </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🎓</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner4Title">وزارة التكوين المهني</h3>
-                    <p class="text-sm text-gray-500" data-key="partner4Desc">دعم مؤسساتي وتقني للمشروع الرقمي التضامني</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏥</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner5Title">المديرية الصحية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner5Desc">تنسيق طبي وتوعية صحية لمرضى السيلياك</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🍞</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner6Title">مخابز خالية من الغلوتين</h3>
-                    <p class="text-sm text-gray-500" data-key="partner6Desc">منتجات مخبوزة آمنة ومعتمدة لمرضى السيلياك</p>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-6">🤝</div>
+                    <h3 data-key="service4Title" class="text-xl font-bold mb-3">التطوع</h3>
+                    <p data-key="service4Desc" class="text-slate-600 text-sm leading-relaxed">انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-emerald-900 text-emerald-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-800 font-bold text-lg">ت</div>
-                        <div><h3 class="font-bold text-white">تضامن – سيلياك البويرة</h3></div>
+    <!-- MAP SECTION -->
+    <section id="map-section" class="py-16 bg-white section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 data-key="mapTitle" class="text-3xl font-extrabold text-slate-900 mb-2">نقاط الاستلام واللوجستيك التضامني</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                    <div id="map"></div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h3 data-key="pickupPoints" class="font-bold text-lg mb-4 text-slate-800">نقاط الاستلام المتاحة</h3>
+                    <div class="space-y-3">
+                        <button onclick="focusMap(36.375, 3.896)" class="w-full text-right p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 transition">
+                            <div class="font-bold text-slate-900">مقر جمعية البركة - الشرفة</div>
+                            <div class="text-xs text-slate-500 mt-1">المتطوع: فاطمة زهرة | 📞 0550 XX XX XX</div>
+                        </button>
+                        <button onclick="focusMap(36.433, 3.864)" class="w-full text-right p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 transition">
+                            <div class="font-bold text-slate-900">مركز التكوين المهني - البويرة</div>
+                            <div class="text-xs text-slate-500 mt-1">المتطوع: أحمد بن علي | 📞 0551 XX XX XX</div>
+                        </button>
+                        <button onclick="focusMap(36.350, 3.950)" class="w-full text-right p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 transition">
+                            <div class="font-bold text-slate-900">مسجد النور - الحيزر</div>
+                            <div class="text-xs text-slate-500 mt-1">المتطوع: محمد سعيد | 📞 0552 XX XX XX</div>
+                        </button>
                     </div>
-                    <p class="text-sm text-emerald-300 leading-relaxed" data-key="footerDesc">مشروع رقمي تضامني لدعم مرضى السيلياك في ولاية البويرة من خلال اللوجستيك التضامني والشراء الجماعي</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="quickLinks">روابط سريعة</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#home" class="hover:text-white transition" data-key="navHome">الرئيسية</a></li>
-                        <li><a href="#services" class="hover:text-white transition" data-key="navServices">الخدمات</a></li>
-                        <li><a href="#counter" class="hover:text-white transition" data-key="navCounter">العداد الجماعي</a></li>
-                        <li><a href="#map-section" class="hover:text-white transition" data-key="navMap">خريطة التوزيع</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="contact">اتصل بنا</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li>📍 مركز التكوين المهني والتمهين الشرفة</li>
-                        <li>📞 +213 (0) 26 XX XX XX</li>
-                        <li>✉️ contact@tadamun-celiac.dz</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="legal">قانوني</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition" data-key="privacy">سياسة الخصوصية</a></li>
-                        <li><a href="#" class="hover:text-white transition" data-key="terms">شروط الاستخدام</a></li>
-                        <li><a href="#" class="hover:text-white transition" data-key="cookies">سياسة الكوكيز</a></li>
-                    </ul>
                 </div>
             </div>
-            <div class="border-t border-emerald-800 mt-8 pt-8 text-center text-sm text-emerald-400">
-                <p>© 2026 تضامن – سيلياك البويرة | Tadamun Celiac Bouira. <span data-key="rights">جميع الحقوق محفوظة</span></p>
-                <p class="mt-1">الجمهورية الجزائرية الديمقراطية الشعبية — وزارة التكوين والتعليم المهنيين</p>
+        </div>
+    </section>
+
+    <!-- PARTNERS SECTION -->
+    <section id="partners" class="py-16 bg-slate-50 section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 data-key="partnersTitle" class="text-3xl font-extrabold text-center mb-12">شركاؤنا وداعمونا</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h4 data-key="partner2Title" class="font-bold text-lg mb-2">مطاحن الوطنية</h4>
+                    <p data-key="partner2Desc" class="text-slate-600 text-sm">رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h4 data-key="partner3Title" class="font-bold text-lg mb-2">مخابر التحاليل الطبية</h4>
+                    <p data-key="partner3Desc" class="text-slate-600 text-sm">فحوصات تشخيصية مدعومة للكشف المبكر عن السيلياك</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h4 data-key="partner5Title" class="font-bold text-lg mb-2">المديرية الصحية</h4>
+                    <p data-key="partner5Desc" class="text-slate-600 text-sm">تنسيق طبي وتوعية صحية لمرضى السيلياك</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-right">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 data-key="brandName" class="text-white font-bold text-lg mb-4">تضامن – سيلياك البويرة</h3>
+                    <p data-key="footerDesc" class="text-sm leading-relaxed">مشروع رقمي تضامني لدعم مرضى السيلياك في ولاية البويرة من خلال اللوجستيك التضامني والشراء الجماعي</p>
+                </div>
+                <div>
+                    <h4 data-key="quickLinks" class="text-white font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#home" data-key="navHome" class="hover:text-white">الرئيسية</a></li>
+                        <li><a href="#services" data-key="navServices" class="hover:text-white">الخدمات</a></li>
+                        <li><a href="#counter" data-key="navCounter" class="hover:text-white">العداد</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 data-key="contact" class="text-white font-bold mb-4">اتصل بنا</h4>
+                    <p class="text-sm">📧 contact@celiac-bouira.dz</p>
+                    <p class="text-sm mt-2">📞 026 XX XX XX</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 text-xs text-center">
+                &copy; 2026 <span data-key="brandName">تضامن – سيلياك البويرة</span>. <span data-key="rights">جميع الحقوق محفوظة</span>
             </div>
         </div>
     </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800" data-key="loginTitle">تسجيل الدخول</h3>
-                <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
+    <!-- MODALS -->
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 data-key="loginTitle" class="text-2xl font-bold mb-6 text-slate-900">تسجيل الدخول</h3>
             <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف</label>
-                    <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
+                    <label data-key="phone" class="block text-sm font-medium mb-1">رقم الهاتف</label>
+                    <input type="tel" required placeholder="06XXXXXXXX" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="loginCode">كود الدخول (SMS)</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
+                    <label data-key="loginCode" class="block text-sm font-medium mb-1">كود الدخول (SMS)</label>
+                    <input type="password" required placeholder="****" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold"><span data-key="btnLogin">دخول</span></button>
+                <button type="submit" data-key="btnLogin" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition">دخول</button>
             </form>
-            <p class="text-center text-sm text-gray-500 mt-4"><span data-key="noAccount">ليس لديك حساب؟</span> <a href="#" onclick="closeModal('loginModal'); openModal('patientModal');" class="text-emerald-600 font-semibold hover:underline" data-key="registerNow">سجّل الآن</a></p>
         </div>
     </div>
 
-    <!-- Patient Registration Modal -->
-    <div id="patientModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">👨‍👩‍👧</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800" data-key="patientTitle">التسجيل كعائلة مريض</h3>
-                        <p class="text-xs text-gray-500" data-key="patientSubtitle">أنشئ هويتك الرقمية للاستفادة من الخدمات</p>
-                    </div>
-                </div>
-                <button onclick="closeModal('patientModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
+    <!-- PATIENT REGISTER MODAL -->
+    <div id="patientModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative my-8">
+            <button onclick="closeModal('patientModal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 data-key="patientTitle" class="text-2xl font-bold mb-1 text-slate-900">التسجيل كعائلة مريض</h3>
+            <p data-key="patientSubtitle" class="text-sm text-slate-500 mb-6">أنشئ هويتك الرقمية للاستفادة من الخدمات</p>
             <form onsubmit="event.preventDefault(); handlePatientRegister();" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="أحمد بن علي" required>
+                    <label data-key="fullName" class="block text-sm font-medium mb-1">الاسم واللقب *</label>
+                    <input type="text" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف *</label>
-                    <div class="flex gap-2">
-                        <input type="tel" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
-                        <button type="button" onclick="sendSMSCode()" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-emerald-700 transition">SMS</button>
+                    <label data-key="address" class="block text-sm font-medium mb-1">البلدية / العنوان *</label>
+                    <input type="text" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label data-key="medicalCert" class="block text-sm font-medium mb-1">شهادة طبية تثبت المرض *</label>
+                    <div class="border-2 border-dashed border-slate-300 p-4 rounded-xl text-center text-slate-500 hover:bg-slate-50 cursor-pointer">
+                        📎 <span data-key="uploadHint">اضغط لرفع الشهادة الطبية (PDF, JPG)</span>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="address">البلدية / العنوان *</label>
-                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" required>
-                        <option value="">اختر البلدية...</option>
-                        <option>البويرة</option><option>الشرفة</option><option>الحيزر</option><option>سور الغزلان</option><option>مشد اللجم</option><option>الأخضرية</option>
-                    </select>
+                <div class="flex items-start gap-2 pt-2">
+                    <input type="checkbox" required id="commitP" class="mt-1">
+                    <label for="commitP" data-key="patientCommit" class="text-xs text-slate-600">أؤكد أنني مريض سيلياك مسجل وأرغب في الاستفادة من خدمات المنصة التضامنية</label>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="medicalCert">شهادة طبية تثبت المرض *</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
-                        <div class="text-3xl mb-2">📎</div>
-                        <p class="text-sm text-gray-500" data-key="uploadHint">اضغط لرفع الشهادة الطبية (PDF, JPG)</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-2 bg-emerald-50 p-3 rounded-lg">
-                    <input type="checkbox" id="patientCommit" class="mt-1 w-4 h-4 text-emerald-600" required>
-                    <label for="patientCommit" class="text-xs text-gray-700 leading-relaxed" data-key="patientCommit">أؤكد أنني مريض سيلياك مسجل وأرغب في الاستفادة من خدمات المنصة التضامنية</label>
-                </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold text-base shadow-lg"><span data-key="btnConfirm">تأكيد البيانات والدخول للقائمة الرئيسية</span></button>
+                <button type="submit" data-key="btnConfirm" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition">تأكيد البيانات والدخول</button>
             </form>
         </div>
     </div>
 
-    <!-- Volunteer Registration Modal -->
-    <div id="volunteerModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl">🤝</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800" data-key="volunteerTitle">التسجيل كمتطوع</h3>
-                        <p class="text-xs text-gray-500" data-key="volunteerSubtitle">انضم لشبكة التوزيع التضامني</p>
-                    </div>
-                </div>
-                <button onclick="closeModal('volunteerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
+    <!-- VOLUNTEER MODAL -->
+    <div id="volunteerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative my-8">
+            <button onclick="closeModal('volunteerModal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 data-key="volunteerTitle" class="text-2xl font-bold mb-1 text-slate-900">التسجيل كمتطوع</h3>
+            <p data-key="volunteerSubtitle" class="text-sm text-slate-500 mb-6">انضم لشبكة التوزيع التضامني</p>
             <form onsubmit="event.preventDefault(); handleVolunteerRegister();" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="فاطمة زهرة" required>
+                    <label data-key="fullName" class="block text-sm font-medium mb-1">الاسم واللقب *</label>
+                    <input type="text" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف *</label>
-                    <div class="flex gap-2">
-                        <input type="tel" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="0550 12 34 56" required>
-                        <button type="button" onclick="sendVolunteerSMS()" class="bg-orange-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-orange-600 transition">SMS</button>
-                    </div>
+                    <label data-key="activityCommune" class="block text-sm font-medium mb-1">بلدية النشاط والتوزيع *</label>
+                    <input type="text" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="activityCommune">بلدية النشاط والتوزيع *</label>
-                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" required>
-                        <option value="">اختر البلدية...</option>
-                        <option>البويرة</option><option>الشرفة</option><option>الحيزر</option><option>سور الغزلان</option>
-                    </select>
+                    <label data-key="assocOrNIN" class="block text-sm font-medium mb-1">الجمعية الشريكة أو رقم بطاقة التعريف الوطنية *</label>
+                    <input type="text" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="assocOrNIN">الجمعية الشريكة أو رقم بطاقة التعريف الوطنية *</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="رقم البطاقة أو اسم الجمعية" required>
+                <div class="flex items-start gap-2">
+                    <input type="checkbox" required id="commitV" class="mt-1">
+                    <label for="commitV" data-key="volunteerCommit" class="text-xs text-slate-600">أتعهد بنقل الطلبيات في مكان نظيف تماماً ومعزول عن أي مواد تحتوي على الغلوتين</label>
                 </div>
-                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                    <div class="flex items-start gap-2">
-                        <input type="checkbox" id="volunteerCommit" class="mt-1 w-4 h-4 text-orange-500" required>
-                        <label for="volunteerCommit" class="text-xs text-orange-800 leading-relaxed font-medium" data-key="volunteerCommit">أتعهد بنقل الطلبيات في مكان نظيف تماماً ومعزول عن أي مواد تحتوي على الغلوتين</label>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="socialDoc">وثيقة إثبات الوضع الاجتماعي (اختياري)</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition">
-                        <p class="text-xs text-gray-500" data-key="uploadOptional">📎 رفع الوثيقة (PDF, JPG) — خاصة بالراغبين في الاستفادة من الدعم</p>
-                    </div>
-                </div>
-                <button type="submit" class="w-full btn-orange text-white py-3 rounded-xl font-bold text-base shadow-lg"><span data-key="btnVolunteerConfirm">تأكيد والدخول إلى خريطة التوزيع</span></button>
+                <button type="submit" data-key="btnVolunteerConfirm" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition">تأكيد والدخول</button>
             </form>
         </div>
     </div>
 
-    <!-- Order Modal (Group Buy) -->
-    <div id="orderModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800" data-key="orderTitle">إضافة طلب للعداد الجماعي</h3>
-                <button onclick="closeModal('orderModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-            <div class="bg-emerald-50 rounded-xl p-4 mb-4 border border-emerald-200">
-                <div class="flex justify-between items-center">
-                    <span class="font-bold text-emerald-800">دقيق الأرز — مصنع الأمل</span>
-                    <span class="text-emerald-700 font-bold">450 دج</span>
-                </div>
-                <p class="text-xs text-emerald-600 mt-1">5 كغ — خالٍ من الغلوتين 100%</p>
-            </div>
+    <!-- ORDER MODAL -->
+    <div id="orderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal('orderModal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 data-key="orderTitle" class="text-xl font-bold mb-4 text-slate-900">إضافة طلب للعداد الجماعي</h3>
             <form onsubmit="event.preventDefault(); handleOrder();" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="quantity">الكمية المطلوبة</label>
-                    <div class="flex items-center gap-3">
-                        <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">-</button>
-                        <input type="number" id="qtyInput" value="1" min="1" class="w-20 text-center border border-gray-300 rounded-lg py-2 text-sm font-bold">
-                        <button type="button" onclick="adjustQty(1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">+</button>
+                    <label data-key="quantity" class="block text-sm font-medium mb-1">الكمية المطلوبة</label>
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 bg-slate-100 rounded-lg font-bold text-xl">-</button>
+                        <input type="number" id="qtyInput" value="1" min="1" readonly class="w-16 text-center font-bold text-lg border border-slate-200 rounded-lg py-1">
+                        <button type="button" onclick="adjustQty(1)" class="w-10 h-10 bg-slate-100 rounded-lg font-bold text-xl">+</button>
                     </div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">المبلغ الإجمالي:</span>
+                    <span id="totalPrice" class="text-xl font-extrabold text-emerald-600">450 دج</span>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2" data-key="paymentMethod">طريقة الدفع</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" class="payment-btn border-2 border-emerald-500 bg-emerald-50 text-emerald-700 rounded-lg py-2 text-xs font-semibold" onclick="selectPayment(this)">Poste Mobile</button>
-                        <button type="button" class="payment-btn border border-gray-300 rounded-lg py-2 text-xs font-semibold hover:border-emerald-500" onclick="selectPayment(this)">Carte</button>
-                        <button type="button" class="payment-btn border border-gray-300 rounded-lg py-2 text-xs font-semibold hover:border-emerald-500" onclick="selectPayment(this)">Espèces</button>
+                    <label data-key="paymentMethod" class="block text-sm font-medium mb-2">طريقة الدفع</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="selectPayment(this)" class="payment-btn border-2 border-emerald-500 bg-emerald-50 text-emerald-700 p-3 rounded-xl font-bold text-sm">CIDA / الذهبية</button>
+                        <button type="button" onclick="selectPayment(this)" class="payment-btn border border-slate-300 p-3 rounded-xl font-bold text-sm text-slate-600">الدفع عند الاستلام</button>
                     </div>
                 </div>
-                <div class="border-t pt-4">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">المجموع:</span>
-                        <span class="font-bold text-emerald-700" id="totalPrice">450 دج</span>
-                    </div>
-                </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg"><span data-key="btnAddOrder">تأكيد الطلب ودفع التكلفة مسبقاً</span></button>
+                <button type="submit" data-key="btnAddOrder" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition">تأكيد الطلب</button>
             </form>
         </div>
     </div>
 
-    <!-- Basket Modal (Solidarity) -->
-    <div id="basketModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center text-2xl">🎁</div>
-                    <div><h3 class="text-xl font-bold text-gray-800" data-key="basketTitle">قفة السيلياك التضامنية</h3></div>
-                </div>
-                <button onclick="closeModal('basketModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-            <div class="bg-pink-50 border border-pink-200 rounded-xl p-4 mb-4">
-                <h4 class="font-bold text-sm text-pink-800 mb-2" data-key="basketContains">محتوى القفة التضامنية:</h4>
-                <ul class="text-sm text-pink-700 space-y-1">
-                    <li>✓ 2 كيس دقيق أرز (5kg)</li>
-                    <li>✓ 1 كيس معكرونة خالية من الغلوتين</li>
-                    <li>✓ 1 علبة حليب نباتي</li>
-                    <li>✓ خبز خالٍ من الغلوتين</li>
-                </ul>
-            </div>
+    <!-- BASKET MODAL -->
+    <div id="basketModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal('basketModal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 data-key="basketTitle" class="text-xl font-bold mb-4 text-slate-900">قفة السيلياك التضامنية</h3>
+            <p data-key="basketContains" class="text-sm font-medium text-slate-700 mb-2">محتوى القفة التضامنية:</p>
+            <ul class="text-sm text-slate-600 space-y-1 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <li>• 5 كغ دقيق أرز خالي من الغلوتين</li>
+                <li>• 2 كغ عجائن خاصة</li>
+                <li>• 1 كغ بسكويت صحي</li>
+            </ul>
             <form onsubmit="event.preventDefault(); handleBasketRequest();" class="space-y-4">
-                <div class="flex items-start gap-2 bg-pink-50 p-3 rounded-lg">
-                    <input type="checkbox" id="needyConfirm" class="mt-1 w-4 h-4 text-pink-500" required>
-                    <label for="needyConfirm" class="text-xs text-gray-700 leading-relaxed" data-key="needyConfirm">أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)</label>
+                <div class="flex items-start gap-2">
+                    <input type="checkbox" required id="needyC" class="mt-1">
+                    <label for="needyC" data-key="needyConfirm" class="text-xs text-slate-600">أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)</label>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="socialDoc">وثيقة إثبات الوضع الاجتماعي (اختياري)</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-pink-400 hover:bg-pink-50 transition">
-                        <p class="text-xs text-gray-500" data-key="uploadOptional">📎 رفع الوثيقة (PDF, JPG) — اختياري</p>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold shadow-lg transition"><span data-key="btnRequestBasket">طلب القفة التضامنية</span></button>
+                <button type="submit" data-key="btnRequestBasket" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition">طلب القفة التضامنية</button>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-2">
-        <span class="text-emerald-400">✓</span>
-        <span id="toastMessage">Notification</span>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <span>✅</span>
+        <span id="toastMessage" class="text-sm font-medium"></span>
     </div>
 
     <!-- Leaflet JS -->
-   <script>
-var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-async function apiCall(endpoint, method, data) {
-  const options = {
-    method: method || 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (data) options.body = JSON.stringify(data);
-
-  try {
-    const response = await fetch(API_BASE_URL + endpoint, options);
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || 'Erreur serveur');
-    return result;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
-}
-
-window.registerPatient = function(data) { return apiCall('/patients/register', 'POST', data); };
-window.registerVolunteer = function(data) { return apiCall('/volunteers/register', 'POST', data); };
-window.sendVerificationCode = function(phone) { return apiCall('/auth/send-code', 'POST', { phone: phone }); };
-window.verifyCode = function(phone, code) { return apiCall('/auth/verify-code', 'POST', { phone: phone, code: code }); };
-window.getPickupPoints = function() { return apiCall('/pickup-points'); };
-window.getCounter = function() { return apiCall('/counter'); };
-window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
-window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
-</script>
-
+    <!-- SCRIPT APPLICATION -->
     <script>
+    // ================= TRANSLATIONS =================
     const translations = {
         ar: {
             brandName: "تضامن – سيلياك البويرة",
@@ -682,49 +451,33 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             counterTitle: "العداد الجماعي الحي", liveBadge: "مباشر",
             productName: "دقيق الأرز — مصنع الأمل", bags: "كيس",
             ordered: "تم الطلب:", remaining: "متبقي:", priceLabel: "السعر الجماعي",
-            progressLabel: "نسبة الإكتمال", btnJoinCounter: "أضف طلبك →",
+            progressLabel: "نسبة الإكتمال", btnJoinCounter: "أضف طلبك ←",
             servicesTitle: "خدماتنا الرئيسية", servicesSubtitle: "حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة",
             service1Title: "الشراء الجماعي", service1Desc: "اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي",
             service2Title: "قفة السيلياك", service2Desc: "دعم تضامني مجاني للأسر المعوزة المسجلة",
             service3Title: "خريطة التوزيع", service3Desc: "اعثر على أقرب نقطة استلام معتمدة في بلديتك",
             service4Title: "التطوع", service4Desc: "انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى",
-            howItWorks: "كيف تعمل المنصة؟",
-            step1Title: "سجّل كعائلة مريض أو متطوع", step1Desc: "أنشئ هويتك الرقمية بخطوات بسيطة مع التحقق عبر SMS",
-            step2Title: "شارك في العداد الجماعي", step2Desc: "انضم لطلبات الشراء الجماعي بسعر المصنع",
-            step3Title: "استلم طلبيتك من نقطة التوزيع", step3Desc: "تواصل مع المتطوع واستلم منتجاتك النظيفة الخالية من الغلوتين",
-            mapTitle: "نقاط الاستلام واللوجستيك التضامني", pickupPoints: "نقاط الاستلام",
-            becomeVolunteer: "كن أنت نقطة الاستلام القادمة",
+            mapTitle: "نقاط الاستلام واللوجستيك التضامني", pickupPoints: "نقاط الاستلام المتاحة",
             partnersTitle: "شركاؤنا وداعمونا",
-            partner1Desc: "اتفاقية رعاية صحية ووقائية لخفض كلفة التكفل",
             partner2Title: "مطاحن الوطنية", partner2Desc: "رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين",
             partner3Title: "مخابر التحاليل الطبية", partner3Desc: "فحوصات تشخيصية مدعومة للكشف المبكر عن السيلياك",
-            partner4Title: "وزارة التكوين المهني", partner4Desc: "دعم مؤسساتي وتقني للمشروع الرقمي التضامني",
             partner5Title: "المديرية الصحية", partner5Desc: "تنسيق طبي وتوعية صحية لمرضى السيلياك",
-            partner6Title: "مخابز خالية من الغلوتين", partner6Desc: "منتجات مخبوزة آمنة ومعتمدة لمرضى السيلياك",
             footerDesc: "مشروع رقمي تضامني لدعم مرضى السيلياك في ولاية البويرة من خلال اللوجستيك التضامني والشراء الجماعي",
-            quickLinks: "روابط سريعة", contact: "اتصل بنا", legal: "قانوني",
-            privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", cookies: "سياسة الكوكيز",
-            rights: "جميع الحقوق محفوظة",
-            loginTitle: "تسجيل الدخول", phone: "رقم الهاتف", loginCode: "كود الدخول (SMS)",
-            btnLogin: "دخول", noAccount: "ليس لديك حساب؟", registerNow: "سجّل الآن",
+            quickLinks: "روابط سريعة", contact: "اتصل بنا", rights: "جميع الحقوق محفوظة",
+            loginTitle: "تسجيل الدخول", phone: "رقم الهاتف", loginCode: "كود الدخول (SMS)", btnLogin: "دخول",
             patientTitle: "التسجيل كعائلة مريض", patientSubtitle: "أنشئ هويتك الرقمية للاستفادة من الخدمات",
             fullName: "الاسم واللقب *", address: "البلدية / العنوان *",
             medicalCert: "شهادة طبية تثبت المرض *", uploadHint: "اضغط لرفع الشهادة الطبية (PDF, JPG)",
             patientCommit: "أؤكد أنني مريض سيلياك مسجل وأرغب في الاستفادة من خدمات المنصة التضامنية",
-            btnConfirm: "تأكيد البيانات والدخول للقائمة الرئيسية",
+            btnConfirm: "تأكيد البيانات والدخول",
             volunteerTitle: "التسجيل كمتطوع", volunteerSubtitle: "انضم لشبكة التوزيع التضامني",
-            activityCommune: "بلدية النشاط والتوزيع *",
-            assocOrNIN: "الجمعية الشريكة أو رقم بطاقة التعريف الوطنية *",
+            activityCommune: "بلدية النشاط والتوزيع *", assocOrNIN: "الجمعية الشريكة أو رقم بطاقة التعريف الوطنية *",
             volunteerCommit: "أتعهد بنقل الطلبيات في مكان نظيف تماماً ومعزول عن أي مواد تحتوي على الغلوتين",
-            socialDoc: "وثيقة إثبات الوضع الاجتماعي (اختياري)",
-            uploadOptional: "📎 رفع الوثيقة (PDF, JPG) — خاصة بالراغبين في الاستفادة من الدعم",
-            btnVolunteerConfirm: "تأكيد والدخول إلى خريطة التوزيع",
+            btnVolunteerConfirm: "تأكيد والدخول",
             orderTitle: "إضافة طلب للعداد الجماعي", quantity: "الكمية المطلوبة",
-            paymentMethod: "طريقة الدفع", btnAddOrder: "تأكيد الطلب ودفع التكلفة مسبقاً",
-            basketTitle: "قفة السيلياك التضامنية",
-            basketContains: "محتوى القفة التضامنية:",
-            needyConfirm: "أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)",
-            btnRequestBasket: "طلب القفة التضامنية"
+            paymentMethod: "طريقة الدفع", btnAddOrder: "تأكيد الطلب",
+            basketTitle: "قفة السيلياك التضامنية", basketContains: "محتوى القفة التضامنية:",
+            needyConfirm: "أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)", btnRequestBasket: "طلب القفة التضامنية"
         },
         fr: {
             brandName: "Tadamun – Celiac Bouira",
@@ -744,43 +497,27 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             service2Title: "Panier Solidaire", service2Desc: "Soutien gratuit pour les familles nécessiteuses inscrites",
             service3Title: "Carte de Distribution", service3Desc: "Trouvez le point de retrait agréé le plus proche dans votre commune",
             service4Title: "Bénévolat", service4Desc: "Rejoignez le réseau de distribution solidaire et contribuez au service des malades",
-            howItWorks: "Comment fonctionne la plateforme ?",
-            step1Title: "Inscrivez-vous comme famille patiente ou bénévole", step1Desc: "Créez votre identité numérique en quelques étapes avec vérification SMS",
-            step2Title: "Participez au compteur collectif", step2Desc: "Rejoignez les commandes groupées au prix usine",
-            step3Title: "Retirez votre commande au point de distribution", step3Desc: "Contactez le bénévole et récupérez vos produits propres sans gluten",
-            mapTitle: "Points de Retrait & Logistique Solidaire", pickupPoints: "Points de retrait",
-            becomeVolunteer: "Devenez le prochain point de retrait",
+            mapTitle: "Points de Retrait & Logistique Solidaire", pickupPoints: "Points de retrait disponibles",
             partnersTitle: "Nos Partenaires & Sponsors",
-            partner1Desc: "Convention de parrainage sanitaire et préventive pour réduire les coûts de prise en charge",
             partner2Title: "Moulins Nationaux", partner2Desc: "Parrainage éthique — points de vente directs pour produits sans gluten",
             partner3Title: "Laboratoires d'analyses médicales", partner3Desc: "Examens diagnostiques soutenus pour le dépistage précoce de la maladie cœliaque",
-            partner4Title: "Ministère de la Formation Professionnelle", partner4Desc: "Soutien institutionnel et technique pour le projet numérique solidaire",
             partner5Title: "Direction de la Santé", partner5Desc: "Coordination médicale et sensibilisation sanitaire pour les malades cœliaques",
-            partner6Title: "Boulangeries sans gluten", partner6Desc: "Produits de boulangerie sûrs et certifiés pour les malades cœliaques",
             footerDesc: "Projet numérique solidaire pour soutenir les malades cœliaques dans la wilaya de Bouira à travers la logistique solidaire et les achats groupés",
-            quickLinks: "Liens Rapides", contact: "Contactez-nous", legal: "Légal",
-            privacy: "Politique de confidentialité", terms: "Conditions d'utilisation", cookies: "Politique des cookies",
-            rights: "Tous droits réservés",
-            loginTitle: "Connexion", phone: "Téléphone", loginCode: "Code d'accès (SMS)",
-            btnLogin: "Entrer", noAccount: "Pas encore de compte ?", registerNow: "Inscrivez-vous",
+            quickLinks: "Liens Rapides", contact: "Contactez-nous", rights: "Tous droits réservés",
+            loginTitle: "Connexion", phone: "Téléphone", loginCode: "Code d'accès (SMS)", btnLogin: "Entrer",
             patientTitle: "Inscription Famille Patient", patientSubtitle: "Créez votre identité numérique pour accéder aux services",
             fullName: "Nom & Prénom *", address: "Commune / Adresse *",
             medicalCert: "Certificat médical attestant la maladie *", uploadHint: "Cliquez pour uploader le certificat (PDF, JPG)",
             patientCommit: "Je confirme être un patient cœliaque enregistré et souhaite bénéficier des services de la plateforme solidaire",
-            btnConfirm: "Confirmer et accéder au menu principal",
+            btnConfirm: "Confirmer et accéder",
             volunteerTitle: "Inscription Bénévole", volunteerSubtitle: "Rejoignez le réseau de distribution solidaire",
-            activityCommune: "Commune d'activité et distribution *",
-            assocOrNIN: "Association partenaire ou NIN *",
+            activityCommune: "Commune d'activité et distribution *", assocOrNIN: "Association partenaire ou NIN *",
             volunteerCommit: "Je m'engage à transporter les commandes dans un lieu propre, isolé de tout gluten",
-            socialDoc: "Document de situation sociale (optionnel)",
-            uploadOptional: "📎 Uploader le document (PDF, JPG) — pour ceux souhaitant bénéficier du soutien",
-            btnVolunteerConfirm: "Confirmer et accéder à la carte de distribution",
+            btnVolunteerConfirm: "Confirmer et accéder",
             orderTitle: "Ajouter une commande au compteur collectif", quantity: "Quantité demandée",
-            paymentMethod: "Mode de paiement", btnAddOrder: "Confirmer la commande et payer en avance",
-            basketTitle: "Panier Solidaire Cœliaque",
-            basketContains: "Contenu du panier solidaire:",
-            needyConfirm: "Je souhaite bénéficier du panier solidaire gratuit (pour les familles reconnues nécessiteuses)",
-            btnRequestBasket: "Demander le panier solidaire"
+            paymentMethod: "Mode de paiement", btnAddOrder: "Confirmer la commande",
+            basketTitle: "Panier Solidaire Cœliaque", basketContains: "Contenu du panier solidaire:",
+            needyConfirm: "Je souhaite bénéficier du panier solidaire gratuit (pour les familles reconnues nécessiteuses)", btnRequestBasket: "Demander le panier solidaire"
         },
         en: {
             brandName: "Tadamun – Celiac Bouira",
@@ -800,54 +537,41 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             service2Title: "Celiac Solidarity Basket", service2Desc: "Free solidarity support for registered needy families",
             service3Title: "Distribution Map", service3Desc: "Find the nearest approved pickup point in your municipality",
             service4Title: "Volunteering", service4Desc: "Join the solidarity distribution network and contribute to serving patients",
-            howItWorks: "How does the platform work?",
-            step1Title: "Register as a patient family or volunteer", step1Desc: "Create your digital identity in simple steps with SMS verification",
-            step2Title: "Join the group counter", step2Desc: "Participate in group orders at factory price",
-            step3Title: "Pick up your order at the distribution point", step3Desc: "Contact the volunteer and receive your clean gluten-free products",
-            mapTitle: "Pickup Points & Solidarity Logistics", pickupPoints: "Pickup points",
-            becomeVolunteer: "Become the next pickup point",
+            mapTitle: "Pickup Points & Solidarity Logistics", pickupPoints: "Available pickup points",
             partnersTitle: "Our Partners & Supporters",
-            partner1Desc: "Health and preventive sponsorship agreement to reduce care costs",
             partner2Title: "National Mills", partner2Desc: "Ethical sponsorship — direct sales outlets for gluten-free products",
             partner3Title: "Medical Analysis Laboratories", partner3Desc: "Supported diagnostic tests for early detection of celiac disease",
-            partner4Title: "Ministry of Vocational Training", partner4Desc: "Institutional and technical support for the digital solidarity project",
             partner5Title: "Health Directorate", partner5Desc: "Medical coordination and health awareness for celiac patients",
-            partner6Title: "Gluten-Free Bakeries", partner6Desc: "Safe and certified bakery products for celiac patients",
             footerDesc: "Digital solidarity project to support celiac patients in Bouira wilaya through solidarity logistics and group purchasing",
-            quickLinks: "Quick Links", contact: "Contact Us", legal: "Legal",
-            privacy: "Privacy Policy", terms: "Terms of Use", cookies: "Cookie Policy",
-            rights: "All rights reserved",
-            loginTitle: "Login", phone: "Phone Number", loginCode: "Access Code (SMS)",
-            btnLogin: "Enter", noAccount: "Don't have an account?", registerNow: "Register now",
+            quickLinks: "Quick Links", contact: "Contact Us", rights: "All rights reserved",
+            loginTitle: "Login", phone: "Phone Number", loginCode: "Access Code (SMS)", btnLogin: "Enter",
             patientTitle: "Patient Family Registration", patientSubtitle: "Create your digital identity to access services",
             fullName: "Full Name *", address: "Municipality / Address *",
             medicalCert: "Medical certificate proving the disease *", uploadHint: "Click to upload certificate (PDF, JPG)",
             patientCommit: "I confirm being a registered celiac patient and wish to benefit from the solidarity platform services",
-            btnConfirm: "Confirm data and enter main menu",
+            btnConfirm: "Confirm and enter",
             volunteerTitle: "Volunteer Registration", volunteerSubtitle: "Join the solidarity distribution network",
-            activityCommune: "Activity & Distribution Municipality *",
-            assocOrNIN: "Partner Association or National ID Number *",
+            activityCommune: "Activity & Distribution Municipality *", assocOrNIN: "Partner Association or National ID Number *",
             volunteerCommit: "I commit to transporting orders in a completely clean place, isolated from any gluten-containing materials",
-            socialDoc: "Social status document (optional)",
-            uploadOptional: "📎 Upload document (PDF, JPG) — for those wishing to benefit from support",
-            btnVolunteerConfirm: "Confirm and access distribution map",
+            btnVolunteerConfirm: "Confirm and access",
             orderTitle: "Add order to group counter", quantity: "Requested quantity",
-            paymentMethod: "Payment method", btnAddOrder: "Confirm order and pay in advance",
-            basketTitle: "Celiac Solidarity Basket",
-            basketContains: "Solidarity basket contents:",
-            needyConfirm: "I wish to benefit from the free solidarity basket (for families recognized as needy)",
-            btnRequestBasket: "Request solidarity basket"
+            paymentMethod: "Payment method", btnAddOrder: "Confirm order",
+            basketTitle: "Celiac Solidarity Basket", basketContains: "Solidarity basket contents:",
+            needyConfirm: "I wish to benefit from the free solidarity basket (for families recognized as needy)", btnRequestBasket: "Request solidarity basket"
         }
     };
 
+    // ================= FUNCTIONS =================
+    
     let currentLang = 'ar';
     let map = null;
-
+    
     function changeLanguage() {
         const select = document.getElementById('langSelect');
         currentLang = select.value;
         const t = translations[currentLang];
-
+        
+        // Update all elements with data-key
         document.querySelectorAll('[data-key]').forEach(el => {
             const key = el.getAttribute('data-key');
             if (t[key]) {
@@ -858,7 +582,8 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
                 }
             }
         });
-
+        
+        // RTL/LTR handling
         const html = document.documentElement;
         const body = document.body;
         if (currentLang === 'ar') {
@@ -873,145 +598,66 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             body.classList.add('font-inter');
         }
     }
-
+    
     function openModal(id) {
         const modal = document.getElementById(id);
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
     }
-
+    
     function closeModal(id) {
         const modal = document.getElementById(id);
         modal.classList.add('hidden');
         modal.classList.remove('flex');
         document.body.style.overflow = '';
     }
-
+    
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');
         menu.classList.toggle('hidden');
     }
-
+    
     function showToast(message) {
         const toast = document.getElementById('toast');
         const msg = document.getElementById('toastMessage');
         msg.textContent = message;
         toast.classList.remove('opacity-0');
-        toast.style.transform = 'translate(-50%, 0)';
         setTimeout(() => {
             toast.classList.add('opacity-0');
-            toast.style.transform = 'translate(-50%, 20px)';
         }, 3000);
     }
-
+    
     function handleLogin() {
         closeModal('loginModal');
-        showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : currentLang === 'fr' ? 'Connexion réussie !' : 'Login successful!');
+        showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 
+                  currentLang === 'fr' ? 'Connexion réussie !' : 'Login successful!');
     }
-
-    async function handlePatientRegister() {
-        const modal = document.getElementById('patientModal');
-        const inputs = modal.querySelectorAll('input, select');
-
-        const fullName = inputs[0].value.trim();
-        const phone = inputs[1].value.trim();
-        const commune = inputs[2].value;
-
-        if (!fullName || !phone || !commune) {
-            showToast('يرجى ملء جميع الحقول المطلوبة');
-            return;
-        }
-
-        try {
-            showToast('جاري التسجيل...');
-            const result = await registerPatient({ fullName, phone, commune });
-
-            if (result.success) {
-                showToast('تم التسجيل بنجاح! كود التحقق: ' + result.devCode);
-                closeModal('patientModal');
-            } else {
-                showToast(result.message || 'خطأ في التسجيل');
-            }
-        } catch (error) {
-            showToast('خطأ: ' + error.message);
-        }
+    
+    function handlePatientRegister() {
+        closeModal('patientModal');
+        showToast(currentLang === 'ar' ? 'تم التسجيل بنجاح! مرحباً بك في تضامن' : 
+                  currentLang === 'fr' ? 'Inscription réussie ! Bienvenue à Tadamun' : 'Registration successful! Welcome to Tadamun');
     }
-
-    async function sendSMSCode() {
-        const phone = document.querySelector('#patientModal input[type="tel"]').value;
-        if (!phone) { 
-            showToast('أدخل رقم الهاتف'); 
-            return; 
-        }
-
-        try {
-            await sendVerificationCode(phone);
-            showToast('تم إرسال الكود!');
-        } catch (error) {
-            showToast('خطأ: ' + error.message);
-        }
+    
+    function handleVolunteerRegister() {
+        closeModal('volunteerModal');
+        showToast(currentLang === 'ar' ? 'تم التسجيل كمتطوع! شكراً لمساهمتك' : 
+                  currentLang === 'fr' ? 'Inscription bénévole réussie ! Merci pour votre contribution' : 'Volunteer registration successful! Thank you for your contribution');
     }
-
-    async function handleVolunteerRegister() {
-        const modal = document.getElementById('volunteerModal');
-        const inputs = modal.querySelectorAll('input, select');
-
-        const fullName = inputs[0].value.trim();
-        const phone = inputs[1].value.trim();
-        const activityCommune = inputs[2].value;
-        const associationName = inputs[3].value.trim();
-
-        if (!fullName || !phone || !activityCommune) {
-            showToast('يرجى ملء جميع الحقول المطلوبة');
-            return;
-        }
-
-        try {
-            showToast('جاري التسجيل...');
-            const result = await registerVolunteer({ 
-                fullName, 
-                phone, 
-                activityCommune,
-                associationName: associationName || undefined
-            });
-
-            if (result.success) {
-                showToast('تم التسجيل كمتطوع! كود التحقق: ' + result.devCode);
-                closeModal('volunteerModal');
-            } else {
-                showToast(result.message || 'خطأ في التسجيل');
-            }
-        } catch (error) {
-            showToast('خطأ: ' + error.message);
-        }
-    }
-
-    async function sendVolunteerSMS() {
-        const phone = document.querySelector('#volunteerModal input[type="tel"]').value;
-        if (!phone) { 
-            showToast('أدخل رقم الهاتف'); 
-            return; 
-        }
-
-        try {
-            await sendVerificationCode(phone);
-            showToast('تم إرسال الكود!');
-        } catch (error) {
-            showToast('خطأ: ' + error.message);
-        }
-    }
-
+    
     function handleOrder() {
         closeModal('orderModal');
-        showToast(currentLang === 'ar' ? 'تم إضافة طلبك للعداد الجماعي!' : currentLang === 'fr' ? 'Votre commande a été ajoutée au compteur collectif !' : 'Your order has been added to the group counter!');
+        showToast(currentLang === 'ar' ? 'تم إضافة طلبك للعداد الجماعي!' : 
+                  currentLang === 'fr' ? 'Votre commande a été ajoutée au compteur collectif !' : 'Your order has been added to the group counter!');
     }
-
+    
     function handleBasketRequest() {
         closeModal('basketModal');
-        showToast(currentLang === 'ar' ? 'تم إرسال طلب القفة التضامنية!' : currentLang === 'fr' ? 'Demande de panier solidaire envoyée !' : 'Solidarity basket request sent!');
+        showToast(currentLang === 'ar' ? 'تم إرسال طلب القفة التضامنية!' : 
+                  currentLang === 'fr' ? 'Demande de panier solidaire envoyée !' : 'Solidarity basket request sent!');
     }
-
+    
     function adjustQty(delta) {
         const input = document.getElementById('qtyInput');
         let val = parseInt(input.value) + delta;
@@ -1019,41 +665,44 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
         input.value = val;
         document.getElementById('totalPrice').textContent = (val * 450) + ' دج';
     }
-
+    
     function selectPayment(btn) {
         document.querySelectorAll('.payment-btn').forEach(b => {
             b.classList.remove('border-2', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
-            b.classList.add('border', 'border-gray-300');
+            b.classList.add('border', 'border-slate-300', 'text-slate-600');
         });
-        btn.classList.remove('border', 'border-gray-300');
+        btn.classList.remove('border', 'border-slate-300', 'text-slate-600');
         btn.classList.add('border-2', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
     }
-
+    
     function focusMap(lat, lng) {
         if (map) {
             map.setView([lat, lng], 14);
         }
     }
-
+    
+    // Initialize Map
     function initMap() {
         map = L.map('map').setView([36.375, 3.896], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-
+        
+        // Add markers for pickup points
         const markers = [
             { lat: 36.375, lng: 3.896, title: 'مقر جمعية البركة - الشرفة', popup: '<b>مقر جمعية البركة</b><br>الشرفة<br>متطوع: فاطمة زهرة<br>📞 0550 XX XX XX' },
             { lat: 36.433, lng: 3.864, title: 'مركز التكوين المهني - البويرة', popup: '<b>مركز التكوين المهني</b><br>البويرة<br>متطوع: أحمد بن علي<br>📞 0551 XX XX XX' },
             { lat: 36.350, lng: 3.950, title: 'مسجد النور - الحيزر', popup: '<b>مسجد النور</b><br>الحيزر<br>متطوع: محمد سعيد<br>📞 0552 XX XX XX' }
         ];
-
+        
         markers.forEach(m => {
             L.marker([m.lat, m.lng]).addTo(map)
                 .bindPopup(m.popup)
                 .bindTooltip(m.title, { permanent: false, direction: 'top' });
         });
     }
-
+    
+    // Scroll animations
     function initScrollAnimations() {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1062,10 +711,11 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
                 }
             });
         }, { threshold: 0.1 });
-
+        
         document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
     }
-
+    
+    // Navbar scroll effect
     function initNavbar() {
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
@@ -1076,20 +726,23 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             }
         });
     }
-
+    
+    // Animate counter bar on load
     function animateCounter() {
         setTimeout(() => {
             const bar = document.getElementById('counterBar');
             if (bar) bar.style.width = '70%';
         }, 500);
     }
-
+    
+    // Close modals on backdrop click
     document.querySelectorAll('[id$="Modal"]').forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal(modal.id);
         });
     });
-
+    
+    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         changeLanguage();
         initMap();
