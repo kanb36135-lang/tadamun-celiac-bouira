@@ -2,6 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('./config/passport');
+
+// Vérification des variables d'environnement
+console.log('🔑 GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'OK (masqué)' : 'MANQUANT');
+console.log('🔑 GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'OK (masqué)' : 'MANQUANT');
+console.log('🔑 SESSION_SECRET:', process.env.SESSION_SECRET ? 'OK (masqué)' : 'MANQUANT');
+console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET ? 'OK (masqué)' : 'MANQUANT');
 
 const app = express();
 
@@ -28,6 +36,20 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 204
 }));
+
+// Session configuration (pour Google OAuth)
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: true,
+    sameSite: 'none'
+  }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // 🔍 Log chaque requête (pour vérifier que CORS passe)
 app.use((req, res, next) => {
