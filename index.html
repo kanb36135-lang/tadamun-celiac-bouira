@@ -665,36 +665,6 @@ window.getCounter = function() { return apiCall('/counter'); };
 window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
 window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
 </script>
-    <script>
-const API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
-
-async function apiCall(endpoint, method, data) {
-  const options = {
-    method: method || 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (data) options.body = JSON.stringify(data);
-
-  try {
-    const response = await fetch(API_BASE_URL + endpoint, options);
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || 'Erreur serveur');
-    return result;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
-}
-
-window.registerPatient = function(data) { return apiCall('/patients/register', 'POST', data); };
-window.registerVolunteer = function(data) { return apiCall('/volunteers/register', 'POST', data); };
-window.sendVerificationCode = function(phone) { return apiCall('/auth/send-code', 'POST', { phone: phone }); };
-window.verifyCode = function(phone, code) { return apiCall('/auth/verify-code', 'POST', { phone: phone, code: code }); };
-window.getPickupPoints = function() { return apiCall('/pickup-points'); };
-window.getCounter = function() { return apiCall('/counter'); };
-window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
-window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
-</script>
 
     <script>
     const translations = {

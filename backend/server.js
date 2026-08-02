@@ -5,16 +5,18 @@ const cors = require('cors');
 
 const app = express();
 
-// ✅ Ajoutez cette ligne pour corriger le warning
-app.set('trust proxy', 1);
-
-// CORS
+// ✅ CORRIGÉ : Autoriser les 2 URLs frontend
 app.use(cors({
-  origin: ['https://tadamun-celiac-bouira-site.onrender.com', 'http://localhost:3000'],
+  origin: [
+    'https://tadamun-celiac-bouira-site.onrender.com',
+    'https://tadamun-celiac-bouira-frontend.onrender.com',
+    'http://localhost:3000'
+  ],
   credentials: true
 }));
 
 app.use(express.json());
+app.set('trust proxy', 1);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
