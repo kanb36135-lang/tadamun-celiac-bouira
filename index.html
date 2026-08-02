@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         tailwind.config = {
@@ -63,6 +64,7 @@
         .step-connector { position: absolute; top: 50%; width: 100%; height: 2px; background: linear-gradient(90deg, #10b981, #34d399); z-index: 0; }
         @media (max-width: 768px) { .step-connector { display: none; } }
     </style>
+
 <base target="_blank">
 </head>
 <body class="bg-gray-50 font-arabic text-gray-800 antialiased">
@@ -636,7 +638,7 @@
 
     <!-- Leaflet JS -->
    <script>
-const API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
+var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
 
 async function apiCall(endpoint, method, data) {
   const options = {
