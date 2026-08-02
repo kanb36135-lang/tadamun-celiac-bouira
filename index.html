@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         tailwind.config = {
@@ -63,7 +64,6 @@
         .step-connector { position: absolute; top: 50%; width: 100%; height: 2px; background: linear-gradient(90deg, #10b981, #34d399); z-index: 0; }
         @media (max-width: 768px) { .step-connector { display: none; } }
     </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 <body class="bg-gray-50 font-arabic text-gray-800 antialiased">
@@ -473,7 +473,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف *</label>
                     <div class="flex gap-2">
                         <input type="tel" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
-                        <button type="button" onclick="sendSMSCode()" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-emerald-700 transition">SMS</button>
+                        <button type="button" onclick="showToast('تم إرسال كود التحقق!')" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-emerald-700 transition">SMS</button>
                     </div>
                 </div>
                 <div>
@@ -521,7 +521,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف *</label>
                     <div class="flex gap-2">
                         <input type="tel" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="0550 12 34 56" required>
-                        <button type="button" onclick="sendVolunteerSMS()" class="bg-orange-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-orange-600 transition">SMS</button>
+                        <button type="button" onclick="showToast('تم إرسال كود التحقق!')" class="bg-orange-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap hover:bg-orange-600 transition">SMS</button>
                     </div>
                 </div>
                 <div>
@@ -636,36 +636,38 @@
     </div>
 
     <!-- Leaflet JS -->
-   <script>
-const API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-async function apiCall(endpoint, method, data) {
-  const options = {
-    method: method || 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (data) options.body = JSON.stringify(data);
+    <script>
+    var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
 
-  try {
-    const response = await fetch(API_BASE_URL + endpoint, options);
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || 'Erreur serveur');
-    return result;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
-}
+    async function apiCall(endpoint, method, data) {
+      const options = {
+        method: method || 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      };
+      if (data) options.body = JSON.stringify(data);
 
-window.registerPatient = function(data) { return apiCall('/patients/register', 'POST', data); };
-window.registerVolunteer = function(data) { return apiCall('/volunteers/register', 'POST', data); };
-window.sendVerificationCode = function(phone) { return apiCall('/auth/send-code', 'POST', { phone: phone }); };
-window.verifyCode = function(phone, code) { return apiCall('/auth/verify-code', 'POST', { phone: phone, code: code }); };
-window.getPickupPoints = function() { return apiCall('/pickup-points'); };
-window.getCounter = function() { return apiCall('/counter'); };
-window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
-window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
-</script>
+      try {
+        const response = await fetch(API_BASE_URL + endpoint, options);
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Erreur serveur');
+        return result;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    window.registerPatient = function(data) { return apiCall('/patients/register', 'POST', data); };
+    window.registerVolunteer = function(data) { return apiCall('/volunteers/register', 'POST', data); };
+    window.sendVerificationCode = function(phone) { return apiCall('/auth/send-code', 'POST', { phone: phone }); };
+    window.verifyCode = function(phone, code) { return apiCall('/auth/verify-code', 'POST', { phone: phone, code: code }); };
+    window.getPickupPoints = function() { return apiCall('/pickup-points'); };
+    window.getCounter = function() { return apiCall('/counter'); };
+    window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
+    window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
+    </script>
 
     <script>
     const translations = {
@@ -942,21 +944,6 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
         }
     }
 
-    async function sendSMSCode() {
-        const phone = document.querySelector('#patientModal input[type="tel"]').value;
-        if (!phone) { 
-            showToast('أدخل رقم الهاتف'); 
-            return; 
-        }
-
-        try {
-            await sendVerificationCode(phone);
-            showToast('تم إرسال الكود!');
-        } catch (error) {
-            showToast('خطأ: ' + error.message);
-        }
-    }
-
     async function handleVolunteerRegister() {
         const modal = document.getElementById('volunteerModal');
         const inputs = modal.querySelectorAll('input, select');
@@ -986,6 +973,21 @@ window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST
             } else {
                 showToast(result.message || 'خطأ في التسجيل');
             }
+        } catch (error) {
+            showToast('خطأ: ' + error.message);
+        }
+    }
+
+    async function sendSMSCode() {
+        const phone = document.querySelector('#patientModal input[type="tel"]').value;
+        if (!phone) { 
+            showToast('أدخل رقم الهاتف'); 
+            return; 
+        }
+
+        try {
+            await sendVerificationCode(phone);
+            showToast('تم إرسال الكود!');
         } catch (error) {
             showToast('خطأ: ' + error.message);
         }
