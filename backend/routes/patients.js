@@ -59,13 +59,8 @@ router.post('/register', [
       });
     }
 
-    // Check if file was uploaded
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: 'Le certificat médical est requis'
-      });
-    }
+    // Check if file was uploaded (optional for now)
+    const medicalCertPath = req.file ? req.file.path : 'pending_upload';
 
     const code = generateCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -75,7 +70,7 @@ router.post('/register', [
       phone,
       commune,
       address,
-      medicalCertPath: req.file.path,
+      medicalCertPath: medicalCertPath,
       verificationCode: code,
       verificationCodeExpires: expiresAt
     });
