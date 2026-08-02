@@ -1,38 +1,38 @@
-const API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-async function apiCall(endpoint, method = 'GET', data = null) {
-  const options = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (data) options.body = JSON.stringify(data);
+const app = express();
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.message || 'Erreur serveur');
-  return result;
-}
+// Trust proxy for Render
+app.set('trust proxy', 1);
 
-// Inscription patient
-window.registerPatient = (data) => apiCall('/patients/register', 'POST', data);
+// CORS - Autoriser les 2 URLs frontend
+app.use(cors({
+  origin: [
+    'https://tadamun-celiac-bouira-site.onrender.com',
+    'https://tadamun-celiac-bouira-frontend.onrender.com',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));
 
-// Inscription bénévole
-window.registerVolunteer = (data) => apiCall('/volunteers/register', 'POST', data);
+app.use(express.json());
 
-// Envoyer code SMS
-window.sendVerificationCode = (phone) => apiCall('/auth/send-code', 'POST', { phone });
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/patients', require('./routes/patients'));
+app.use('/api/volunteers', require('./routes/volunteers'));
+app.use('/api/orders', require('./routes/orders'));
+app.use('/api/baskets', require('./routes/baskets'));
+app.use('/api/counter', require('./routes/counter'));
+app.use('/api/pickup-points', require('./routes/pickupPoints'));
 
-// Vérifier code SMS
-window.verifyCode = (phone, code) => apiCall('/auth/verify-code', 'POST', { phone, code });
+// Connexion MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Error:', err));
 
-// Récupérer points de retrait
-window.getPickupPoints = () => apiCall('/pickup-points');
-
-// Récupérer compteur
-window.getCounter = () => apiCall('/counter');
-
-// Créer commande
-window.createOrder = (data) => apiCall('/orders', 'POST', data);
-
-// Demander panier solidaire
-window.requestBasket = (data) => apiCall('/baskets/request', 'POST', data);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
