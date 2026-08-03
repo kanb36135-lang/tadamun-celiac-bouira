@@ -3,6 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const Patient = require('../models/Patient');
 const Volunteer = require('../models/Volunteer');
 const SMSLog = require('../models/SMSLog');
@@ -13,34 +14,50 @@ const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString(
 // Send SMS (placeholder - integrate with Twilio or local provider)
 const sendSMS = async (phone, message, type = 'verification') => {
   try {
-    // TODO: Integrate with Twilio or Algerian SMS provider
-    // For now, log the SMS
     console.log(`📱 SMS to ${phone}: ${message}`);
-
-    await SMSLog.create({
-      phone,
-      message,
-      type,
-      status: 'sent'
-    });
-
+    await SMSLog.create({ phone, message, type, status: 'sent' });
     return { success: true };
   } catch (error) {
     console.error('SMS Error:', error);
-    await SMSLog.create({
-      phone,
-      message,
-      type,
-      status: 'failed',
-      errorMessage: error.message
-    });
+    await SMSLog.create({ phone, message, type, status: 'failed', errorMessage: error.message });
     return { success: false, error: error.message };
   }
 };
 
-// @route   POST /api/auth/send-code
-// @desc    Send verification code via SMS
-// @access  Public
+// ============================================
+// ROUTES GOOGLE OAUTH (NOUVEAU)
+// ============================================
+
+// Lancer la connexion Google
+router.get('/google',
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+  })
+);
+
+// Callback après connexion Google
+router.get('/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    res.redirect(`https://tadamun-celiac-bouira-site.onrender.com?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      id: req.user._id,
+      fullName: req.user.fullName,
+      email: req.user.email
+    }))}`);
+  }
+);
+
+// ============================================
+// ROUTES SMS (EXISTANT - CONSERVÉ)
+// ============================================
+
 router.post('/send-code', [
   body('phone').isMobilePhone('any').withMessage('Numéro de téléphone invalide')
 ], async (req, res) => {
@@ -52,53 +69,36 @@ router.post('/send-code', [
 
     const { phone } = req.body;
     const code = generateCode();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Check if phone exists in patients or volunteers
     let user = await Patient.findOne({ phone }) || await Volunteer.findOne({ phone });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: `Numéro de téléphone non enregistré. Veuillez vous inscrire d'abord.`  // ← backticks
+        message: 'Numéro de téléphone non enregistré. Veuillez vous inscrire d\'abord.'
       });
     }
 
-    // Update verification code
     user.verificationCode = code;
     user.verificationCodeExpires = expiresAt;
     await user.save();
 
-    // Send SMS
     const message = `Votre code de vérification Tadamun est: ${code}. Valide pendant 10 minutes.`;
     const smsResult = await sendSMS(phone, message);
 
-    if (!smsResult.success) {
-      // For development, return the code in the response
-      return res.json({
-        success: true,
-        message: 'Code envoyé (Mode développement)',
-        devCode: code // Remove in production!
-      });
-    }
-
     res.json({
       success: true,
-      message: 'Code de vérification envoyé avec succès'
+      message: smsResult.success ? 'Code envoyé' : 'Code envoyé (Mode développement)',
+      devCode: code
     });
 
   } catch (error) {
     console.error('Send code error:', error);
-    res.status(500).json({
-      success: false,
-      message: `Erreur lors de l'envoi du code`  // ← backticks
-    });
+    res.status(500).json({ success: false, message: 'Erreur lors de l\'envoi du code' });
   }
 });
 
-// @route   POST /api/auth/verify-code
-// @desc    Verify SMS code and login
-// @access  Public
 router.post('/verify-code', [
   body('phone').notEmpty().withMessage('Le téléphone est requis'),
   body('code').isLength({ min: 6, max: 6 }).withMessage('Code invalide')
@@ -110,46 +110,27 @@ router.post('/verify-code', [
     }
 
     const { phone, code } = req.body;
-
-    // Find user
     let user = await Patient.findOne({ phone }) || await Volunteer.findOne({ phone });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Utilisateur non trouvé'
-      });
+      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
     }
 
-    // Check code
     if (user.verificationCode !== code) {
-      return res.status(400).json({
-        success: false,
-        message: 'Code de vérification incorrect'
-      });
+      return res.status(400).json({ success: false, message: 'Code incorrect' });
     }
 
-    // Check expiration
     if (user.verificationCodeExpires < new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Code expiré. Veuillez demander un nouveau code.'
-      });
+      return res.status(400).json({ success: false, message: 'Code expiré' });
     }
 
-    // Mark as verified
     user.isVerified = true;
     user.verificationCode = undefined;
     user.verificationCodeExpires = undefined;
     await user.save();
 
-    // Generate JWT
     const token = jwt.sign(
-      { 
-        id: user._id, 
-        phone: user.phone,
-        type: user instanceof Patient ? 'patient' : 'volunteer'
-      },
+      { id: user._id, phone: user.phone, type: user instanceof Patient ? 'patient' : 'volunteer' },
       process.env.JWT_SECRET || 'tadamun_secret_key',
       { expiresIn: '7d' }
     );
@@ -169,10 +150,7 @@ router.post('/verify-code', [
 
   } catch (error) {
     console.error('Verify code error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la vérification'
-    });
+    res.status(500).json({ success: false, message: 'Erreur lors de la vérification' });
   }
 });
 
