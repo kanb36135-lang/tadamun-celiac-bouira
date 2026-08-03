@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const passport = require('./config/passport');
 
 // Vérification des variables d'environnement
@@ -37,14 +38,21 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
-// Session configuration (pour Google OAuth)
+// Session configuration avec connect-mongo (stockage persistant)
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    ttl: 14 * 24 * 60 * 60,  // Sessions valides 14 jours
+    autoRemove: 'native',      // Suppression automatique des sessions expirées
+    touchAfter: 24 * 3600      // Mise à jour du TTL une fois par jour
+  }),
   cookie: { 
     secure: true,
-    sameSite: 'none'
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 14  // 14 jours en millisecondes
   }
 }));
 
