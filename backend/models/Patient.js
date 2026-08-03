@@ -8,14 +8,19 @@ const patientSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: [true, 'Le numéro de téléphone est requis'],
+    required: function() { 
+      return !this.googleId;
+    },
     unique: true,
+    sparse: true,
     trim: true
   },
   commune: {
     type: String,
-    required: [true, 'La commune est requise'],
-    enum: ['البويرة', 'الشرفة', 'الحيزر', 'سور الغزلان', 'مشد اللجم', 'الأخضرية', ' autres']
+    required: function() {
+      return !this.googleId;
+    },
+    enum: ['البويرة', 'الشرفة', 'الحيزر', 'سور الغزلان', 'مشد اللجم', 'الأخضرية', ' autres', 'non_defini']
   },
   address: {
     type: String,
@@ -23,7 +28,9 @@ const patientSchema = new mongoose.Schema({
   },
   medicalCertPath: {
     type: String,
-    required: [true, 'Le certificat médical est requis']
+    required: function() {
+      return !this.googleId;
+    }
   },
   googleId: {
     type: String,
@@ -48,18 +55,7 @@ const patientSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
-}, { timestamps: true });  // ✅ timestamps: true gère createdAt/updatedAt automatiquement
-
-// Index for phone lookups
-// patientSchema.index({ phone: 1 });
+}, { timestamps: true });
 
 module.exports = mongoose.model('Patient', patientSchema);
