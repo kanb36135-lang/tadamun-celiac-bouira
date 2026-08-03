@@ -47,10 +47,11 @@ router.get('/google/callback',
     );
     
     res.redirect(`https://tadamun-celiac-bouira-site.onrender.com?token=${token}&user=${encodeURIComponent(JSON.stringify({
-      id: req.user._id,
-      fullName: req.user.fullName,
-      email: req.user.email
-    }))}`);
+  id: req.user._id,
+  fullName: req.user.fullName,
+  email: req.user.email,
+  photo: req.user.photo || null
+}))}`);
   }
 );
 
@@ -152,6 +153,22 @@ router.post('/verify-code', [
     console.error('Verify code error:', error);
     res.status(500).json({ success: false, message: 'Erreur lors de la vérification' });
   }
+});
+  
+  // Route de déconnexion
+router.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Erreur lors de la déconnexion' });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Erreur lors de la destruction de la session' });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ success: true, message: 'Déconnexion réussie' });
+    });
+  });
 });
 
 module.exports = router;
