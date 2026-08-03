@@ -46,12 +46,16 @@ router.get('/google/callback',
       { expiresIn: '7d' }
     );
     
-    res.redirect(`https://tadamun-celiac-bouira-site.onrender.com?token=${token}&user=${encodeURIComponent(JSON.stringify({
-  id: req.user._id,
-  fullName: req.user.fullName,
-  email: req.user.email,
-  photo: req.user.photo || null
-}))}`);
+    const userData = {
+      id: req.user._id,
+      fullName: req.user.fullName,
+      email: req.user.email,
+      photo: req.user.photo || null
+    };
+    
+    const userString = encodeURIComponent(JSON.stringify(userData));
+    
+    res.redirect(`https://tadamun-celiac-bouira-site.onrender.com?token=${token}&user=${userString}`);
   }
 );
 
@@ -155,7 +159,7 @@ router.post('/verify-code', [
   }
 });
   
-  // Route de déconnexion
+// Route de déconnexion
 router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) {
