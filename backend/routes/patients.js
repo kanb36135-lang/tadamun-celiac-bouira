@@ -2,62 +2,46 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
-// Configuration du dossier de destination pour les certificats
 const upload = multer({ dest: 'uploads/' });
 
-// Importer le modèle User
-const User = require('../models/user');
-
-// Middlewares d'authentification & de vérification Admin
+// ✅ Import exact du modèle Patient
+const Patient = require('../models/Patient');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
-// --- 1. ROUTE GET : Récupérer tous les patients (ADMIN ONLY) ---
+// --- 1. ROUTE GET : Tous les patients ---
 router.get('/', verifyToken, verifyAdmin, async (req, res) => {
     try {
-        // Filtre les utilisateurs pour ne récupérer que ceux qui sont des patients
-        const patients = await User.find({ userType: 'patient' }).select('-password');
-        res.json({
-            success: true,
-            count: patients.length,
-            patients
-        });
+        const patients = await Patient.find().select('-password');
+        res.json({ success: true, count: patients.length, patients });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// --- 2. ROUTE GET : Récupérer un patient par son ID ---
+// --- 2. ROUTE GET : Un patient par ID ---
 router.get('/:id', verifyToken, async (req, res) => {
     try {
-        const patient = await User.findOne({ _id: req.params.id, userType: 'patient' }).select('-password');
-        
-        if (!patient) {
-            return res.status(404).json({ success: false, message: 'Patient non trouvé' });
-        }
-
-        res.json({
-            success: true,
-            patient
-        });
+        const patient = await Patient.findById(req.params.id).select('-password');
+        if (!patient) return res.status(404).json({ success: false, message: 'Patient non trouvé' });
+        res.json({ success: true, patient });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// --- 3. ROUTE POST : Compléter le profil (Après inscription Email) ---
+// --- 3. ROUTE POST : Compléter le profil ---
 router.post('/complete-profile', verifyToken, upload.single('medicalCert'), async (req, res) => {
     try {
-        const userId = req.user.id; // Obtenu via verifyToken
-        const { fullName, phone, commune, type } = req.body;
+        const userId = req.user.id;
+        const { fullName, phone, commune } = req.body;
         const fileUrl = req.file ? req.file.path : null;
 
-        const updatedUser = await User.findByIdAndUpdate(
+        const updatedPatient = await Patient.findByIdAndUpdate(
             userId,
             {
                 fullName,
                 phone,
                 commune,
-                userType: type, // 'volunteer' ou 'patient'
                 medicalCert: fileUrl,
                 isProfileComplete: true
             },
@@ -67,33 +51,28 @@ router.post('/complete-profile', verifyToken, upload.single('medicalCert'), asyn
         res.json({
             success: true,
             message: 'Profil mis à jour avec succès',
-            user: updatedUser
+            patient: updatedPatient
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// --- 4. ROUTE PUT : Modification d'un patient (ADMIN ONLY) ---
-router.put('/user/:id', verifyToken, verifyAdmin, async (req, res) => {
+// --- 4. ROUTE PUT : Modification patient (ADMIN) ---
+router.put('/:id', verifyToken, verifyAdmin, async (req, res) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id, 
-            req.body, 
-            { new: true }
-        ).select('-password');
-        
-        res.json({ success: true, user: updatedUser });
+        const updatedPatient = await Patient.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password');
+        res.json({ success: true, patient: updatedPatient });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// --- 5. ROUTE DELETE : Suppression d'un patient (ADMIN ONLY) ---
-router.delete('/user/:id', verifyToken, verifyAdmin, async (req, res) => {
+// --- 5. ROUTE DELETE : Suppression patient (ADMIN) ---
+router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'Utilisateur supprimé avec succès' });
+        await Patient.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Patient supprimé avec succès' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
