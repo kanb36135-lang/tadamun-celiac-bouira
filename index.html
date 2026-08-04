@@ -64,7 +64,6 @@
         .step-connector { position: absolute; top: 50%; width: 100%; height: 2px; background: linear-gradient(90deg, #10b981, #34d399); z-index: 0; }
         @media (max-width: 768px) { .step-connector { display: none; } }
     </style>
-<base target="_blank">
 </head>
 <body class="bg-gray-50 font-arabic text-gray-800 antialiased">
 
@@ -95,21 +94,23 @@
                                 <option value="en">🇬🇧 English</option>
                             </select>
                         </div>
-<!-- Bouton Connexion (quand déconnecté) -->
-                   <button id="loginBtn" onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
-                      <span data-key="login">تسجيل الدخول</span>
-                      </button>
 
-                    <!-- Bouton Déconnexion (quand connecté) -->
-                       <button id="logoutBtn" onclick="handleLogout()" class="hidden bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                               </svg>
-                         <span data-key="logout">تسجيل الخروج</span>
-                           </button>
+                        <!-- Bouton Connexion (quand déconnecté) -->
+                        <button id="loginBtn" onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
+                            <span data-key="login">تسجيل الدخول</span>
+                        </button>
 
-<!-- Photo de profil utilisateur (quand connecté) -->
-               <img id="userPhoto" src="" alt="Profile" class="hidden w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-emerald-500 object-cover">                        
+                        <!-- Infos Profil & Déconnexion (quand connecté) -->
+                        <div id="userProfileGroup" class="hidden flex items-center gap-3">
+                            <span id="userName" class="text-xs lg:text-sm font-semibold text-gray-700 hidden sm:inline-block"></span>
+                            <img id="userPhoto" src="" alt="Profile" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-emerald-500 object-cover">
+                            <button id="logoutBtn" onclick="handleLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span data-key="logout">تسجيل الخروج</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,7 +127,6 @@
     </nav>
 
     <!-- Hero Section -->
-
     <section id="home" class="pt-24 lg:pt-32 pb-16 lg:pb-24 gradient-hero relative overflow-hidden">
         <div class="absolute inset-0 opacity-10">
             <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -186,123 +186,73 @@
             </svg>
         </div>
     </section>
-    
-	<!-- ============================================ -->
-<!-- ESPACE ADMINISTRATION (Visible uniquement par l'Admin) -->
-<!-- ============================================ -->
-<section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  
-  <!-- Bloc 1 : Gestion des Utilisateurs Inscrits -->
-  <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
-    <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h2 class="text-2xl font-bold flex items-center gap-2">
-          <span>⚙️</span> Espace Administration
-        </h2>
-        <p class="text-emerald-100 text-sm mt-1">Gestion, modification et suppression des membres</p>
-      </div>
-      <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
-        <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
-        <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
-      </div>
-    </div>
 
-    <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
-      <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors">
-        🔄 Actualiser
-      </button>
-    </div>
+    <!-- ESPACE ADMINISTRATION -->
+    <section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <!-- Bloc 1 : Gestion des Utilisateurs Inscrits -->
+        <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+            <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold flex items-center gap-2">
+                        <span>⚙️</span> Espace Administration
+                    </h2>
+                    <p class="text-emerald-100 text-sm mt-1">Gestion, modification et suivi des membres inscrits sur la plateforme</p>
+                </div>
+                <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
+                    <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
+                    <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
+                </div>
+            </div>
 
-    <!-- Table des Utilisateurs -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b">
-            <th class="p-4">Utilisateur</th>
-            <th class="p-4">Email</th>
-            <th class="p-4">Téléphone</th>
-            <th class="p-4">Commune</th>
-            <th class="p-4">Rôle</th>
-            <th class="p-4 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
-          <!-- Injecté dynamiquement -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+            <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+                <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                    <span>🔄</span> Actualiser la liste
+                </button>
+                <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
+            </div>
 
-  <!-- Bloc 2 : Ajout de Contenu (Actualités / Annonces) par l'Admin -->
-  <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 p-6">
-    <h3 class="text-xl font-bold text-emerald-800 mb-4 flex items-center gap-2">
-      <span>📝</span> Publier du contenu sur la plateforme
-    </h3>
-    <form id="addContentForm" onsubmit="handlePostContent(event)" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Titre de l'annonce / article</label>
-        <input type="text" id="postTitle" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
-        <textarea id="postContent" rows="4" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"></textarea>
-      </div>
-      <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-md transition-colors">
-        Publier l'annonce
-      </button>
-    </form>
-  </div>
-  
-  <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
-    
-    <!-- En-tête du tableau de bord -->
-    <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h2 class="text-2xl font-bold flex items-center gap-2">
-          <span>⚙️</span> Espace Administration
-        </h2>
-        <p class="text-emerald-100 text-sm mt-1">Gestion et suivi des utilisateurs inscrits sur la plateforme</p>
-      </div>
-      
-      <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
-        <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
-        <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
-      </div>
-    </div>
+            <!-- Table des Utilisateurs -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
+                            <th class="p-4">Utilisateur</th>
+                            <th class="p-4">Téléphone</th>
+                            <th class="p-4">Commune</th>
+                            <th class="p-4">Statut</th>
+                            <th class="p-4">Inscrit le</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
+                        <tr>
+                            <td colspan="5" class="p-6 text-center text-gray-400">Chargement des données...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <!-- Filtres & Actions -->
-    <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
-      <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
-        <span>🔄</span> Actualiser la liste
-      </button>
-      <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
-    </div>
+        <!-- Bloc 2 : Publication de Contenu -->
+        <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 p-6">
+            <h3 class="text-xl font-bold text-emerald-800 mb-4 flex items-center gap-2">
+                <span>📝</span> Publier du contenu sur la plateforme
+            </h3>
+            <form id="addContentForm" onsubmit="event.preventDefault(); handlePostContent();" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Titre de l'annonce / article</label>
+                    <input type="text" id="postTitle" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
+                    <textarea id="postContent" rows="4" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"></textarea>
+                </div>
+                <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                    Publier l'annonce
+                </button>
+            </form>
+        </div>
+    </section>
 
-    <!-- Table des inscrits -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
-            <th class="p-4">Utilisateur</th>
-            <th class="p-4">Email</th>
-            <th class="p-4">Téléphone</th>
-            <th class="p-4">Commune</th>
-            <th class="p-4">Rôle</th>
-            <th class="p-4">Inscrit le</th>
-          </tr>
-        </thead>
-        <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
-          <!-- Les lignes chargées dynamiquement -->
-          <tr>
-            <td colspan="6" class="p-6 text-center text-gray-400">Chargement des données...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</section>
-	
     <!-- Live Counter Section -->
     <section id="counter" class="py-16 lg:py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -563,43 +513,41 @@
                 <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف</label>
-                   <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
-              </div>
-             <div>
-             <label class="block text-sm font-medium text-gray-700 mb-1" data-key="loginCode">كود الدخول (SMS)</label>
-               <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
-              </div>
-                 <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold"><span data-key="btnLogin">دخول</span></button>
-    
-              <!-- Séparateur -->
-                    <div class="relative my-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف</label>
+                    <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="loginCode">كود الدخول (SMS)</label>
+                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
+                </div>
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold"><span data-key="btnLogin">دخول</span></button>
+
+                <div class="relative my-4">
                     <div class="absolute inset-0 flex items-center">
-                     <div class="w-full border-t border-gray-300"></div>
-                         </div>
-                      <div class="relative flex justify-center text-sm">
-                      <span class="px-2 bg-white text-gray-500">أو</span>
-                          </div>
-                   </div>
-    
-    <!-- Bouton Google OAuth -->
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">أو</span>
+                    </div>
+                </div>
+
                 <a href="https://tadamun-celiac-bouira-backend.onrender.com/api/auth/google" 
-            class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition shadow-sm">
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        <span data-key="googleLogin">تسجيل الدخول بحساب Google</span>
-    </a>
-</form>
+                   class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition shadow-sm">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span data-key="googleLogin">تسجيل الدخول بحساب Google</span>
+                </a>
+            </form>
             <p class="text-center text-sm text-gray-500 mt-4"><span data-key="noAccount">ليس لديك حساب؟</span> <a href="#" onclick="closeModal('loginModal'); openModal('patientModal');" class="text-emerald-600 font-semibold hover:underline" data-key="registerNow">سجّل الآن</a></p>
         </div>
     </div>
 
-<!-- Patient Profile Completion Modal (عائلة مريض) -->
+    <!-- Patient Profile Completion Modal (عائلة مريض) -->
     <div id="patientModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
         <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
             <div class="flex justify-between items-center mb-6">
@@ -613,7 +561,6 @@
                 <button onclick="closeModal('patientModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
 
-            <!-- Google Account Info Banner -->
             <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-emerald-800">
                 <span class="text-lg">✅</span>
                 <div>
@@ -622,7 +569,11 @@
                 </div>
             </div>
 
-            <form onsubmit="event.preventDefault(); handlePatientRegister();" class="space-y-4">
+            <form onsubmit="event.preventDefault(); handlePatientRegister();" class="space-y-4" enctype="multipart/form-data">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
+                    <input type="text" id="patientFullNameInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="Nom et Prénom" required>
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف للتوصل بالطلبيات *</label>
                     <input type="tel" id="patientPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="06XX XX XX XX" required>
@@ -640,11 +591,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="medicalCert">شهادة طبية تثبت المرض (اختياري)</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition">
-                        <div class="text-2xl mb-1">📎</div>
-                        <p class="text-xs text-gray-500" data-key="uploadHint">رفع الشهادة الطبية (PDF, JPG)</p>
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="medicalCert">شهادة طبية تثبت المرض *</label>
+                    <input type="file" id="patientFileInput" accept=".pdf,.jpg,.jpeg,.png" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50" required>
                 </div>
                 <div class="flex items-start gap-2 bg-emerald-50 p-3 rounded-lg">
                     <input type="checkbox" id="patientCommit" class="mt-1 w-4 h-4 text-emerald-600" required>
@@ -671,7 +619,6 @@
                 <button onclick="closeModal('volunteerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
 
-            <!-- Google Account Info Banner -->
             <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-orange-800">
                 <span class="text-lg">✅</span>
                 <div>
@@ -681,6 +628,10 @@
             </div>
 
             <form onsubmit="event.preventDefault(); handleVolunteerRegister();" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
+                    <input type="text" id="volunteerFullNameInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="Nom et Prénom" required>
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف للتواصل *</label>
                     <input type="tel" id="volunteerPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="06XX XX XX XX" required>
@@ -782,7 +733,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="socialDoc">وثيقة إثبات الوضع الاجتماعي (اختياري)</label>
                     <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-pink-400 hover:bg-pink-50 transition">
-                        <p class="text-xs text-gray-500" data-key="uploadOptional">📎 رفع الوثيقة (PDF, JPG) — اختياري</p>
+                        <p class="text-xs text-gray-500" data-key="uploadOptional">📎 رفع الوثيقة (PDF, JPG) — خاصة بالراغبين في الاستفادة من الدعم</p>
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold shadow-lg transition"><span data-key="btnRequestBasket">طلب القفة التضامنية</span></button>
@@ -795,9 +746,6 @@
         <span class="text-emerald-400">✓</span>
         <span id="toastMessage">Notification</span>
     </div>
-
-    <!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
   var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
@@ -837,7 +785,7 @@
       ar: {
           brandName: "تضامن – سيلياك البويرة",
           navHome: "الرئيسية", navServices: "الخدمات", navCounter: "العداد",
-          navMap: "الخريطة", navPartners: "الشركاء", login: "تسجيل الدخول",
+          navMap: "الخريطة", navPartners: "الشركاء", login: "تسجيل الدخول", logout: "تسجيل الخروج",
           badge: "منصة رقمية تضامنية",
           heroTitle: "معاً لدعم\nمرضى السيلياك",
           heroSubtitle: "منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة",
@@ -870,7 +818,7 @@
           privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", cookies: "سياسة الكوكيز",
           rights: "جميع الحقوق محفوظة",
           loginTitle: "تسجيل الدخول", phone: "رقم الهاتف", loginCode: "كود الدخول (SMS)",
-          btnLogin: "دخول", noAccount: "ليس لديك حساب؟", registerNow: "سجّل الآن",
+          btnLogin: "دخول", noAccount: "ليس لديك حساب؟", registerNow: "سجّل الآن", googleLogin: "تسجيل الدخول بحساب Google",
           patientTitle: "التسجيل كعائلة مريض", patientSubtitle: "أنشئ هويتك الرقمية للاستفادة من الخدمات",
           fullName: "الاسم واللقب *", address: "البلدية / العنوان *",
           medicalCert: "شهادة طبية تثبت المرض *", uploadHint: "اضغط لرفع الشهادة الطبية (PDF, JPG)",
@@ -893,7 +841,7 @@
       fr: {
           brandName: "Tadamun – Celiac Bouira",
           navHome: "Accueil", navServices: "Services", navCounter: "Compteur",
-          navMap: "Carte", navPartners: "Partenaires", login: "Connexion",
+          navMap: "Carte", navPartners: "Partenaires", login: "Connexion", logout: "Déconnexion",
           badge: "Plateforme numérique solidaire",
           heroTitle: "Ensemble pour soutenir\nles malades cœliaques",
           heroSubtitle: "Plateforme numérique solidaire pour la logistique et les achats groupés au prix usine, dédiée aux malades cœliaques dans la wilaya de Bouira",
@@ -926,7 +874,7 @@
           privacy: "Politique de confidentialité", terms: "Conditions d'utilisation", cookies: "Politique des cookies",
           rights: "Tous droits réservés",
           loginTitle: "Connexion", phone: "Téléphone", loginCode: "Code d'accès (SMS)",
-          btnLogin: "Entrer", noAccount: "Pas encore de compte ?", registerNow: "Inscrivez-vous",
+          btnLogin: "Entrer", noAccount: "Pas encore de compte ?", registerNow: "Inscrivez-vous", googleLogin: "Se connecter avec Google",
           patientTitle: "Inscription Famille Patient", patientSubtitle: "Créez votre identité numérique pour accéder aux services",
           fullName: "Nom & Prénom *", address: "Commune / Adresse *",
           medicalCert: "Certificat médical attestant la maladie *", uploadHint: "Cliquez pour uploader le certificat (PDF, JPG)",
@@ -949,7 +897,7 @@
       en: {
           brandName: "Tadamun – Celiac Bouira",
           navHome: "Home", navServices: "Services", navCounter: "Counter",
-          navMap: "Map", navPartners: "Partners", login: "Login",
+          navMap: "Map", navPartners: "Partners", login: "Login", logout: "Logout",
           badge: "Digital Solidarity Platform",
           heroTitle: "Together for\nCeliac Patients",
           heroSubtitle: "Digital solidarity platform for logistics and group purchasing at factory prices, dedicated to celiac patients in Bouira wilaya",
@@ -982,7 +930,7 @@
           privacy: "Privacy Policy", terms: "Terms of Use", cookies: "Cookie Policy",
           rights: "All rights reserved",
           loginTitle: "Login", phone: "Phone Number", loginCode: "Access Code (SMS)",
-          btnLogin: "Enter", noAccount: "Don't have an account?", registerNow: "Register now",
+          btnLogin: "Enter", noAccount: "Don't have an account?", registerNow: "Register now", googleLogin: "Sign in with Google",
           patientTitle: "Patient Family Registration", patientSubtitle: "Create your digital identity to access services",
           fullName: "Full Name *", address: "Municipality / Address *",
           medicalCert: "Medical certificate proving the disease *", uploadHint: "Click to upload certificate (PDF, JPG)",
@@ -1079,89 +1027,73 @@
 
   async function handleLogout() {
       try {
-          const response = await fetch(API_BASE_URL + '/auth/logout', {
+          await fetch(API_BASE_URL + '/auth/logout', {
               method: 'GET',
               credentials: 'include'
           });
-          const data = await response.json();
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          showToast('تم تسجيل الخروج بنجاح');
-          window.location.reload();
       } catch (error) {
           console.error('Logout error:', error);
+      } finally {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           window.location.reload();
       }
   }
 
-// Remplacez handlePatientRegister par cette version
-async function handlePatientRegister() {
-    const modal = document.getElementById('patientModal');
-    
-    // Récupération des champs du formulaire
-    const fullName = modal.querySelector('input[placeholder*="الاسم"], input[type="text"]').value.trim();
-    const phone = modal.querySelector('input[type="tel"]').value.trim();
-    const commune = modal.querySelector('select').value;
-    const fileInput = modal.querySelector('input[type="file"]'); // Champ d'upload du fichier
+  async function handlePatientRegister() {
+      const fullName = document.getElementById('patientFullNameInput').value.trim();
+      const phone = document.getElementById('patientPhoneInput').value.trim();
+      const commune = document.getElementById('patientCommuneInput').value;
+      const fileInput = document.getElementById('patientFileInput');
 
-    // Validation de base
-    if (!fullName || !phone || !commune) {
-        showToast('يرجى ملء جميع الحقول المطلوبة');
-        return;
-    }
+      if (!fullName || !phone || !commune) {
+          showToast('يرجى ملء جميع الحقول المطلوبة');
+          return;
+      }
 
-    if (!fileInput || !fileInput.files[0]) {
-        showToast('يرجى تحميل الشهادة الطبية');
-        return;
-    }
+      if (!fileInput || !fileInput.files[0]) {
+          showToast('يرجى تحميل الشهادة الطبية');
+          return;
+      }
 
-    // --- C'EST ICI QUE LE CODE FORMDATA S'INSÈRE ---
-    const formData = new FormData();
-    formData.append('fullName', fullName);
-    formData.append('phone', phone);
-    formData.append('commune', commune);
-    formData.append('medicalCert', fileInput.files[0]); // Envoie le fichier sélectionné
+      const formData = new FormData();
+      formData.append('fullName', fullName);
+      formData.append('phone', phone);
+      formData.append('commune', commune);
+      formData.append('medicalCert', fileInput.files[0]);
 
-    try {
-        showToast('جاري التسجيل والرفع...');
+      try {
+          showToast('جاري التسجيل والرفع...');
 
-        // Requête HTTP directe avec FormData
-        const token = localStorage.getItem('token');
-        const headers = {};
-        if (token) headers['Authorization'] = 'Bearer ' + token;
+          const token = localStorage.getItem('token');
+          const headers = {};
+          if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        // Attention : Ne PAS ajouter 'Content-Type': 'application/json' !
-        // Le navigateur définit automatiquement le boundary pour Multipart/Form-Data.
-        const response = await fetch(API_BASE_URL + '/patients/register', {
-            method: 'POST',
-            headers: headers,
-            body: formData
-        });
+          const response = await fetch(API_BASE_URL + '/patients/register', {
+              method: 'POST',
+              headers: headers,
+              body: formData
+          });
 
-        const result = await response.json();
+          const result = await response.json();
 
-        if (response.ok && result.success) {
-            showToast('تم التسجيل بنجاح!');
-            closeModal('patientModal');
-        } else {
-            showToast(result.message || 'خطأ في التسجيل');
-        }
-    } catch (error) {
-        console.error('Erreur Upload:', error);
-        showToast('خطأ في الاتصال بالسيرفر');
-    }
-}
+          if (response.ok && result.success) {
+              showToast('تم التسجيل بنجاح!');
+              closeModal('patientModal');
+          } else {
+              showToast(result.message || 'خطأ في التسجيل');
+          }
+      } catch (error) {
+          console.error('Erreur Upload:', error);
+          showToast('خطأ في الاتصال بالسيرفر');
+      }
+  }
 
   async function handleVolunteerRegister() {
-      const modal = document.getElementById('volunteerModal');
-      const inputs = modal.querySelectorAll('input, select');
-
-      const fullName = inputs[0].value.trim();
-      const phone = inputs[1].value.trim();
-      const activityCommune = inputs[2].value;
-      const associationName = inputs[3].value.trim();
+      const fullName = document.getElementById('volunteerFullNameInput').value.trim();
+      const phone = document.getElementById('volunteerPhoneInput').value.trim();
+      const activityCommune = document.getElementById('volunteerCommuneInput').value;
+      const associationName = document.getElementById('volunteerAssocInput').value.trim();
 
       if (!fullName || !phone || !activityCommune) {
           showToast('يرجى ملء جميع الحقول المطلوبة');
@@ -1178,7 +1110,7 @@ async function handlePatientRegister() {
           });
 
           if (result.success) {
-              showToast('تم التسجيل كمتطوع! كود التحقق: ' + result.devCode);
+              showToast('تم التسجيل كمتطوع!');
               closeModal('volunteerModal');
           } else {
               showToast(result.message || 'خطأ في التسجيل');
@@ -1188,33 +1120,12 @@ async function handlePatientRegister() {
       }
   }
 
-  async function sendSMSCode() {
-      const phone = document.querySelector('#patientModal input[type="tel"]').value;
-      if (!phone) { 
-          showToast('أدخل رقم الهاتف'); 
-          return; 
-      }
-
-      try {
-          await sendVerificationCode(phone);
-          showToast('تم إرسال الكود!');
-      } catch (error) {
-          showToast('خطأ: ' + error.message);
-      }
-  }
-
-  async function sendVolunteerSMS() {
-      const phone = document.querySelector('#volunteerModal input[type="tel"]').value;
-      if (!phone) { 
-          showToast('أدخل رقم الهاتف'); 
-          return; 
-      }
-
-      try {
-          await sendVerificationCode(phone);
-          showToast('تم إرسال الكود!');
-      } catch (error) {
-          showToast('خطأ: ' + error.message);
+  function handlePostContent() {
+      const title = document.getElementById('postTitle').value;
+      const content = document.getElementById('postContent').value;
+      if (title && content) {
+          showToast('تم نشر المحتوى بنجاح');
+          document.getElementById('addContentForm').reset();
       }
   }
 
@@ -1326,19 +1237,18 @@ async function handlePatientRegister() {
       const savedUser = localStorage.getItem('user');
 
       const loginBtn = document.getElementById('loginBtn');
-      const logoutBtn = document.getElementById('logoutBtn');
-      const avatarImg = document.getElementById('userAvatar');
+      const userProfileGroup = document.getElementById('userProfileGroup');
+      const avatarImg = document.getElementById('userPhoto');
       const nameSpan = document.getElementById('userName');
 
       if (token && savedUser) {
           try {
               const user = JSON.parse(savedUser);
               if (loginBtn) loginBtn.classList.add('hidden');
-              if (logoutBtn) logoutBtn.classList.remove('hidden');
+              if (userProfileGroup) userProfileGroup.classList.remove('hidden');
 
               if (avatarImg && user.photo) {
                   avatarImg.src = user.photo;
-                  avatarImg.classList.remove('hidden');
               }
               if (nameSpan && user.fullName) {
                   nameSpan.textContent = user.fullName;
@@ -1356,8 +1266,7 @@ async function handlePatientRegister() {
           }
       } else {
           if (loginBtn) loginBtn.classList.remove('hidden');
-          if (logoutBtn) logoutBtn.classList.add('hidden');
-          if (avatarImg) avatarImg.classList.add('hidden');
+          if (userProfileGroup) userProfileGroup.classList.add('hidden');
       }
   }
 
@@ -1373,7 +1282,7 @@ async function handlePatientRegister() {
               if (!tbody) return;
 
               if (!result.patients || result.patients.length === 0) {
-                  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-500">Aucun utilisateur inscrit pour le moment.</td></tr>`;
+                  tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500">Aucun utilisateur inscrit pour le moment.</td></tr>`;
                   return;
               }
 
