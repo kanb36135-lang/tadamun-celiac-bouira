@@ -126,6 +126,61 @@
     </nav>
 
     <!-- Hero Section -->
+	<!-- ============================================ -->
+<!-- ESPACE ADMINISTRATION (Visible uniquement par l'Admin) -->
+<!-- ============================================ -->
+<section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+    
+    <!-- En-tête du tableau de bord -->
+    <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <span>⚙️</span> Espace Administration
+        </h2>
+        <p class="text-emerald-100 text-sm mt-1">Gestion et suivi des utilisateurs inscrits sur la plateforme</p>
+      </div>
+      
+      <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
+        <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
+        <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
+      </div>
+    </div>
+
+    <!-- Filtres & Actions -->
+    <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+      <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+        <span>🔄</span> Actualiser la liste
+      </button>
+      <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
+    </div>
+
+    <!-- Table des inscrits -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
+            <th class="p-4">Utilisateur</th>
+            <th class="p-4">Email</th>
+            <th class="p-4">Téléphone</th>
+            <th class="p-4">Commune</th>
+            <th class="p-4">Rôle</th>
+            <th class="p-4">Inscrit le</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
+          <!-- Les lignes chargées dynamiquement -->
+          <tr>
+            <td colspan="6" class="p-6 text-center text-gray-400">Chargement des données...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+	
+	
     <section id="home" class="pt-24 lg:pt-32 pb-16 lg:pb-24 gradient-hero relative overflow-hidden">
         <div class="absolute inset-0 opacity-10">
             <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -1224,5 +1279,115 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUI();
 });
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Intercepter les paramètres token & user renvoyés dans l'URL par Google
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userParam = urlParams.get('user');
+
+    if (token && userParam) {
+        try {
+            const userData = JSON.parse(decodeURIComponent(userParam));
+            
+            // Stocker dans le localStorage
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(userData));
+
+            // Nettoyer l'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            console.error("Erreur de décodage des données utilisateur :", error);
+        }
+    }
+
+    // 2. Mettre à jour l'interface
+    initAppUI();
+});
+
+function initAppUI() {
+    const savedUser = localStorage.getItem('user');
+    if (!savedUser) return;
+
+    try {
+        const user = JSON.parse(savedUser);
+
+        // Affichage de l'avatar et du nom dans la barre de navigation
+        const avatarImg = document.getElementById('userAvatar');
+        const nameSpan = document.getElementById('userName');
+
+        if (avatarImg && user.photo) {
+            avatarImg.src = user.photo;
+            avatarImg.classList.remove('hidden');
+        }
+
+        if (nameSpan && user.fullName) {
+            nameSpan.textContent = user.fullName;
+        }
+
+        // VÉRIFICATION DU RÔLE ADMIN
+        if (user.role === 'admin') {
+            const adminDashboard = document.getElementById('adminDashboard');
+            if (adminDashboard) {
+                adminDashboard.classList.remove('hidden');
+                fetchRegisteredUsers(); // Charger la liste
+            }
+        }
+
+    } catch (e) {
+        console.error("Erreur lors de l'initialisation de l'IHM :", e);
+    }
+}
+
+async function fetchRegisteredUsers() {
+    const tbody = document.getElementById('usersTableBody');
+    const countSpan = document.getElementById('totalUsersCount');
+
+    try {
+        const response = await fetch('https://tadamun-celiac-bouira-backend.onrender.com/api/patients');
+        const result = await response.json();
+
+        if (result.success) {
+            if (countSpan) countSpan.textContent = result.count;
+            if (!tbody) return;
+
+            if (result.patients.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-500">Aucun utilisateur inscrit pour le moment.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            result.patients.forEach(patient => {
+                const dateFormatee = new Date(patient.createdAt).toLocaleDateString('fr-FR');
+                const photoSrc = patient.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(patient.fullName);
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-emerald-50/50 transition-colors">
+                        <td class="p-4 flex items-center gap-3 font-medium text-gray-800">
+                            <img src="${photoSrc}" class="w-9 h-9 rounded-full object-cover border border-emerald-200">
+                            <span>${patient.fullName}</span>
+                        </td>
+                        <td class="p-4 text-gray-600">${patient.email || 'N/A'}</td>
+                        <td class="p-4 text-gray-600">${patient.phone || '<span class="text-gray-400 italic">Non renseigné</span>'}</td>
+                        <td class="p-4 text-gray-600">${patient.commune || 'non_defini'}</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${patient.role === 'admin' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
+                                ${patient.role || 'user'}
+                            </span>
+                        </td>
+                        <td class="p-4 text-gray-500 text-xs">${dateFormatee}</td>
+                    </tr>
+                `;
+            });
+        }
+    } catch (error) {
+        console.error("Erreur chargement inscrits :", error);
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">Erreur lors de la récupération des données.</td></tr>`;
+        }
+    }
+}
+</script>		
 </body>
 </html>
