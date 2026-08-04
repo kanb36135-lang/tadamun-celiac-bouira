@@ -6,7 +6,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 // Importer le modèle User
-const User = require('../models/User');
+const User = require('../models/user');
 
 // Middlewares d'authentification & de vérification Admin
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
