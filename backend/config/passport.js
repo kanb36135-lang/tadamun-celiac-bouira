@@ -9,23 +9,51 @@ passport.use(new GoogleStrategy({
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
-      let patient = await Patient.findOne({ googleId: profile.id });
+      const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+      const photoUrl = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
+
+      if (!email) {
+        return done(new Error("Aucun email associé à ce compte Google."), null);
+      }
+
+      // Rechercher d'abord par email (ou par googleId)
+      let patient = await Patient.findOne({ $or: [{ googleId: profile.id }, { email: email }] });
       
       if (!patient) {
+        // Créer un nouvel utilisateur avec la photo Google
         patient = new Patient({
           googleId: profile.id,
           fullName: profile.displayName,
-          email: profile.emails[0].value,
+          email: email,
+          photo: photoUrl,
           commune: 'non_defini',
           medicalCertPath: 'pending_upload',
           isVerified: true
         });
         await patient.save();
+      } else {
+        // Mettre à jour les informations existantes (googleId et photo)
+        let hasChanges = false;
+
+        if (!patient.googleId) {
+          patient.googleId = profile.id;
+          hasChanges = true;
+        }
+
+        if (photoUrl && patient.photo !== photoUrl) {
+          patient.photo = photoUrl;
+          hasChanges = true;
+        }
+
+        if (hasChanges) {
+          await patient.save();
+        }
       }
       
-      done(null, patient);
+      return done(null, patient);
     } catch (error) {
-      done(error, null);
+      console.error("Erreur dans la stratégie Google Passport:", error);
+      return done(error, null);
     }
   }
 ));
