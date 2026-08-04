@@ -20,7 +20,7 @@ const patientSchema = new mongoose.Schema({
     required: function() {
       return !this.googleId;
     },
-    enum: ['البويرة', 'الشرفة', 'الحيزر', 'سور الغزلان', 'مشد اللجم', 'الأخضرية', ' autres', 'non_defini']
+    default: 'non_defini'
   },
   address: {
     type: String,
@@ -42,6 +42,10 @@ const patientSchema = new mongoose.Schema({
     unique: true,
     sparse: true
   },
+  photo: {
+    type: String,
+    default: null
+  },
   isVerified: {
     type: Boolean,
     default: false
@@ -56,6 +60,8 @@ const patientSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   }
-}, { timestamps: true });
+}, { 
+  timestamps: true 
+});
 
 module.exports = mongoose.model('Patient', patientSchema);

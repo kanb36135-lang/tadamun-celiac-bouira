@@ -9,12 +9,10 @@ passport.use(new GoogleStrategy({
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
-      console.log("=== PROFILE GOOGLE REÇU ===", profile); // Pour voir les logs dans Render
-
+      // 1. Extraction robuste de l'image
       const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-      
-      // Extraction sécurisée de la photo depuis différentes structures Google possibles
       let photoUrl = null;
+      
       if (profile.photos && profile.photos.length > 0) {
         photoUrl = profile.photos[0].value;
       } else if (profile._json && profile._json.picture) {
@@ -25,27 +23,24 @@ passport.use(new GoogleStrategy({
         return done(new Error("Aucun email trouvé dans le compte Google"), null);
       }
 
-      // Chercher si l'utilisateur existe déjà
-      let patient = await Patient.findOne({ $or: [{ googleId: profile.id }, { email: email }] });
-
-      if (!patient) {
-        // Création du patient avec la photo
-        patient = new Patient({
-          googleId: profile.id,
-          fullName: profile.displayName,
-          email: email,
-          photo: photoUrl,
-          commune: 'non_defini',
-          medicalCertPath: 'pending_upload',
-          isVerified: true
-        });
-        await patient.save();
-      } else {
-        // Mise à jour si la photo est nouvelle ou modifiée
-        patient.googleId = profile.id;
-        patient.photo = photoUrl;
-        await patient.save();
-      }
+      // 2. Mettre à jour OU Créer l'utilisateur directement avec la photo mise à jour
+      const patient = await Patient.findOneAndUpdate(
+        { $or: [{ googleId: profile.id }, { email: email }] },
+        {
+          $set: {
+            googleId: profile.id,
+            fullName: profile.displayName,
+            email: email,
+            photo: photoUrl, // Forcer la valeur de la photo
+            isVerified: true
+          },
+          $setOnInsert: {
+            commune: 'non_defini',
+            medicalCertPath: 'pending_upload'
+          }
+        },
+        { new: true, upsert: true } // Crée si n'existe pas, retourne la version mise à jour
+      );
 
       return done(null, patient);
     } catch (error) {
