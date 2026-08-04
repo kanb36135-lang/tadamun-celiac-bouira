@@ -12,7 +12,7 @@ const patientSchema = new mongoose.Schema({
       return !this.googleId; 
     },
     default: undefined,
-    sparse: true, // Crucial : permet à plusieurs utilisateurs d'avoir phone = undefined
+    sparse: true, // Permet à plusieurs utilisateurs d'avoir phone = undefined
     trim: true
   },
   commune: {
@@ -42,6 +42,11 @@ const patientSchema = new mongoose.Schema({
   photo: {
     type: String,
     default: null
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   isVerified: {
     type: Boolean,

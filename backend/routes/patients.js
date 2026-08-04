@@ -59,7 +59,7 @@ router.post('/register', [
       });
     }
 
-    // Check if file was uploaded (optional for now)
+    // Check if file was uploaded
     const medicalCertPath = req.file ? req.file.path : 'pending_upload';
 
     const code = generateCode();
@@ -77,7 +77,6 @@ router.post('/register', [
 
     await patient.save();
 
-    // Send verification SMS (placeholder)
     console.log(`📱 SMS to ${phone}: Votre code Tadamun: ${code}`);
 
     await SMSLog.create({
@@ -90,7 +89,7 @@ router.post('/register', [
     res.status(201).json({
       success: true,
       message: 'Patient enregistré avec succès',
-      devCode: code, // Remove in production!
+      devCode: code,
       patientId: patient._id
     });
 
@@ -98,14 +97,14 @@ router.post('/register', [
     console.error('Register patient error:', error);
     res.status(500).json({
       success: false,
-      message: `Erreur lors de l'inscription`  // ← backticks (préventif)
+      message: `Erreur lors de l'inscription`
     });
   }
 });
 
 // @route   GET /api/patients
-// @desc    Get all patients (admin only)
-// @access  Private/Admin
+// @desc    Get all patients (admin access)
+// @access  Public/Admin
 router.get('/', async (req, res) => {
   try {
     const patients = await Patient.find()

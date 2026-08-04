@@ -25,7 +25,7 @@ const sendSMS = async (phone, message, type = 'verification') => {
 };
 
 // ============================================
-// ROUTES GOOGLE OAUTH (NOUVEAU)
+// ROUTES GOOGLE OAUTH
 // ============================================
 
 // Lancer la connexion Google
@@ -41,7 +41,7 @@ router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     const token = jwt.sign(
-      { id: req.user._id, email: req.user.email },
+      { id: req.user._id, email: req.user.email, role: req.user.role || 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -50,7 +50,8 @@ router.get('/google/callback',
       id: req.user._id,
       fullName: req.user.fullName,
       email: req.user.email,
-      photo: req.user.photo || null
+      photo: req.user.photo || null,
+      role: req.user.role || 'user'
     };
     
     const userString = encodeURIComponent(JSON.stringify(userData));
@@ -60,7 +61,7 @@ router.get('/google/callback',
 );
 
 // ============================================
-// ROUTES SMS (EXISTANT - CONSERVÉ)
+// ROUTES SMS
 // ============================================
 
 router.post('/send-code', [
@@ -135,7 +136,7 @@ router.post('/verify-code', [
     await user.save();
 
     const token = jwt.sign(
-      { id: user._id, phone: user.phone, type: user instanceof Patient ? 'patient' : 'volunteer' },
+      { id: user._id, phone: user.phone, type: user instanceof Patient ? 'patient' : 'volunteer', role: user.role || 'user' },
       process.env.JWT_SECRET || 'tadamun_secret_key',
       { expiresIn: '7d' }
     );
@@ -149,7 +150,8 @@ router.post('/verify-code', [
         fullName: user.fullName,
         phone: user.phone,
         type: user instanceof Patient ? 'patient' : 'volunteer',
-        commune: user.commune || user.activityCommune
+        commune: user.commune || user.activityCommune,
+        role: user.role || 'user'
       }
     });
 
