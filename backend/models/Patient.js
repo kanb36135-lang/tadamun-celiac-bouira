@@ -9,17 +9,14 @@ const patientSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: function() { 
-      return !this.googleId;
+      return !this.googleId; 
     },
-    unique: true,
-    sparse: true,
+    default: undefined,
+    sparse: true, // Crucial : permet à plusieurs utilisateurs d'avoir phone = undefined
     trim: true
   },
   commune: {
     type: String,
-    required: function() {
-      return !this.googleId;
-    },
     default: 'non_defini'
   },
   address: {
@@ -28,9 +25,7 @@ const patientSchema = new mongoose.Schema({
   },
   medicalCertPath: {
     type: String,
-    required: function() {
-      return !this.googleId;
-    }
+    default: null
   },
   googleId: {
     type: String,
@@ -39,8 +34,10 @@ const patientSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    required: true,
     unique: true,
-    sparse: true
+    trim: true,
+    lowercase: true
   },
   photo: {
     type: String,
