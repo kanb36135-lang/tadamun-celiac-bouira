@@ -9,18 +9,27 @@ passport.use(new GoogleStrategy({
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
-      const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-      const photoUrl = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
+      console.log("=== PROFILE GOOGLE REÇU ===", profile); // Pour voir les logs dans Render
 
-      if (!email) {
-        return done(new Error("Aucun email associé à ce compte Google."), null);
+      const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+      
+      // Extraction sécurisée de la photo depuis différentes structures Google possibles
+      let photoUrl = null;
+      if (profile.photos && profile.photos.length > 0) {
+        photoUrl = profile.photos[0].value;
+      } else if (profile._json && profile._json.picture) {
+        photoUrl = profile._json.picture;
       }
 
-      // Rechercher d'abord par email (ou par googleId)
+      if (!email) {
+        return done(new Error("Aucun email trouvé dans le compte Google"), null);
+      }
+
+      // Chercher si l'utilisateur existe déjà
       let patient = await Patient.findOne({ $or: [{ googleId: profile.id }, { email: email }] });
-      
+
       if (!patient) {
-        // Créer un nouvel utilisateur avec la photo Google
+        // Création du patient avec la photo
         patient = new Patient({
           googleId: profile.id,
           fullName: profile.displayName,
@@ -32,27 +41,15 @@ passport.use(new GoogleStrategy({
         });
         await patient.save();
       } else {
-        // Mettre à jour les informations existantes (googleId et photo)
-        let hasChanges = false;
-
-        if (!patient.googleId) {
-          patient.googleId = profile.id;
-          hasChanges = true;
-        }
-
-        if (photoUrl && patient.photo !== photoUrl) {
-          patient.photo = photoUrl;
-          hasChanges = true;
-        }
-
-        if (hasChanges) {
-          await patient.save();
-        }
+        // Mise à jour si la photo est nouvelle ou modifiée
+        patient.googleId = profile.id;
+        patient.photo = photoUrl;
+        await patient.save();
       }
-      
+
       return done(null, patient);
     } catch (error) {
-      console.error("Erreur dans la stratégie Google Passport:", error);
+      console.error("Erreur Passport Google:", error);
       return done(error, null);
     }
   }
