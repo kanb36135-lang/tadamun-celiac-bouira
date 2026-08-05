@@ -10,12 +10,15 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>">
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Leaflet JS & CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -111,6 +114,12 @@
                                 <span data-key="logout">تسجيل الخروج</span>
                             </button>
                         </div>
+
+                        <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 hover:text-emerald-600 p-1">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -515,11 +524,11 @@
             <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف</label>
-                    <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
+                    <input type="tel" id="loginPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="loginCode">كود الدخول (SMS)</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
+                    <input type="text" id="loginCodeInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
                 </div>
                 <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold"><span data-key="btnLogin">دخول</span></button>
 
@@ -561,7 +570,7 @@
                 <button onclick="closeModal('patientModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
 
-            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-emerald-800">
+            <div id="patientGoogleBadge" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-emerald-800">
                 <span class="text-lg">✅</span>
                 <div>
                     <p class="font-bold" id="patientGoogleName">مسجل بالحساب : --</p>
@@ -619,7 +628,7 @@
                 <button onclick="closeModal('volunteerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
 
-            <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-orange-800">
+            <div id="volunteerGoogleBadge" class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-orange-800">
                 <span class="text-lg">✅</span>
                 <div>
                     <p class="font-bold" id="volunteerGoogleName">مسجل بالحساب : --</p>
@@ -683,7 +692,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-key="quantity">الكمية المطلوبة</label>
                     <div class="flex items-center gap-3">
                         <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">-</button>
-                        <input type="number" id="qtyInput" value="1" min="1" class="w-20 text-center border border-gray-300 rounded-lg py-2 text-sm font-bold">
+                        <input type="number" id="qtyInput" value="1" min="1" class="w-20 text-center border border-gray-300 rounded-lg py-2 text-sm font-bold" readonly>
                         <button type="button" onclick="adjustQty(1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">+</button>
                     </div>
                 </div>
@@ -989,6 +998,28 @@
   function openModal(id) {
       const modal = document.getElementById(id);
       if (!modal) return;
+
+      // Prefill user data if logged in
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+          try {
+              const user = JSON.parse(savedUser);
+              if (id === 'patientModal') {
+                  if (user.fullName) document.getElementById('patientFullNameInput').value = user.fullName;
+                  if (user.email) {
+                      document.getElementById('patientGoogleEmail').textContent = user.email;
+                      document.getElementById('patientGoogleName').textContent = "مسجل بالحساب : " + (user.fullName || '');
+                  }
+              } else if (id === 'volunteerModal') {
+                  if (user.fullName) document.getElementById('volunteerFullNameInput').value = user.fullName;
+                  if (user.email) {
+                      document.getElementById('volunteerGoogleEmail').textContent = user.email;
+                      document.getElementById('volunteerGoogleName').textContent = "مسجل بالحساب : " + (user.fullName || '');
+                  }
+              }
+          } catch(e) {}
+      }
+
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       document.body.style.overflow = 'hidden';
@@ -1020,9 +1051,22 @@
       }, 3000);
   }
 
-  function handleLogin() {
-      closeModal('loginModal');
-      showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : currentLang === 'fr' ? 'Connexion réussie !' : 'Login successful!');
+  async function handleLogin() {
+      const phone = document.getElementById('loginPhoneInput').value;
+      const code = document.getElementById('loginCodeInput').value;
+      try {
+          showToast('جاري التحقق...');
+          const res = await verifyCode(phone, code);
+          if (res && res.token) {
+              localStorage.setItem('token', res.token);
+              if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
+              updateUI();
+              closeModal('loginModal');
+              showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Connexion réussie !');
+          }
+      } catch (err) {
+          showToast(err.message || 'خطأ في الدخول');
+      }
   }
 
   async function handleLogout() {
@@ -1080,6 +1124,8 @@
           if (response.ok && result.success) {
               showToast('تم التسجيل بنجاح!');
               closeModal('patientModal');
+              if (result.user) localStorage.setItem('user', JSON.stringify(result.user));
+              updateUI();
           } else {
               showToast(result.message || 'خطأ في التسجيل');
           }
@@ -1112,6 +1158,8 @@
           if (result.success) {
               showToast('تم التسجيل كمتطوع!');
               closeModal('volunteerModal');
+              if (result.user) localStorage.setItem('user', JSON.stringify(result.user));
+              updateUI();
           } else {
               showToast(result.message || 'خطأ في التسجيل');
           }
@@ -1129,14 +1177,27 @@
       }
   }
 
-  function handleOrder() {
-      closeModal('orderModal');
-      showToast(currentLang === 'ar' ? 'تم إضافة طلبك للعداد الجماعي!' : currentLang === 'fr' ? 'Votre commande a été ajoutée au compteur collectif !' : 'Your order has been added to the group counter!');
+  async function handleOrder() {
+      const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+      try {
+          showToast('جاري إرسال الطلب...');
+          await createOrder({ quantity: qty, product: 'دقيق الأرز' });
+          closeModal('orderModal');
+          showToast(currentLang === 'ar' ? 'تم إضافة طلبك بنجاح!' : 'Commande ajoutée !');
+      } catch (err) {
+          showToast('خطأ: ' + err.message);
+      }
   }
 
-  function handleBasketRequest() {
-      closeModal('basketModal');
-      showToast(currentLang === 'ar' ? 'تم إرسال طلب القفة التضامنية!' : currentLang === 'fr' ? 'Demande de panier solidaire envoyée !' : 'Solidarity basket request sent!');
+  async function handleBasketRequest() {
+      try {
+          showToast('جاري إرسال الطلب...');
+          await requestBasket({ needyConfirmed: true });
+          closeModal('basketModal');
+          showToast(currentLang === 'ar' ? 'تم إرسال طلب القفة التضامنية!' : 'Demande envoyée !');
+      } catch (err) {
+          showToast('خطأ: ' + err.message);
+      }
   }
 
   function adjustQty(delta) {
@@ -1247,11 +1308,11 @@
               if (loginBtn) loginBtn.classList.add('hidden');
               if (userProfileGroup) userProfileGroup.classList.remove('hidden');
 
-              if (avatarImg && user.photo) {
-                  avatarImg.src = user.photo;
+              if (avatarImg) {
+                  avatarImg.src = user.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName || 'User');
               }
-              if (nameSpan && user.fullName) {
-                  nameSpan.textContent = user.fullName;
+              if (nameSpan) {
+                  nameSpan.textContent = user.fullName || user.name || 'مستخدم';
               }
 
               if (user.role === 'admin') {
@@ -1277,8 +1338,8 @@
       try {
           const result = await apiCall('/patients');
 
-          if (result.success) {
-              if (countSpan) countSpan.textContent = result.count;
+          if (result && result.success) {
+              if (countSpan) countSpan.textContent = result.count || (result.patients ? result.patients.length : 0);
               if (!tbody) return;
 
               if (!result.patients || result.patients.length === 0) {
@@ -1288,7 +1349,7 @@
 
               tbody.innerHTML = '';
               result.patients.forEach(patient => {
-                  const dateFormatee = new Date(patient.createdAt).toLocaleDateString('fr-FR');
+                  const dateFormatee = patient.createdAt ? new Date(patient.createdAt).toLocaleDateString('fr-FR') : '-';
                   const photoSrc = patient.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(patient.fullName || 'User');
 
                   const row = document.createElement('tr');
@@ -1296,12 +1357,12 @@
                   row.innerHTML = `
                       <td class="p-4 flex items-center gap-3">
                           <img src="${photoSrc}" class="w-8 h-8 rounded-full" alt="avatar">
-                          <span>${patient.fullName || 'N/A'}</span>
+                          <span class="font-medium text-gray-800">${patient.fullName || 'N/A'}</span>
                       </td>
-                      <td class="p-4">${patient.phone || 'N/A'}</td>
-                      <td class="p-4">${patient.commune || 'N/A'}</td>
-                      <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">${patient.status || 'Actif'}</span></td>
-                      <td class="p-4">${dateFormatee}</td>
+                      <td class="p-4 text-gray-600">${patient.phone || 'N/A'}</td>
+                      <td class="p-4 text-gray-600">${patient.commune || 'N/A'}</td>
+                      <td class="p-4"><span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">${patient.status || 'Actif'}</span></td>
+                      <td class="p-4 text-gray-500 text-xs">${dateFormatee}</td>
                   `;
                   tbody.appendChild(row);
               });
