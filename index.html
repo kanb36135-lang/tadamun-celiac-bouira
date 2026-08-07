@@ -656,71 +656,73 @@ async function checkGoogleLogin() {
     }
 }
   // Récupérer et afficher tous les utilisateurs inscrits (Espace Admin)
-  async function fetchRegisteredUsers() {
-      try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${API_BASE_URL}/admin/users`, {
-              method: 'GET',
-              headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-              }
-          });
+ async function fetchRegisteredUsers() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/admin/users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-          if (!response.ok) throw new Error('Erreur d\'accès ou token expiré');
+        if (!response.ok) throw new Error('Erreur d\'accès ou token expiré');
 
-          const users = await response.json();
-          
-          // Mise à jour du compteur global
-          const totalUsersCount = document.getElementById('totalUsersCount');
-          if (totalUsersCount) totalUsersCount.textContent = users.length;
+        const users = await response.json();
+        
+        // Mise à jour du compteur global
+        const totalUsersCount = document.getElementById('totalUsersCount');
+        if (totalUsersCount) totalUsersCount.textContent = users.length;
 
-          const tbody = document.getElementById('usersTableBody');
-          if (!tbody) return;
-          
-          tbody.innerHTML = ''; // Nettoyer le tableau
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = ''; // Nettoyer le tableau
 
-          if (users.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا يوجد أي مستخدم مسجل حالياً (Aucun inscrit)</td></tr>`;
-              return;
-          }
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا يوجد أي مستخدم مسجل حالياً (Aucun inscrit)</td></tr>`;
+            return;
+        }
 
-          // Génération dynamique des lignes de la table admin
-          users.forEach(user => {
-              const tr = document.createElement('tr');
-              tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
+        // Génération dynamique des lignes de la table admin
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
 
-              let certAction = '<span class="text-gray-400">Aucun (Volontaire)</span>';
-              if (user.role === 'patient') {
-                  if (user.medicalCert && user.medicalCert.fileName) {
-                      certAction = `
-                          <a href="${API_BASE_URL}/admin/download-cert/${user._id}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 font-medium">
-                              📄 Consulter le PDF
-                          </a>`;
-                  } else {
-                      certAction = '<span class="text-red-500 font-medium">Manquant ⚠️</span>';
-                  }
-              }
+            let certAction = '<span class="text-gray-400">Aucun (Volontaire)</span>';
+            
+            if (user.role === 'patient') {
+                // Modifié pour accepter à la fois un objet contenant le fichier ou directement le chemin textuel
+                if (user.medicalCert) {
+                    certAction = `
+                        <a href="${API_BASE_URL}/admin/download-cert/${user._id}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 font-medium">
+                            📄 Consulter le PDF
+                        </a>`;
+                } else {
+                    certAction = '<span class="text-red-500 font-medium">Manquant ⚠️</span>';
+                }
+            }
 
-              const roleBadge = user.role === 'patient' 
-                  ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">Patient 👨‍👩‍👧</span>' 
-                  : '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-semibold">Volontaire 🤝</span>';
+            const roleBadge = user.role === 'patient' 
+                ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">Patient 👨‍👩‍👧</span>' 
+                : '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-semibold">Volontaire 🤝</span>';
 
-              tr.innerHTML = `
-                  <td class="p-4 font-semibold text-gray-800">${user.lastName || ''} ${user.firstName || ''}</td>
-                  <td class="p-4">${roleBadge}</td>
-                  <td class="p-4 text-gray-600 font-mono">${user.phone || '—'}</td>
-                  <td class="p-4 text-gray-600">${user.wilaya || '—'} / ${user.commune || '—'}</td>
-                  <td class="p-4">${certAction}</td>
-              `;
-              tbody.appendChild(tr);
-          });
+            tr.innerHTML = `
+                <td class="p-4 font-semibold text-gray-800">${user.lastName || ''} ${user.firstName || ''}</td>
+                <td class="p-4">${roleBadge}</td>
+                <td class="p-4 text-gray-600 font-mono">${user.phone || '—'}</td>
+                <td class="p-4 text-gray-600">${user.wilaya || '—'} / ${user.commune || '—'}</td>
+                <td class="p-4">${certAction}</td>
+            `;
+            tbody.appendChild(tr);
+        });
 
-      } catch (error) {
-          console.error("Erreur lors du chargement des utilisateurs :", error);
-          showToast('Erreur lors du chargement des données admin.');
-      }
-  }
+    } catch (error) {
+        console.error("Erreur lors du chargement des utilisateurs :", error);
+        showToast('Erreur lors du chargement des données admin.');
+    }
+}
 
   function openModal(id) {
       const modal = document.getElementById(id);
@@ -821,11 +823,19 @@ async function checkGoogleLogin() {
         if (response.ok && result.success) {
             localStorage.setItem('token', result.token);
             localStorage.setItem('user', JSON.stringify(result.user));
+            
+            // Nettoyage complet des états temporaires
             localStorage.removeItem('pendingProfile');
             localStorage.removeItem('googleUserPending');
 
+            // NETTOYAGE STRICT DE L'URL (Supprime ?token=...&user=... définitivement)
+            window.history.replaceState({}, document.title, window.location.pathname);
+
             closeModal('profileModal'); // Fermer le modal si ouvert
             showToast('تم التسجيل بنجاح! (Inscription réussie !)');
+            
+            // Forcer la redirection vers la page d'accueil
+            window.location.hash = "home";
             updateUI();
         } else {
             showToast(result.message || 'Erreur lors de l’enregistrement.');
