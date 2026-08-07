@@ -98,9 +98,9 @@
                             </select>
                         </div>
 
-                        <!-- Bouton Connexion (quand déconnecté) -->
-                        <button id="loginBtn" onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
-                            <span data-key="login">تسجيل الدخول</span>
+                        <!-- Bouton Connexion Google unique -->
+                        <button id="loginBtn" onclick="openModal('registerModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
+                            <span data-key="login">تسجيل الدخول / إنشاء حساب</span>
                         </button>
 
                         <!-- Infos Profil & Déconnexion (quand connecté) -->
@@ -151,10 +151,10 @@
                     <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight" data-key="heroTitle">معاً لدعم<br>مرضى السيلياك</h1>
                     <p class="text-emerald-100 text-base lg:text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed" data-key="heroSubtitle">منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة</p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="openModal('patientModal')" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
+                        <button onclick="openModal('registerModal')" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
                             <span>👨‍👩‍👧</span><span data-key="btnPatient">دخول كعائلة مريض</span>
                         </button>
-                        <button onclick="openModal('volunteerModal')" class="btn-orange text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
+                        <button onclick="openModal('registerModal')" class="btn-orange text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
                             <span>🤝</span><span data-key="btnVolunteer">دخول كمتطوع</span>
                         </button>
                     </div>
@@ -198,7 +198,6 @@
 
     <!-- ESPACE ADMINISTRATION -->
     <section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <!-- Bloc 1 : Gestion des Utilisateurs Inscrits -->
         <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
             <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -220,16 +219,15 @@
                 <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
             </div>
 
-            <!-- Table des Utilisateurs -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
                             <th class="p-4">Utilisateur</th>
+                            <th class="p-4">Rôle</th>
                             <th class="p-4">Téléphone</th>
-                            <th class="p-4">Commune</th>
-                            <th class="p-4">Statut</th>
-                            <th class="p-4">Inscrit le</th>
+                            <th class="p-4">Wilaya / Commune</th>
+                            <th class="p-4">Certificat PDF</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
@@ -239,26 +237,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <!-- Bloc 2 : Publication de Contenu -->
-        <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 p-6">
-            <h3 class="text-xl font-bold text-emerald-800 mb-4 flex items-center gap-2">
-                <span>📝</span> Publier du contenu sur la plateforme
-            </h3>
-            <form id="addContentForm" onsubmit="event.preventDefault(); handlePostContent();" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Titre de l'annonce / article</label>
-                    <input type="text" id="postTitle" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
-                    <textarea id="postContent" rows="4" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"></textarea>
-                </div>
-                <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-md transition-colors">
-                    Publier l'annonce
-                </button>
-            </form>
         </div>
     </section>
 
@@ -336,40 +314,10 @@
                     <h3 class="font-bold text-gray-800 mb-2" data-key="service3Title">خريطة التوزيع</h3>
                     <p class="text-sm text-gray-500 leading-relaxed" data-key="service3Desc">اعثر على أقرب نقطة استلام معتمدة في بلديتك</p>
                 </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-purple-100 shadow-sm cursor-pointer" onclick="openModal('volunteerModal')">
+                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-purple-100 shadow-sm cursor-pointer" onclick="openModal('registerModal')">
                     <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🤝</div>
                     <h3 class="font-bold text-gray-800 mb-2" data-key="service4Title">التطوع</h3>
                     <p class="text-sm text-gray-500 leading-relaxed" data-key="service4Desc">انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="py-16 lg:py-20 bg-emerald-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="howItWorks">كيف تعمل المنصة؟</h2>
-                <p class="text-gray-500">ثلاث خطوات بسيطة للاستفادة من خدماتنا</p>
-            </div>
-            <div class="relative">
-                <div class="step-connector hidden lg:block"></div>
-                <div class="grid lg:grid-cols-3 gap-8 relative z-10">
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">1</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step1Title">سجّل كعائلة مريض أو متطوع</h3>
-                        <p class="text-sm text-gray-500" data-key="step1Desc">أنشئ هويتك الرقمية بخطوات بسيطة مع التحقق عبر SMS</p>
-                    </div>
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">2</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step2Title">شارك في العداد الجماعي</h3>
-                        <p class="text-sm text-gray-500" data-key="step2Desc">انضم لطلبات الشراء الجماعي بسعر المصنع</p>
-                    </div>
-                    <div class="section-reveal text-center">
-                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg border-4 border-emerald-100">3</div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-2" data-key="step3Title">استلم طلبيتك من نقطة التوزيع</h3>
-                        <p class="text-sm text-gray-500" data-key="step3Desc">تواصل مع المتطوع واستلم منتجاتك النظيفة الخالية من الغلوتين</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -410,17 +358,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.350, 3.950)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-700 font-bold text-sm shrink-0">3</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مسجد النور</p>
-                                <p class="text-xs text-gray-500">الحيزر — المتطوع: محمد سعيد</p>
-                                <span class="inline-block mt-1 bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">يغلق قريباً</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="openModal('volunteerModal')" class="w-full border-2 border-dashed border-emerald-300 rounded-xl p-4 text-emerald-600 font-semibold text-sm hover:bg-emerald-50 transition">
+                    <button onclick="openModal('registerModal')" class="w-full border-2 border-dashed border-emerald-300 rounded-xl p-4 text-emerald-600 font-semibold text-sm hover:bg-emerald-50 transition">
                         + <span data-key="becomeVolunteer">كن أنت نقطة الاستلام القادمة</span>
                     </button>
                 </div>
@@ -446,26 +384,6 @@
                     <h3 class="font-bold text-gray-800 mb-1" data-key="partner2Title">مطاحن الوطنية</h3>
                     <p class="text-sm text-gray-500" data-key="partner2Desc">رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين</p>
                 </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🔬</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner3Title">مخابر التحاليل الطبية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner3Desc">فحوصات تشخيصية مدعومة للكشف المبكر عن السيلياك</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🎓</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner4Title">وزارة التكوين المهني</h3>
-                    <p class="text-sm text-gray-500" data-key="partner4Desc">دعم مؤسساتي وتقني للمشروع الرقمي التضامني</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏥</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner5Title">المديرية الصحية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner5Desc">تنسيق طبي وتوعية صحية لمرضى السيلياك</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🍞</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner6Title">مخابز خالية من الغلوتين</h3>
-                    <p class="text-sm text-gray-500" data-key="partner6Desc">منتجات مخبوزة آمنة ومعتمدة لمرضى السيلياك</p>
-                </div>
             </div>
         </div>
     </section>
@@ -473,279 +391,97 @@
     <!-- Footer -->
     <footer class="bg-emerald-900 text-emerald-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-800 font-bold text-lg">ت</div>
-                        <div><h3 class="font-bold text-white">تضامن – سيلياك البويرة</h3></div>
-                    </div>
-                    <p class="text-sm text-emerald-300 leading-relaxed" data-key="footerDesc">مشروع رقمي تضامني لدعم مرضى السيلياك في ولاية البويرة من خلال اللوجستيك التضامني والشراء الجماعي</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="quickLinks">روابط سريعة</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#home" class="hover:text-white transition" data-key="navHome">الرئيسية</a></li>
-                        <li><a href="#services" class="hover:text-white transition" data-key="navServices">الخدمات</a></li>
-                        <li><a href="#counter" class="hover:text-white transition" data-key="navCounter">العداد الجماعي</a></li>
-                        <li><a href="#map-section" class="hover:text-white transition" data-key="navMap">خريطة التوزيع</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="contact">اتصل بنا</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li>📍 مركز التكوين المهني والتمهين الشرفة</li>
-                        <li>📞 +213 (0) 26 XX XX XX</li>
-                        <li>✉️ contact@tadamun-celiac.dz</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4" data-key="legal">قانوني</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition" data-key="privacy">سياسة الخصوصية</a></li>
-                        <li><a href="#" class="hover:text-white transition" data-key="terms">شروط الاستخدام</a></li>
-                        <li><a href="#" class="hover:text-white transition" data-key="cookies">سياسة الكوكيز</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-emerald-800 mt-8 pt-8 text-center text-sm text-emerald-400">
+            <div class="border-t border-emerald-800 pt-8 text-center text-sm text-emerald-400">
                 <p>© 2026 تضامن – سيلياك البويرة | Tadamun Celiac Bouira. <span data-key="rights">جميع الحقوق محفوظة</span></p>
-                <p class="mt-1">الجمهورية الجزائرية الديمقراطية الشعبية — وزارة التكوين والتعليم المهنيين</p>
             </div>
         </div>
     </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800" data-key="loginTitle">تسجيل الدخول</h3>
-                <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-            <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف</label>
-                    <input type="tel" id="loginPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="0550 12 34 56" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="loginCode">كود الدخول (SMS)</label>
-                    <input type="text" id="loginCodeInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="123456" required>
-                </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold"><span data-key="btnLogin">دخول</span></button>
-
-                <div class="relative my-4">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">أو</span>
-                    </div>
-                </div>
-
-                <a href="https://tadamun-celiac-bouira-backend.onrender.com/api/auth/google" 
-                   class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition shadow-sm">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span data-key="googleLogin">تسجيل الدخول بحساب Google</span>
-                </a>
-            </form>
-            <p class="text-center text-sm text-gray-500 mt-4"><span data-key="noAccount">ليس لديك حساب؟</span> <a href="#" onclick="closeModal('loginModal'); openModal('patientModal');" class="text-emerald-600 font-semibold hover:underline" data-key="registerNow">سجّل الآن</a></p>
-        </div>
-    </div>
-
-    <!-- Patient Profile Completion Modal (عائلة مريض) -->
-    <div id="patientModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
+    <!-- MODAL UNIQUE DE FORMULAIRE & CONNEXION GOOGLE -->
+    <div id="registerModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
         <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
             <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">👨‍👩‍👧</div>
+                <h3 class="text-xl font-bold text-gray-800">إنشاء حساب / إكمال الملف الشخصي</h3>
+                <button onclick="closeModal('registerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+
+            <form id="profileForm" onsubmit="event.preventDefault(); handleProfileSubmit();" class="space-y-4" enctype="multipart/form-data">
+                
+                <!-- Identité (Nom & Prénom) -->
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <h3 class="text-xl font-bold text-gray-800" data-key="patientTitle">إكمال بيانات عائلة المريض</h3>
-                        <p class="text-xs text-gray-500" data-key="patientSubtitle">استكمال المعلومات للوصول إلى خدمات المنصة</p>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">اللقب (Nom) *</label>
+                        <input type="text" name="lastName" id="lastNameInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="Nom" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">الاسم (Prénom) *</label>
+                        <input type="text" name="firstName" id="firstNameInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="Prénom" required>
                     </div>
                 </div>
-                <button onclick="closeModal('patientModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
 
-            <div id="patientGoogleBadge" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-emerald-800">
-                <span class="text-lg">✅</span>
+                <!-- Téléphone -->
                 <div>
-                    <p class="font-bold" id="patientGoogleName">مسجل بالحساب : --</p>
-                    <p class="text-emerald-600" id="patientGoogleEmail">--</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف (للتواصل والتوصيل) *</label>
+                    <input type="tel" name="phone" id="phoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="06XX XX XX XX" required>
                 </div>
-            </div>
 
-            <form onsubmit="event.preventDefault(); handlePatientRegister();" class="space-y-4" enctype="multipart/form-data">
+                <!-- Type de Profil (Patient / Volontaire) -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
-                    <input type="text" id="patientFullNameInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="Nom et Prénom" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف للتوصل بالطلبيات *</label>
-                    <input type="tel" id="patientPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" placeholder="06XX XX XX XX" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="address">البلدية *</label>
-                    <select id="patientCommuneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500" required>
-                        <option value="">اختر البلدية...</option>
-                        <option value="البويرة">البويرة</option>
-                        <option value="الشرفة">الشرفة</option>
-                        <option value="الحيزر">الحيزر</option>
-                        <option value="سور الغزلان">سور الغزلان</option>
-                        <option value="مشد اللجم">مشد اللجم</option>
-                        <option value="الأخضرية">الأخضرية</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">صفة المستخدم *</label>
+                    <select name="role" id="roleSelect" onchange="togglePatientFields()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold bg-emerald-50 text-emerald-900" required>
+                        <option value="patient">👨‍👩‍👧 مريض / عائلة مريض (Patient)</option>
+                        <option value="volunteer">🤝 متطوع / مصلحة لوجستية (Volontaire)</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="medicalCert">شهادة طبية تثبت المرض *</label>
-                    <input type="file" id="patientFileInput" accept=".pdf,.jpg,.jpeg,.png" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50" required>
+
+                <!-- Sélection Dynamique Wilaya et Commune -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">الولاية (Wilaya) *</label>
+                        <select name="wilaya" id="wilayaSelect" onchange="updateCommunes()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">اختر الولاية...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">البلدية (Commune) *</label>
+                        <select name="commune" id="communeSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500" disabled required>
+                            <option value="">اختر البلدية...</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="flex items-start gap-2 bg-emerald-50 p-3 rounded-lg">
-                    <input type="checkbox" id="patientCommit" class="mt-1 w-4 h-4 text-emerald-600" required>
-                    <label for="patientCommit" class="text-xs text-gray-700 leading-relaxed" data-key="patientCommit">أؤكد صحة البيانات وأرغب في الاستفادة من خدمات المنصة التضامنية</label>
+
+                <!-- Certificat Médical (Patient Uniquement) -->
+                <div id="patientCertGroup">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">الشهادة الطبية (PDF) *</label>
+                    <input type="file" name="medicalCert" id="medicalCertInput" accept=".pdf" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50">
+                    <p class="text-xs text-gray-500 mt-1">يرجى رفع ملف PDF يثبت الإصابة بمرض السيلياك.</p>
                 </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-base shadow-lg transition">
-                    <span data-key="btnConfirm">حفظ البيانات والدخول</span>
-                </button>
+
+                <!-- Bouton Connexion Google Exclusif -->
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-xl font-bold shadow-md hover:bg-gray-50 transition border-emerald-500">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>التسجيل والتأكيد عبر Google</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Volunteer Profile Completion Modal (متطوع) -->
-    <div id="volunteerModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl">🤝</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800" data-key="volunteerTitle">إكمال بيانات المتطوع</h3>
-                        <p class="text-xs text-gray-500" data-key="volunteerSubtitle">الانضمام إلى شبكة التوزيع التضامني</p>
-                    </div>
-                </div>
-                <button onclick="closeModal('volunteerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-
-            <div id="volunteerGoogleBadge" class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 flex items-center gap-3 text-xs text-orange-800">
-                <span class="text-lg">✅</span>
-                <div>
-                    <p class="font-bold" id="volunteerGoogleName">مسجل بالحساب : --</p>
-                    <p class="text-orange-600" id="volunteerGoogleEmail">--</p>
-                </div>
-            </div>
-
-            <form onsubmit="event.preventDefault(); handleVolunteerRegister();" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="fullName">الاسم واللقب *</label>
-                    <input type="text" id="volunteerFullNameInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="Nom et Prénom" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="phone">رقم الهاتف للتواصل *</label>
-                    <input type="tel" id="volunteerPhoneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="06XX XX XX XX" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="activityCommune">بلدية النشاط والتوزيع *</label>
-                    <select id="volunteerCommuneInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" required>
-                        <option value="">اختر البلدية...</option>
-                        <option value="البويرة">البويرة</option>
-                        <option value="الشرفة">الشرفة</option>
-                        <option value="الحيزر">الحيزر</option>
-                        <option value="سور الغزلان">سور الغزلان</option>
-                        <option value="الأخضرية">الأخضرية</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="assocOrNIN">الجمعية الشريكة أو رقم بطاقة التعريف الوطنية</label>
-                    <input type="text" id="volunteerAssocInput" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500" placeholder="رقم البطاقة أو اسم الجمعية (اختياري)">
-                </div>
-                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                    <div class="flex items-start gap-2">
-                        <input type="checkbox" id="volunteerCommit" class="mt-1 w-4 h-4 text-orange-500" required>
-                        <label for="volunteerCommit" class="text-xs text-orange-800 leading-relaxed font-medium" data-key="volunteerCommit">أتعهد بنقل الطلبيات في مكان نظيف تماماً ومعزول عن أي مواد تحتوي على الغلوتين</label>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-base shadow-lg transition">
-                    <span data-key="btnVolunteerConfirm">تأكيد والدخول</span>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Order Modal (Group Buy) -->
+    <!-- Order Modal -->
     <div id="orderModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800" data-key="orderTitle">إضافة طلب للعداد الجماعي</h3>
+                <h3 class="text-xl font-bold text-gray-800">إضافة طلب للعداد الجماعي</h3>
                 <button onclick="closeModal('orderModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <div class="bg-emerald-50 rounded-xl p-4 mb-4 border border-emerald-200">
-                <div class="flex justify-between items-center">
-                    <span class="font-bold text-emerald-800">دقيق الأرز — مصنع الأمل</span>
-                    <span class="text-emerald-700 font-bold">450 دج</span>
-                </div>
-                <p class="text-xs text-emerald-600 mt-1">5 كغ — خالٍ من الغلوتين 100%</p>
-            </div>
             <form onsubmit="event.preventDefault(); handleOrder();" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="quantity">الكمية المطلوبة</label>
-                    <div class="flex items-center gap-3">
-                        <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">-</button>
-                        <input type="number" id="qtyInput" value="1" min="1" class="w-20 text-center border border-gray-300 rounded-lg py-2 text-sm font-bold" readonly>
-                        <button type="button" onclick="adjustQty(1)" class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-200">+</button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2" data-key="paymentMethod">طريقة الدفع</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" class="payment-btn border-2 border-emerald-500 bg-emerald-50 text-emerald-700 rounded-lg py-2 text-xs font-semibold" onclick="selectPayment(this)">Poste Mobile</button>
-                        <button type="button" class="payment-btn border border-gray-300 rounded-lg py-2 text-xs font-semibold hover:border-emerald-500" onclick="selectPayment(this)">Carte</button>
-                        <button type="button" class="payment-btn border border-gray-300 rounded-lg py-2 text-xs font-semibold hover:border-emerald-500" onclick="selectPayment(this)">Espèces</button>
-                    </div>
-                </div>
-                <div class="border-t pt-4">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">المجموع:</span>
-                        <span class="font-bold text-emerald-700" id="totalPrice">450 دج</span>
-                    </div>
-                </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg"><span data-key="btnAddOrder">تأكيد الطلب ودفع التكلفة مسبقاً</span></button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Basket Modal (Solidarity) -->
-    <div id="basketModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center text-2xl">🎁</div>
-                    <div><h3 class="text-xl font-bold text-gray-800" data-key="basketTitle">قفة السيلياك التضامنية</h3></div>
-                </div>
-                <button onclick="closeModal('basketModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-            <div class="bg-pink-50 border border-pink-200 rounded-xl p-4 mb-4">
-                <h4 class="font-bold text-sm text-pink-800 mb-2" data-key="basketContains">محتوى القفة التضامنية:</h4>
-                <ul class="text-sm text-pink-700 space-y-1">
-                    <li>✓ 2 كيس دقيق أرز (5kg)</li>
-                    <li>✓ 1 كيس معكرونة خالية من الغلوتين</li>
-                    <li>✓ 1 علبة حليب نباتي</li>
-                    <li>✓ خبز خالٍ من الغلوتين</li>
-                </ul>
-            </div>
-            <form onsubmit="event.preventDefault(); handleBasketRequest();" class="space-y-4">
-                <div class="flex items-start gap-2 bg-pink-50 p-3 rounded-lg">
-                    <input type="checkbox" id="needyConfirm" class="mt-1 w-4 h-4 text-pink-500" required>
-                    <label for="needyConfirm" class="text-xs text-gray-700 leading-relaxed" data-key="needyConfirm">أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)</label>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" data-key="socialDoc">وثيقة إثبات الوضع الاجتماعي (اختياري)</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-pink-400 hover:bg-pink-50 transition">
-                        <p class="text-xs text-gray-500" data-key="uploadOptional">📎 رفع الوثيقة (PDF, JPG) — خاصة بالراغبين في الاستفادة من الدعم</p>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold shadow-lg transition"><span data-key="btnRequestBasket">طلب القفة التضامنية</span></button>
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">تأكيد الطلب</button>
             </form>
         </div>
     </div>
@@ -759,523 +495,87 @@
 <script>
   var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
 
-  async function apiCall(endpoint, method, data) {
-    const token = localStorage.getItem('token');
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = 'Bearer ' + token;
-
-    const options = {
-      method: method || 'GET',
-      headers: headers,
-    };
-    if (data) options.body = JSON.stringify(data);
-
-    try {
-      const response = await fetch(API_BASE_URL + endpoint, options);
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || 'Erreur serveur');
-      return result;
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }
-  }
-
-  window.registerPatient = function(data) { return apiCall('/patients/register', 'POST', data); };
-  window.registerVolunteer = function(data) { return apiCall('/volunteers/register', 'POST', data); };
-  window.sendVerificationCode = function(phone) { return apiCall('/auth/send-code', 'POST', { phone: phone }); };
-  window.verifyCode = function(phone, code) { return apiCall('/auth/verify-code', 'POST', { phone: phone, code: code }); };
-  window.getPickupPoints = function() { return apiCall('/pickup-points'); };
-  window.getCounter = function() { return apiCall('/counter'); };
-  window.createOrder = function(data) { return apiCall('/orders', 'POST', data); };
-  window.requestBasket = function(data) { return apiCall('/baskets/request', 'POST', data); };
-
-  const translations = {
-      ar: {
-          brandName: "تضامن – سيلياك البويرة",
-          navHome: "الرئيسية", navServices: "الخدمات", navCounter: "العداد",
-          navMap: "الخريطة", navPartners: "الشركاء", login: "تسجيل الدخول", logout: "تسجيل الخروج",
-          badge: "منصة رقمية تضامنية",
-          heroTitle: "معاً لدعم\nمرضى السيلياك",
-          heroSubtitle: "منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة",
-          btnPatient: "دخول كعائلة مريض", btnVolunteer: "دخول كمتطوع",
-          statFamilies: "عائلة مسجلة", statVolunteers: "متطوع نشط", statCommunes: "بلدية مغطاة",
-          counterTitle: "العداد الجماعي الحي", liveBadge: "مباشر",
-          productName: "دقيق الأرز — مصنع الأمل", bags: "كيس",
-          ordered: "تم الطلب:", remaining: "متبقي:", priceLabel: "السعر الجماعي",
-          progressLabel: "نسبة الإكتمال", btnJoinCounter: "أضف طلبك →",
-          servicesTitle: "خدماتنا الرئيسية", servicesSubtitle: "حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة",
-          service1Title: "الشراء الجماعي", service1Desc: "اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي",
-          service2Title: "قفة السيلياك", service2Desc: "دعم تضامني مجاني للأسر المعوزة المسجلة",
-          service3Title: "خريطة التوزيع", service3Desc: "اعثر على أقرب نقطة استلام معتمدة في بلديتك",
-          service4Title: "التطوع", service4Desc: "انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى",
-          howItWorks: "كيف تعمل المنصة؟",
-          step1Title: "سجّل كعائلة مريض أو متطوع", step1Desc: "أنشئ هويتك الرقمية بخطوات بسيطة مع التحقق عبر SMS",
-          step2Title: "شارك في العداد الجماعي", step2Desc: "انضم لطلبات الشراء الجماعي بسعر المصنع",
-          step3Title: "استلم طلبيتك من نقطة التوزيع", step3Desc: "تواصل مع المتطوع واستلم منتجاتك النظيفة الخالية من الغلوتين",
-          mapTitle: "نقاط الاستلام واللوجستيك التضامني", pickupPoints: "نقاط الاستلام",
-          becomeVolunteer: "كن أنت نقطة الاستلام القادمة",
-          partnersTitle: "شركاؤنا وداعمونا",
-          partner1Desc: "اتفاقية رعاية صحية ووقائية لخفض كلفة التكفل",
-          partner2Title: "مطاحن الوطنية", partner2Desc: "رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين",
-          partner3Title: "مخابر التحاليل الطبية", partner3Desc: "فحوصات تشخيصية مدعومة للكشف المبكر عن السيلياك",
-          partner4Title: "وزارة التكوين المهني", partner4Desc: "دعم مؤسساتي وتقني للمشروع الرقمي التضامني",
-          partner5Title: "المديرية الصحية", partner5Desc: "تنسيق طبي وتوعية صحية لمرضى السيلياك",
-          partner6Title: "مخابز خالية من الغلوتين", partner6Desc: "منتجات مخبوزة آمنة ومعتمدة لمرضى السيلياك",
-          footerDesc: "مشروع رقمي تضامني لدعم مرضى السيلياك في ولاية البويرة من خلال اللوجستيك التضامني والشراء الجماعي",
-          quickLinks: "روابط سريعة", contact: "اتصل بنا", legal: "قانوني",
-          privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", cookies: "سياسة الكوكيز",
-          rights: "جميع الحقوق محفوظة",
-          loginTitle: "تسجيل الدخول", phone: "رقم الهاتف", loginCode: "كود الدخول (SMS)",
-          btnLogin: "دخول", noAccount: "ليس لديك حساب؟", registerNow: "سجّل الآن", googleLogin: "تسجيل الدخول بحساب Google",
-          patientTitle: "التسجيل كعائلة مريض", patientSubtitle: "أنشئ هويتك الرقمية للاستفادة من الخدمات",
-          fullName: "الاسم واللقب *", address: "البلدية / العنوان *",
-          medicalCert: "شهادة طبية تثبت المرض *", uploadHint: "اضغط لرفع الشهادة الطبية (PDF, JPG)",
-          patientCommit: "أؤكد أنني مريض سيلياك مسجل وأرغب في الاستفادة من خدمات المنصة التضامنية",
-          btnConfirm: "تأكيد البيانات والدخول للقائمة الرئيسية",
-          volunteerTitle: "التسجيل كمتطوع", volunteerSubtitle: "انضم لشبكة التوزيع التضامني",
-          activityCommune: "بلدية النشاط والتوزيع *",
-          assocOrNIN: "الجمعية الشريكة أو رقم بطاقة التعريف الوطنية *",
-          volunteerCommit: "أتعهد بنقل الطلبيات في مكان نظيف تماماً ومعزول عن أي مواد تحتوي على الغلوتين",
-          socialDoc: "وثيقة إثبات الوضع الاجتماعي (اختياري)",
-          uploadOptional: "📎 رفع الوثيقة (PDF, JPG) — خاصة بالراغبين في الاستفادة من الدعم",
-          btnVolunteerConfirm: "تأكيد والدخول إلى خريطة التوزيع",
-          orderTitle: "إضافة طلب للعداد الجماعي", quantity: "الكمية المطلوبة",
-          paymentMethod: "طريقة الدفع", btnAddOrder: "تأكيد الطلب ودفع التكلفة مسبقاً",
-          basketTitle: "قفة السيلياك التضامنية",
-          basketContains: "محتوى القفة التضامنية:",
-          needyConfirm: "أرغب في الاستفادة من القفة التضامنية المجانية (للمقررين كمعوزين)",
-          btnRequestBasket: "طلب القفة التضامنية"
-      },
-      fr: {
-          brandName: "Tadamun – Celiac Bouira",
-          navHome: "Accueil", navServices: "Services", navCounter: "Compteur",
-          navMap: "Carte", navPartners: "Partenaires", login: "Connexion", logout: "Déconnexion",
-          badge: "Plateforme numérique solidaire",
-          heroTitle: "Ensemble pour soutenir\nles malades cœliaques",
-          heroSubtitle: "Plateforme numérique solidaire pour la logistique et les achats groupés au prix usine, dédiée aux malades cœliaques dans la wilaya de Bouira",
-          btnPatient: "Espace Famille Patient", btnVolunteer: "Espace Bénévole",
-          statFamilies: "Familles inscrites", statVolunteers: "Bénévoles actifs", statCommunes: "Communes couvertes",
-          counterTitle: "Compteur Collectif en Direct", liveBadge: "LIVE",
-          productName: "Farine de riz — Usine Al-Amal", bags: "sacs",
-          ordered: "Commandés:", remaining: "Restants:", priceLabel: "Prix groupé",
-          progressLabel: "Taux de complétion", btnJoinCounter: "Ajoutez votre commande →",
-          servicesTitle: "Nos Services Principaux", servicesSubtitle: "Solutions intégrées pour soutenir les malades cœliaques dans la wilaya de Bouira",
-          service1Title: "Achat Groupé", service1Desc: "Commandez vos produits sans gluten au prix usine via le compteur collectif",
-          service2Title: "Panier Solidaire", service2Desc: "Soutien gratuit pour les familles nécessiteuses inscrites",
-          service3Title: "Carte de Distribution", service3Desc: "Trouvez le point de retrait agréé le plus proche dans votre commune",
-          service4Title: "Bénévolat", service4Desc: "Rejoignez le réseau de distribution solidaire et contribuez au service des malades",
-          howItWorks: "Comment fonctionne la plateforme ?",
-          step1Title: "Inscrivez-vous comme famille patiente ou bénévole", step1Desc: "Créez votre identité numérique en quelques étapes avec vérification SMS",
-          step2Title: "Participez au compteur collectif", step2Desc: "Rejoignez les commandes groupées au prix usine",
-          step3Title: "Retirez votre commande au point de distribution", step3Desc: "Contactez le bénévole et récupérez vos produits propres sans gluten",
-          mapTitle: "Points de Retrait & Logistique Solidaire", pickupPoints: "Points de retrait",
-          becomeVolunteer: "Devenez le prochain point de retrait",
-          partnersTitle: "Nos Partenaires & Sponsors",
-          partner1Desc: "Convention de parrainage sanitaire et préventive pour réduire les coûts de prise en charge",
-          partner2Title: "Moulins Nationaux", partner2Desc: "Parrainage éthique — points de vente directs pour produits sans gluten",
-          partner3Title: "Laboratoires d'analyses médicales", partner3Desc: "Examens diagnostiques soutenus pour le dépistage précoce de la maladie cœliaque",
-          partner4Title: "Ministère de la Formation Professionnelle", partner4Desc: "Soutien institutionnel et technique pour le projet numérique solidaire",
-          partner5Title: "Direction de la Santé", partner5Desc: "Coordination médicale et sensibilisation sanitaire pour les malades cœliaques",
-          partner6Title: "Boulangeries sans gluten", partner6Desc: "Produits de boulangerie sûrs et certifiés pour les malades cœliaques",
-          footerDesc: "Projet numérique solidaire pour soutenir les malades cœliaques dans la wilaya de Bouira à travers la logistique solidaire et les achats groupés",
-          quickLinks: "Liens Rapides", contact: "Contactez-nous", legal: "Légal",
-          privacy: "Politique de confidentialité", terms: "Conditions d'utilisation", cookies: "Politique des cookies",
-          rights: "Tous droits réservés",
-          loginTitle: "Connexion", phone: "Téléphone", loginCode: "Code d'accès (SMS)",
-          btnLogin: "Entrer", noAccount: "Pas encore de compte ?", registerNow: "Inscrivez-vous", googleLogin: "Se connecter avec Google",
-          patientTitle: "Inscription Famille Patient", patientSubtitle: "Créez votre identité numérique pour accéder aux services",
-          fullName: "Nom & Prénom *", address: "Commune / Adresse *",
-          medicalCert: "Certificat médical attestant la maladie *", uploadHint: "Cliquez pour uploader le certificat (PDF, JPG)",
-          patientCommit: "Je confirme être un patient cœliaque enregistré et souhaite bénéficier des services de la plateforme solidaire",
-          btnConfirm: "Confirmer et accéder au menu principal",
-          volunteerTitle: "Inscription Bénévole", volunteerSubtitle: "Rejoignez le réseau de distribution solidaire",
-          activityCommune: "Commune d'activité et distribution *",
-          assocOrNIN: "Association partenaire ou NIN *",
-          volunteerCommit: "Je m'engage à transporter les commandes dans un lieu propre, isolé de tout gluten",
-          socialDoc: "Document de situation sociale (optionnel)",
-          uploadOptional: "📎 Uploader le document (PDF, JPG) — pour ceux souhaitant bénéficier du soutien",
-          btnVolunteerConfirm: "Confirmer et accéder à la carte de distribution",
-          orderTitle: "Ajouter une commande au compteur collectif", quantity: "Quantité demandée",
-          paymentMethod: "Mode de paiement", btnAddOrder: "Confirmer la commande et payer en avance",
-          basketTitle: "Panier Solidaire Cœliaque",
-          basketContains: "Contenu du panier solidaire:",
-          needyConfirm: "Je souhaite bénéficier du panier solidaire gratuit (pour les familles reconnues nécessiteuses)",
-          btnRequestBasket: "Demander le panier solidaire"
-      },
-      en: {
-          brandName: "Tadamun – Celiac Bouira",
-          navHome: "Home", navServices: "Services", navCounter: "Counter",
-          navMap: "Map", navPartners: "Partners", login: "Login", logout: "Logout",
-          badge: "Digital Solidarity Platform",
-          heroTitle: "Together for\nCeliac Patients",
-          heroSubtitle: "Digital solidarity platform for logistics and group purchasing at factory prices, dedicated to celiac patients in Bouira wilaya",
-          btnPatient: "Patient Family Portal", btnVolunteer: "Volunteer Portal",
-          statFamilies: "Registered families", statVolunteers: "Active volunteers", statCommunes: "Covered municipalities",
-          counterTitle: "Live Group Counter", liveBadge: "LIVE",
-          productName: "Rice Flour — Al-Amal Factory", bags: "bags",
-          ordered: "Ordered:", remaining: "Remaining:", priceLabel: "Group price",
-          progressLabel: "Completion rate", btnJoinCounter: "Add your order →",
-          servicesTitle: "Our Main Services", servicesSubtitle: "Integrated solutions to support celiac patients in Bouira wilaya",
-          service1Title: "Group Buying", service1Desc: "Order your gluten-free products at factory price through the group counter",
-          service2Title: "Celiac Solidarity Basket", service2Desc: "Free solidarity support for registered needy families",
-          service3Title: "Distribution Map", service3Desc: "Find the nearest approved pickup point in your municipality",
-          service4Title: "Volunteering", service4Desc: "Join the solidarity distribution network and contribute to serving patients",
-          howItWorks: "How does the platform work?",
-          step1Title: "Register as a patient family or volunteer", step1Desc: "Create your digital identity in simple steps with SMS verification",
-          step2Title: "Join the group counter", step2Desc: "Participate in group orders at factory price",
-          step3Title: "Pick up your order at the distribution point", step3Desc: "Contact the volunteer and receive your clean gluten-free products",
-          mapTitle: "Pickup Points & Solidarity Logistics", pickupPoints: "Pickup points",
-          becomeVolunteer: "Become the next pickup point",
-          partnersTitle: "Our Partners & Supporters",
-          partner1Desc: "Health and preventive sponsorship agreement to reduce care costs",
-          partner2Title: "National Mills", partner2Desc: "Ethical sponsorship — direct sales outlets for gluten-free products",
-          partner3Title: "Medical Analysis Laboratories", partner3Desc: "Supported diagnostic tests for early detection of celiac disease",
-          partner4Title: "Ministry of Vocational Training", partner4Desc: "Institutional and technical support for the digital solidarity project",
-          partner5Title: "Health Directorate", partner5Desc: "Medical coordination and health awareness for celiac patients",
-          partner6Title: "Gluten-Free Bakeries", partner6Desc: "Safe and certified bakery products for celiac patients",
-          footerDesc: "Digital solidarity project to support celiac patients in Bouira wilaya through solidarity logistics and group purchasing",
-          quickLinks: "Quick Links", contact: "Contact Us", legal: "Legal",
-          privacy: "Privacy Policy", terms: "Terms of Use", cookies: "Cookie Policy",
-          rights: "All rights reserved",
-          loginTitle: "Login", phone: "Phone Number", loginCode: "Access Code (SMS)",
-          btnLogin: "Enter", noAccount: "Don't have an account?", registerNow: "Register now", googleLogin: "Sign in with Google",
-          patientTitle: "Patient Family Registration", patientSubtitle: "Create your digital identity to access services",
-          fullName: "Full Name *", address: "Municipality / Address *",
-          medicalCert: "Medical certificate proving the disease *", uploadHint: "Click to upload certificate (PDF, JPG)",
-          patientCommit: "I confirm being a registered celiac patient and wish to benefit from the solidarity platform services",
-          btnConfirm: "Confirm data and enter main menu",
-          volunteerTitle: "Volunteer Registration", volunteerSubtitle: "Join the solidarity distribution network",
-          activityCommune: "Activity & Distribution Municipality *",
-          assocOrNIN: "Partner Association or National ID Number *",
-          volunteerCommit: "I commit to transporting orders in a completely clean place, isolated from any gluten-containing materials",
-          socialDoc: "Social status document (optional)",
-          uploadOptional: "📎 Upload document (PDF, JPG) — for those wishing to benefit from support",
-          btnVolunteerConfirm: "Confirm and access distribution map",
-          orderTitle: "Add order to group counter", quantity: "Requested quantity",
-          paymentMethod: "Payment method", btnAddOrder: "Confirm order and pay in advance",
-          basketTitle: "Celiac Solidarity Basket",
-          basketContains: "Solidarity basket contents:",
-          needyConfirm: "I wish to benefit from the free solidarity basket (for families recognized as needy)",
-          btnRequestBasket: "Request solidarity basket"
-      }
+  // Base de données des Wilayas et Communes principales d'Algérie
+  const dzData = {
+      "10 - Bouira": ["البويرة (Bouira)", "الشرفة (Chorfa)", "الحيزر (Haizer)", "سور الغزلان (Sour El Ghozlane)", "مشد اللجم (M'Chedallah)", "الأخضرية (Lakhdaria)", "عين بسام (Aain Bessem)"],
+      "16 - Alger": ["الجزائر الوسطى (Alger Centre)", "باب الوادي (Bab El Oued)", "الشراقة (Cheraga)", "الدار البيضاء (Dar El Beida)"],
+      "15 - Tizi Ouzou": ["تيزي وزو (Tizi Ouzou)", "عزازقة (Azazga)", "ذراع الميزان (Draa El Mizan)"],
+      "31 - Oran": ["وهران (Oran)", "إيساتو (Es Senia)", "أرزيو (Arzew)"],
+      "25 - Constantine": ["قسنطينة (Constantine)", "الخروب (El Khroub)"]
   };
 
-  let currentLang = 'ar';
-  let map = null;
-
-  function changeLanguage() {
-      const select = document.getElementById('langSelect');
-      if (select) currentLang = select.value;
-      const t = translations[currentLang];
-
-      document.querySelectorAll('[data-key]').forEach(el => {
-          const key = el.getAttribute('data-key');
-          if (t[key]) {
-              if (key === 'heroTitle') {
-                  el.innerHTML = t[key].replace('\n', '<br>');
-              } else {
-                  el.textContent = t[key];
-              }
-          }
+  // Charger la liste des Wilayas au démarrage
+  function initLocationDropdowns() {
+      const wilayaSelect = document.getElementById('wilayaSelect');
+      if (!wilayaSelect) return;
+      
+      wilayaSelect.innerHTML = '<option value="">اختر الولاية...</option>';
+      Object.keys(dzData).forEach(w => {
+          const opt = document.createElement('option');
+          opt.value = w;
+          opt.textContent = w;
+          wilayaSelect.appendChild(opt);
       });
+  }
 
-      const html = document.documentElement;
-      const body = document.body;
-      if (currentLang === 'ar') {
-          html.setAttribute('dir', 'rtl');
-          html.setAttribute('lang', 'ar');
-          body.classList.add('font-arabic');
-          body.classList.remove('font-inter');
+  // Mettre à jour les communes dynamiquement
+  function updateCommunes() {
+      const wilayaSelect = document.getElementById('wilayaSelect');
+      const communeSelect = document.getElementById('communeSelect');
+      const selectedWilaya = wilayaSelect.value;
+
+      communeSelect.innerHTML = '<option value="">اختر البلدية...</option>';
+
+      if (selectedWilaya && dzData[selectedWilaya]) {
+          communeSelect.disabled = false;
+          dzData[selectedWilaya].forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c;
+              opt.textContent = c;
+              communeSelect.appendChild(opt);
+          });
       } else {
-          html.setAttribute('dir', 'ltr');
-          html.setAttribute('lang', currentLang);
-          body.classList.remove('font-arabic');
-          body.classList.add('font-inter');
+          communeSelect.disabled = true;
       }
   }
 
-  function openModal(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
+  // Basculer l'affichage du champ certificat médical
+  function togglePatientFields() {
+      const role = document.getElementById('roleSelect').value;
+      const certGroup = document.getElementById('patientCertGroup');
+      const certInput = document.getElementById('medicalCertInput');
 
-      // Prefill user data if logged in
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-          try {
-              const user = JSON.parse(savedUser);
-              if (id === 'patientModal') {
-                  if (user.fullName) document.getElementById('patientFullNameInput').value = user.fullName;
-                  if (user.email) {
-                      document.getElementById('patientGoogleEmail').textContent = user.email;
-                      document.getElementById('patientGoogleName').textContent = "مسجل بالحساب : " + (user.fullName || '');
-                  }
-              } else if (id === 'volunteerModal') {
-                  if (user.fullName) document.getElementById('volunteerFullNameInput').value = user.fullName;
-                  if (user.email) {
-                      document.getElementById('volunteerGoogleEmail').textContent = user.email;
-                      document.getElementById('volunteerGoogleName').textContent = "مسجل بالحساب : " + (user.fullName || '');
-                  }
-              }
-          } catch(e) {}
-      }
-
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-      document.body.style.overflow = '';
-  }
-
-  function toggleMobileMenu() {
-      const menu = document.getElementById('mobileMenu');
-      if (menu) menu.classList.toggle('hidden');
-  }
-
-  function showToast(message) {
-      const toast = document.getElementById('toast');
-      const msg = document.getElementById('toastMessage');
-      if (!toast || !msg) return;
-      msg.textContent = message;
-      toast.classList.remove('opacity-0');
-      toast.style.transform = 'translate(-50%, 0)';
-      setTimeout(() => {
-          toast.classList.add('opacity-0');
-          toast.style.transform = 'translate(-50%, 20px)';
-      }, 3000);
-  }
-
-  async function handleLogin() {
-      const phone = document.getElementById('loginPhoneInput').value;
-      const code = document.getElementById('loginCodeInput').value;
-      try {
-          showToast('جاري التحقق...');
-          const res = await verifyCode(phone, code);
-          if (res && res.token) {
-              localStorage.setItem('token', res.token);
-              if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
-              updateUI();
-              closeModal('loginModal');
-              showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Connexion réussie !');
-          }
-      } catch (err) {
-          showToast(err.message || 'خطأ في الدخول');
+      if (role === 'patient') {
+          certGroup.classList.remove('hidden');
+          certInput.setAttribute('required', 'required');
+      } else {
+          certGroup.classList.add('hidden');
+          certInput.removeAttribute('required');
       }
   }
 
-  async function handleLogout() {
-      try {
-          await fetch(API_BASE_URL + '/auth/logout', {
-              method: 'GET',
-              credentials: 'include'
-          });
-      } catch (error) {
-          console.error('Logout error:', error);
-      } finally {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.reload();
-      }
+  // Soumission vers Google Auth
+  function handleProfileSubmit() {
+      const form = document.getElementById('profileForm');
+      const formData = new FormData(form);
+
+      // Sauvegarder les données du profil dans le localStorage avant la redirection Google
+      const profileData = {
+          lastName: formData.get('lastName'),
+          firstName: formData.get('firstName'),
+          phone: formData.get('phone'),
+          role: formData.get('role'),
+          wilaya: formData.get('wilaya'),
+          commune: formData.get('commune')
+      };
+      
+      localStorage.setItem('pendingProfile', JSON.stringify(profileData));
+
+      // Redirection vers le backend d'authentification Google
+      window.location.href = API_BASE_URL + '/auth/google';
   }
 
-  async function handlePatientRegister() {
-      const fullName = document.getElementById('patientFullNameInput').value.trim();
-      const phone = document.getElementById('patientPhoneInput').value.trim();
-      const commune = document.getElementById('patientCommuneInput').value;
-      const fileInput = document.getElementById('patientFileInput');
-
-      if (!fullName || !phone || !commune) {
-          showToast('يرجى ملء جميع الحقول المطلوبة');
-          return;
-      }
-
-      if (!fileInput || !fileInput.files[0]) {
-          showToast('يرجى تحميل الشهادة الطبية');
-          return;
-      }
-
-      const formData = new FormData();
-      formData.append('fullName', fullName);
-      formData.append('phone', phone);
-      formData.append('commune', commune);
-      formData.append('medicalCert', fileInput.files[0]);
-
-      try {
-          showToast('جاري التسجيل والرفع...');
-
-          const token = localStorage.getItem('token');
-          const headers = {};
-          if (token) headers['Authorization'] = 'Bearer ' + token;
-
-          const response = await fetch(API_BASE_URL + '/patients/register', {
-              method: 'POST',
-              headers: headers,
-              body: formData
-          });
-
-          const result = await response.json();
-
-          if (response.ok && result.success) {
-              showToast('تم التسجيل بنجاح!');
-              closeModal('patientModal');
-              if (result.user) localStorage.setItem('user', JSON.stringify(result.user));
-              updateUI();
-          } else {
-              showToast(result.message || 'خطأ في التسجيل');
-          }
-      } catch (error) {
-          console.error('Erreur Upload:', error);
-          showToast('خطأ في الاتصال بالسيرفر');
-      }
-  }
-
-  async function handleVolunteerRegister() {
-      const fullName = document.getElementById('volunteerFullNameInput').value.trim();
-      const phone = document.getElementById('volunteerPhoneInput').value.trim();
-      const activityCommune = document.getElementById('volunteerCommuneInput').value;
-      const associationName = document.getElementById('volunteerAssocInput').value.trim();
-
-      if (!fullName || !phone || !activityCommune) {
-          showToast('يرجى ملء جميع الحقول المطلوبة');
-          return;
-      }
-
-      try {
-          showToast('جاري التسجيل...');
-          const result = await registerVolunteer({ 
-              fullName, 
-              phone, 
-              activityCommune,
-              associationName: associationName || undefined
-          });
-
-          if (result.success) {
-              showToast('تم التسجيل كمتطوع!');
-              closeModal('volunteerModal');
-              if (result.user) localStorage.setItem('user', JSON.stringify(result.user));
-              updateUI();
-          } else {
-              showToast(result.message || 'خطأ في التسجيل');
-          }
-      } catch (error) {
-          showToast('خطأ: ' + error.message);
-      }
-  }
-
-  function handlePostContent() {
-      const title = document.getElementById('postTitle').value;
-      const content = document.getElementById('postContent').value;
-      if (title && content) {
-          showToast('تم نشر المحتوى بنجاح');
-          document.getElementById('addContentForm').reset();
-      }
-  }
-
-  async function handleOrder() {
-      const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-      try {
-          showToast('جاري إرسال الطلب...');
-          await createOrder({ quantity: qty, product: 'دقيق الأرز' });
-          closeModal('orderModal');
-          showToast(currentLang === 'ar' ? 'تم إضافة طلبك بنجاح!' : 'Commande ajoutée !');
-      } catch (err) {
-          showToast('خطأ: ' + err.message);
-      }
-  }
-
-  async function handleBasketRequest() {
-      try {
-          showToast('جاري إرسال الطلب...');
-          await requestBasket({ needyConfirmed: true });
-          closeModal('basketModal');
-          showToast(currentLang === 'ar' ? 'تم إرسال طلب القفة التضامنية!' : 'Demande envoyée !');
-      } catch (err) {
-          showToast('خطأ: ' + err.message);
-      }
-  }
-
-  function adjustQty(delta) {
-      const input = document.getElementById('qtyInput');
-      let val = parseInt(input.value) + delta;
-      if (val < 1) val = 1;
-      input.value = val;
-      document.getElementById('totalPrice').textContent = (val * 450) + ' دج';
-  }
-
-  function selectPayment(btn) {
-      document.querySelectorAll('.payment-btn').forEach(b => {
-          b.classList.remove('border-2', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
-          b.classList.add('border', 'border-gray-300');
-      });
-      btn.classList.remove('border', 'border-gray-300');
-      btn.classList.add('border-2', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
-  }
-
-  function focusMap(lat, lng) {
-      if (map) {
-          map.setView([lat, lng], 14);
-      }
-  }
-
-  function initMap() {
-      const mapContainer = document.getElementById('map');
-      if (!mapContainer) return;
-
-      map = L.map('map').setView([36.375, 3.896], 11);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-
-      const markers = [
-          { lat: 36.375, lng: 3.896, title: 'مقر جمعية البركة - الشرفة', popup: '<b>مقر جمعية البركة</b><br>الشرفة<br>متطوع: فاطمة زهرة<br>📞 0550 XX XX XX' },
-          { lat: 36.433, lng: 3.864, title: 'مركز التكوين المهني - البويرة', popup: '<b>مركز التكوين المهني</b><br>البويرة<br>متطوع: أحمد بن علي<br>📞 0551 XX XX XX' },
-          { lat: 36.350, lng: 3.950, title: 'مسجد النور - الحيزر', popup: '<b>مسجد النور</b><br>الحيزر<br>متطوع: محمد سعيد<br>📞 0552 XX XX XX' }
-      ];
-
-      markers.forEach(m => {
-          L.marker([m.lat, m.lng]).addTo(map)
-              .bindPopup(m.popup)
-              .bindTooltip(m.title, { permanent: false, direction: 'top' });
-      });
-  }
-
-  function initScrollAnimations() {
-      const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                  entry.target.classList.add('visible');
-              }
-          });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
-  }
-
-  function initNavbar() {
-      const navbar = document.getElementById('navbar');
-      if (!navbar) return;
-      window.addEventListener('scroll', () => {
-          if (window.scrollY > 50) {
-              navbar.classList.add('shadow-lg');
-          } else {
-              navbar.classList.remove('shadow-lg');
-          }
-      });
-  }
-
-  function animateCounter() {
-      setTimeout(() => {
-          const bar = document.getElementById('counterBar');
-          if (bar) bar.style.width = '70%';
-      }, 500);
-  }
-
+  // Vérifier la connexion Google et traiter le retour
   function checkGoogleLogin() {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
@@ -1285,12 +585,109 @@
           try {
               localStorage.setItem('token', token);
               localStorage.setItem('user', decodeURIComponent(userParam));
+              
+              // Redirection automatique vers la page d'accueil
               window.history.replaceState({}, document.title, window.location.pathname);
-              showToast('تم تسجيل الدخول بنجاح');
+              window.location.hash = "home";
+              showToast('تم تسجيل الدخول بنجاح!');
           } catch (error) {
-              console.error("Erreur de décodage des données utilisateur :", error);
+              console.error("Erreur d'authentification Google:", error);
           }
       }
+  }
+
+  // Récupérer et afficher tous les utilisateurs inscrits (Espace Admin)
+  async function fetchRegisteredUsers() {
+      try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/admin/users`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (!response.ok) throw new Error('Erreur d\'accès ou token expiré');
+
+          const users = await response.json();
+          
+          // Mise à jour du compteur global
+          const totalUsersCount = document.getElementById('totalUsersCount');
+          if (totalUsersCount) totalUsersCount.textContent = users.length;
+
+          const tbody = document.getElementById('usersTableBody');
+          if (!tbody) return;
+          
+          tbody.innerHTML = ''; // Nettoyer le tableau
+
+          if (users.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا يوجد أي مستخدم مسجل حالياً (Aucun inscrit)</td></tr>`;
+              return;
+          }
+
+          // Génération dynamique des lignes de la table admin
+          users.forEach(user => {
+              const tr = document.createElement('tr');
+              tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
+
+              let certAction = '<span class="text-gray-400">Aucun (Volontaire)</span>';
+              if (user.role === 'patient') {
+                  if (user.medicalCert && user.medicalCert.fileName) {
+                      certAction = `
+                          <a href="${API_BASE_URL}/admin/download-cert/${user._id}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 font-medium">
+                              📄 Consulter le PDF
+                          </a>`;
+                  } else {
+                      certAction = '<span class="text-red-500 font-medium">Manquant ⚠️</span>';
+                  }
+              }
+
+              const roleBadge = user.role === 'patient' 
+                  ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">Patient 👨‍👩‍👧</span>' 
+                  : '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-semibold">Volontaire 🤝</span>';
+
+              tr.innerHTML = `
+                  <td class="p-4 font-semibold text-gray-800">${user.lastName || ''} ${user.firstName || ''}</td>
+                  <td class="p-4">${roleBadge}</td>
+                  <td class="p-4 text-gray-600 font-mono">${user.phone || '—'}</td>
+                  <td class="p-4 text-gray-600">${user.wilaya || '—'} / ${user.commune || '—'}</td>
+                  <td class="p-4">${certAction}</td>
+              `;
+              tbody.appendChild(tr);
+          });
+
+      } catch (error) {
+          console.error("Erreur lors du chargement des utilisateurs :", error);
+          showToast('Erreur lors du chargement des données admin.');
+      }
+  }
+
+  function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          document.body.style.overflow = 'hidden';
+      }
+  }
+
+  function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          document.body.style.overflow = '';
+      }
+  }
+
+  function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toastMessage');
+      if (!toast || !msg) return;
+      msg.textContent = message;
+      toast.classList.remove('opacity-0');
+      setTimeout(() => toast.classList.add('opacity-0'), 3000);
   }
 
   function updateUI() {
@@ -1308,22 +705,17 @@
               if (loginBtn) loginBtn.classList.add('hidden');
               if (userProfileGroup) userProfileGroup.classList.remove('hidden');
 
-              if (avatarImg) {
-                  avatarImg.src = user.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName || 'User');
-              }
-              if (nameSpan) {
-                  nameSpan.textContent = user.fullName || user.name || 'مستخدم';
-              }
+              if (avatarImg) avatarImg.src = user.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName || 'User');
+              if (nameSpan) nameSpan.textContent = user.fullName || user.name || 'مستخدم';
 
               if (user.role === 'admin') {
                   const adminDashboard = document.getElementById('adminDashboard');
-                  if (adminDashboard) {
-                      adminDashboard.classList.remove('hidden');
-                      fetchRegisteredUsers();
-                  }
+                  if (adminDashboard) adminDashboard.classList.remove('hidden');
+                  // Charger automatiquement les données si c'est l'admin
+                  fetchRegisteredUsers();
               }
           } catch (e) {
-              console.error("Erreur parsing user:", e);
+              console.error(e);
           }
       } else {
           if (loginBtn) loginBtn.classList.remove('hidden');
@@ -1331,61 +723,16 @@
       }
   }
 
-  async function fetchRegisteredUsers() {
-      const tbody = document.getElementById('usersTableBody');
-      const countSpan = document.getElementById('totalUsersCount');
-
-      try {
-          const result = await apiCall('/patients');
-
-          if (result && result.success) {
-              if (countSpan) countSpan.textContent = result.count || (result.patients ? result.patients.length : 0);
-              if (!tbody) return;
-
-              if (!result.patients || result.patients.length === 0) {
-                  tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500">Aucun utilisateur inscrit pour le moment.</td></tr>`;
-                  return;
-              }
-
-              tbody.innerHTML = '';
-              result.patients.forEach(patient => {
-                  const dateFormatee = patient.createdAt ? new Date(patient.createdAt).toLocaleDateString('fr-FR') : '-';
-                  const photoSrc = patient.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(patient.fullName || 'User');
-
-                  const row = document.createElement('tr');
-                  row.className = 'border-b hover:bg-gray-50';
-                  row.innerHTML = `
-                      <td class="p-4 flex items-center gap-3">
-                          <img src="${photoSrc}" class="w-8 h-8 rounded-full" alt="avatar">
-                          <span class="font-medium text-gray-800">${patient.fullName || 'N/A'}</span>
-                      </td>
-                      <td class="p-4 text-gray-600">${patient.phone || 'N/A'}</td>
-                      <td class="p-4 text-gray-600">${patient.commune || 'N/A'}</td>
-                      <td class="p-4"><span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">${patient.status || 'Actif'}</span></td>
-                      <td class="p-4 text-gray-500 text-xs">${dateFormatee}</td>
-                  `;
-                  tbody.appendChild(row);
-              });
-          }
-      } catch (error) {
-          console.error("Erreur lors de la récupération des utilisateurs:", error);
-      }
+  function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.reload();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+      initLocationDropdowns();
       checkGoogleLogin();
       updateUI();
-      changeLanguage();
-      initMap();
-      initScrollAnimations();
-      initNavbar();
-      animateCounter();
-
-      document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-          modal.addEventListener('click', (e) => {
-              if (e.target === modal) closeModal(modal.id);
-          });
-      });
   });
 </script>
 </body>

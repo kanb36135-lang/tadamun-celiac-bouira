@@ -6,6 +6,7 @@ const session = require('express-session');
 const connectMongo = require('connect-mongo');
 const MongoStore = connectMongo.default || connectMongo.MongoStore || connectMongo;
 const passport = require('./config/passport');
+const adminRoutes = require('./routes/admin');
 
 // Vérification des variables d'environnement
 console.log('🔑 GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'OK (masqué)' : 'MANQUANT');
@@ -76,6 +77,7 @@ app.get('/health', (req, res) => {
 
 // Routes API
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/admin', adminRoutes);
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/volunteers', require('./routes/volunteers'));
 app.use('/api/users', require('./routes/users'));
