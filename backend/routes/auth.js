@@ -7,7 +7,7 @@ const passport = require('passport');
 const Patient = require('../models/Patient');
 const Volunteer = require('../models/Volunteer');
 const SMSLog = require('../models/SMSLog');
-const upload = require('../middlewares/upload'); // Importation du middleware Multer (Mémoire vive)
+const upload = require('../middleware/upload');  //  Correct (singulier) // Importation du middleware Multer (Mémoire vive)
 
 // Generate 6-digit verification code
 const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
