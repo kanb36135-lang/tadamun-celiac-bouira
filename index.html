@@ -555,46 +555,72 @@
   }
 
   // Soumission vers Google Auth
-  function handleProfileSubmit() {
-      const form = document.getElementById('profileForm');
-      const formData = new FormData(form);
+function handleProfileSubmit(event) {
+    if (event) event.preventDefault(); // Empêcher le rechargement de la page
 
-      // Sauvegarder les données du profil dans le localStorage avant la redirection Google
-      const profileData = {
-          lastName: formData.get('lastName'),
-          firstName: formData.get('firstName'),
-          phone: formData.get('phone'),
-          role: formData.get('role'),
-          wilaya: formData.get('wilaya'),
-          commune: formData.get('commune')
-      };
-      
-      localStorage.setItem('pendingProfile', JSON.stringify(profileData));
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
 
-      // Redirection vers le backend d'authentification Google
-      window.location.href = API_BASE_URL + '/auth/google';
-  }
+    // Cas 1 : L'utilisateur n'est pas encore passé par Google Auth
+    if (!token) {
+        // Sauvegarder temporairement les textes saisis pour ne pas qu'il les réécrive
+        const form = document.getElementById('profileForm');
+        const formData = new FormData(form);
+        const profileData = {
+            lastName: formData.get('lastName'),
+            firstName: formData.get('firstName'),
+            phone: formData.get('phone'),
+            role: formData.get('role'),
+            wilaya: formData.get('wilaya'),
+            commune: formData.get('commune')
+        };
+        localStorage.setItem('pendingProfile', JSON.stringify(profileData));
+
+        // Aller vers Google
+        window.location.href = API_BASE_URL + '/auth/google';
+        return;
+    }
+
+    // Cas 2 : L'utilisateur revient de Google, on envoie tout au backend
+    sendProfileAndFileToBackend();
+}
 
   // Vérifier la connexion Google et traiter le retour
-  function checkGoogleLogin() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      const userParam = urlParams.get('user');
+ async function checkGoogleLogin() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userParam = urlParams.get('user');
 
-      if (token && userParam) {
-          try {
-              localStorage.setItem('token', token);
-              localStorage.setItem('user', decodeURIComponent(userParam));
-              
-              // Redirection automatique vers la page d'accueil
-              window.history.replaceState({}, document.title, window.location.pathname);
-              window.location.hash = "home";
-              showToast('تم تسجيل الدخول بنجاح!');
-          } catch (error) {
-              console.error("Erreur d'authentification Google:", error);
-          }
-      }
-  }
+    if (token && userParam) {
+        try {
+            const googleUser = JSON.parse(decodeURIComponent(userParam));
+            
+            // On garde les infos Google au chaud
+            localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
+            
+            // On nettoie l'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Récupérer le profil en attente pour pré-remplir le formulaire
+            const pendingProfile = localStorage.getItem('pendingProfile');
+            if (pendingProfile) {
+                const profileData = JSON.parse(pendingProfile);
+                
+                // Ouvrir le modal d'inscription pour qu'il mette son PDF
+                openModal('profileModal'); 
+                showToast('Veuillez ajouter votre certificat médical pour finaliser. (رجاءً أرفق الشهادة الطبية لإتمام التسجيل)');
+            } else {
+                // Connexion normale d'un ancien utilisateur
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(googleUser));
+                window.location.hash = "home";
+                updateUI();
+            }
+        } catch (error) {
+            console.error("Erreur retour Google:", error);
+        }
+    }
+}
 
   // Récupérer et afficher tous les utilisateurs inscrits (Espace Admin)
   async function fetchRegisteredUsers() {
@@ -734,6 +760,48 @@
       checkGoogleLogin();
       updateUI();
   });
+  
+  async function sendProfileAndFileToBackend() {
+    try {
+        const googleUser = JSON.parse(localStorage.getItem('googleUserPending'));
+        if (!googleUser) {
+            showToast('Veuillez d’abord vous connecter avec Google.');
+            return;
+        }
+
+        const form = document.getElementById('profileForm');
+        const formData = new FormData(form);
+
+        // On ajoute les identifiants Google récupérés
+        formData.append('googleId', googleUser.id);
+        formData.append('email', googleUser.email);
+
+        showToast('جاري إرسال البيانات... (Envoi en cours...)');
+
+        const response = await fetch(`${API_BASE_URL}/auth/finalize-signup`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+            localStorage.removeItem('pendingProfile');
+            localStorage.removeItem('googleUserPending');
+
+            closeModal('profileModal'); // Fermer le modal si ouvert
+            showToast('تم التسجيل بنجاح! (Inscription réussie !)');
+            updateUI();
+        } else {
+            showToast(result.message || 'Erreur lors de l’enregistrement.');
+        }
+    } catch (error) {
+        console.error("Erreur transmission backend:", error);
+        showToast("Erreur de connexion avec le serveur.");
+    }
+}
 </script>
 </body>
 </html>
