@@ -559,11 +559,19 @@ function handleProfileSubmit(event) {
     if (event) event.preventDefault(); // Empêcher le rechargement de la page
 
     const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    // CHANGER ICI : On vérifie aussi si on est en attente de finalisation Google
+    const isGooglePending = localStorage.getItem('googleUserPending'); 
 
-    // Cas 1 : L'utilisateur n'est pas encore passé par Google Auth
+    // Cas 1 : Si l'utilisateur revient de Google, il est en attente de finalisation.
+    // On ENVOIE directement les données au backend (Texte + Nouveau PDF sélectionné)
+    if (isGooglePending) {
+        sendProfileAndFileToBackend();
+        return;
+    }
+
+    // Cas 2 : L'utilisateur n'est pas encore connecté avec Google du tout
     if (!token) {
-        // Sauvegarder temporairement les textes saisis pour ne pas qu'il les réécrive
+        // Sauvegarder temporairement les textes saisis pour les réafficher au retour
         const form = document.getElementById('profileForm');
         const formData = new FormData(form);
         const profileData = {
@@ -581,12 +589,12 @@ function handleProfileSubmit(event) {
         return;
     }
 
-    // Cas 2 : L'utilisateur revient de Google, on envoie tout au backend
+    // Cas 3 : Connexion classique existante
     sendProfileAndFileToBackend();
 }
 
   // Vérifier la connexion Google et traiter le retour
- async function checkGoogleLogin() {
+async function checkGoogleLogin() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userParam = urlParams.get('user');
@@ -601,12 +609,23 @@ function handleProfileSubmit(event) {
             // On nettoie l'URL
             window.history.replaceState({}, document.title, window.location.pathname);
             
-            // Récupérer le profil en attente pour pré-remplir le formulaire
+            // Récupérer le profil en attente pour pré-remplir automatiquement le formulaire
             const pendingProfile = localStorage.getItem('pendingProfile');
             if (pendingProfile) {
                 const profileData = JSON.parse(pendingProfile);
                 
-                // Ouvrir le modal d'inscription pour qu'il mette son PDF
+                // Pré-remplir les champs du formulaire pour éviter de retaper
+                if(document.getElementById('lastName')) document.getElementById('lastName').value = profileData.lastName || '';
+                if(document.getElementById('firstName')) document.getElementById('firstName').value = profileData.firstName || '';
+                if(document.getElementById('phone')) document.getElementById('phone').value = profileData.phone || '';
+                if(document.getElementById('role')) document.getElementById('role').value = profileData.role || 'patient';
+                
+                // Si vous avez une logique dynamique pour charger les communes après la wilaya, 
+                // assurez-vous qu'elle s'exécute ici, sinon on affecte directement :
+                if(document.getElementById('wilaya')) document.getElementById('wilaya').value = profileData.wilaya || '';
+                if(document.getElementById('commune')) document.getElementById('commune').value = profileData.commune || '';
+                
+                // Ouvrir le modal d'inscription
                 openModal('profileModal'); 
                 showToast('Veuillez ajouter votre certificat médical pour finaliser. (رجاءً أرفق الشهادة الطبية لإتمام التسجيل)');
             } else {
