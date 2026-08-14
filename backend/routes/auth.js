@@ -9,10 +9,10 @@ const Volunteer = require('../models/Volunteer');
 const SMSLog = require('../models/SMSLog');
 const upload = require('../middleware/upload'); // Middleware Multer
 
-// Generate 6-digit verification code
+// Générer un code de vérification à 6 chiffres
 const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Send SMS (placeholder - integrate with Twilio or local provider)
+// Envoyer un SMS (placeholder)
 const sendSMS = async (phone, message, type = 'verification') => {
   try {
     console.log(`📱 SMS to ${phone}: ${message}`);
@@ -26,7 +26,7 @@ const sendSMS = async (phone, message, type = 'verification') => {
 };
 
 // ============================================
-// ROUTES GOOGLE OAUTH (NOUVELLE MÉTHODE SÉCURISÉE)
+// ROUTES GOOGLE OAUTH
 // ============================================
 
 // 1. Lancer la connexion Google
@@ -37,16 +37,15 @@ router.get('/google',
   })
 );
 
-// 2. Callback après connexion Google (Redirection simple sans paramètres)
+// 2. Callback après connexion Google
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: 'https://tadamun-celiac-bouira-site.onrender.com' }),
   (req, res) => {
-    // Redirection simple vers la page d'accueil (pas de paramètres dans l'URL !)
     res.redirect('https://tadamun-celiac-bouira-site.onrender.com');
   }
 );
 
-// 3. NOUVELLE ROUTE : Le frontend interroge la session actuelle
+// 3. Interrogation de la session actuelle par le frontend
 router.get('/me', (req, res) => {
   if (req.isAuthenticated && req.isAuthenticated() && req.user) {
     return res.json({
@@ -63,80 +62,104 @@ router.get('/me', (req, res) => {
 });
 
 // ============================================
-// NOUVELLE ROUTE : FINALISATION DE L'INSCRIPTION (POST)
+// FINALISATION DE L'INSCRIPTION (POST)
 // ============================================
 router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) => {
   try {
     const { googleId, email, lastName, firstName, phone, role, wilaya, commune } = req.body;
 
-    // 1. Vérifier si le numéro de téléphone ou le compte Google est déjà utilisé
-    const alreadyPatient = await Patient.findOne({ $or: [{ googleId }, { phone }] });
-    const alreadyVolunteer = await Volunteer.findOne({ $or: [{ googleId }, { phone }] });
-
-    if (alreadyPatient || alreadyVolunteer) {
-      return res.status(400).json({ success: false, message: 'Ce numéro ou ce compte Google est déjà enregistré.' });
+    if (!email) {
+      return res.status(400).json({ success: false, message: "L'adresse email est requise pour finaliser l'inscription." });
     }
 
-    // 2. Préparer le dictionnaire de données de base
+    const cleanEmail = email.toLowerCase().trim();
+    const fullName = `${firstName || ''} ${lastName || ''}`.trim() || 'Utilisateur';
+    const userRole = role || 'patient';
+
+    // Données de base
     const baseUserData = {
       googleId,
-      email,
+      email: cleanEmail,
       lastName,
       firstName,
-      fullName: `${firstName} ${lastName}`,
+      fullName,
       phone,
-      role: role || 'user',
+      role: userRole,
       wilaya,
       commune,
-      isVerified: false
+      isVerified: true
     };
+
+    // Gestion de la pièce jointe (Certificat médical)
+    if (req.file) {
+      baseUserData.medicalCert = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+        fileName: req.file.originalname
+      };
+      baseUserData.medicalCertPath = req.file.originalname;
+    }
 
     let savedUser;
 
-    // 3. Sauvegarder dans la bonne collection selon le rôle choisi
-    if (role === 'patient') {
-      if (req.file) {
-        baseUserData.medicalCert = {
-          data: req.file.buffer,          // Les octets (Buffer) du PDF
-          contentType: req.file.mimetype, // 'application/pdf'
-          fileName: req.file.originalname // Le nom initial du fichier
-        };
+    // A. Gestion si le rôle est 'patient'
+    if (userRole === 'patient') {
+      savedUser = await Patient.findOne({ $or: [{ email: cleanEmail }, { googleId }] });
+
+      if (savedUser) {
+        // Mettre à jour l'utilisateur existant
+        Object.assign(savedUser, baseUserData);
+      } else {
+        // Créer un nouveau patient
+        savedUser = new Patient(baseUserData);
       }
-      savedUser = new Patient(baseUserData);
+      await savedUser.save();
+
+    // B. Gestion si le rôle est 'volunteer' ou autre
     } else {
-      savedUser = new Volunteer(baseUserData);
+      savedUser = await Volunteer.findOne({ $or: [{ email: cleanEmail }, { googleId }] });
+
+      if (savedUser) {
+        // Mettre à jour le volontaire existant
+        Object.assign(savedUser, baseUserData);
+      } else {
+        // Créer un nouveau volontaire
+        savedUser = new Volunteer(baseUserData);
+      }
+      await savedUser.save();
     }
 
-    await savedUser.save();
-
-    // 4. Générer un jeton d'accès JWT temporaire de session
+    // Générer un jeton JWT
     const token = jwt.sign(
       { id: savedUser._id, email: savedUser.email, role: savedUser.role },
       process.env.JWT_SECRET || 'tadamun_secret_key',
       { expiresIn: '7d' }
     );
 
-    res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message: 'Inscription enregistrée en attente de vérification.',
+      message: 'Inscription et profil enregistrés avec succès.',
       token,
       user: {
         id: savedUser._id,
         fullName: savedUser.fullName,
         email: savedUser.email,
         role: savedUser.role,
-        type: role
+        type: userRole
       }
     });
 
   } catch (error) {
     console.error('Finalize signup error:', error);
-    res.status(500).json({ success: false, message: 'Erreur lors de la création du profil.' });
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Erreur lors de la création ou mise à jour du profil.' 
+    });
   }
 });
 
 // ============================================
-// ROUTES SMS
+// ROUTES SMS ET VÉRIFICATION
 // ============================================
 
 router.post('/send-code', [
