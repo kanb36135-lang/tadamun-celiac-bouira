@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-
 const patientSchema = new mongoose.Schema({
+  firstName: { type: String, trim: true },
+  lastName: { type: String, trim: true },
   fullName: {
     type: String,
     required: [true, 'Le nom complet est requis'],
@@ -12,9 +12,10 @@ const patientSchema = new mongoose.Schema({
       return !this.googleId; 
     },
     default: undefined,
-    sparse: true, // Permet à plusieurs utilisateurs d'avoir phone = undefined
+    sparse: true,
     trim: true
   },
+  wilaya: { type: String, trim: true },
   commune: {
     type: String,
     default: 'non_defini'
@@ -22,6 +23,11 @@ const patientSchema = new mongoose.Schema({
   address: {
     type: String,
     trim: true
+  },
+  medicalCert: {
+    data: Buffer,
+    contentType: String,
+    fileName: String
   },
   medicalCertPath: {
     type: String,
@@ -45,8 +51,8 @@ const patientSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    enum: ['patient', 'volunteer', 'user', 'admin'],
+    default: 'patient'
   },
   isVerified: {
     type: Boolean,
