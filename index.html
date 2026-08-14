@@ -762,50 +762,104 @@ async function fetchRegisteredUsers() {
       setTimeout(() => toast.classList.add('opacity-0'), 3000);
   }
 
-  function updateUI() {
-      const token = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('user');
+// --- GESTION DE L'AFFICHAGE DE L'INTERFACE ---
+function updateUI() {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
 
-      const loginBtn = document.getElementById('loginBtn');
-      const userProfileGroup = document.getElementById('userProfileGroup');
-      const avatarImg = document.getElementById('userPhoto');
-      const nameSpan = document.getElementById('userName');
+    console.log("🔄 Exécution de updateUI()...");
+    console.log("🔑 Token trouvé :", token ? "OUI" : "NON");
+    console.log("👤 Utilisateur trouvé :", savedUser);
 
-      if (token && savedUser) {
-          try {
-              const user = JSON.parse(savedUser);
-              if (loginBtn) loginBtn.classList.add('hidden');
-              if (userProfileGroup) userProfileGroup.classList.remove('hidden');
+    const loginBtn = document.getElementById('loginBtn');
+    const userProfileGroup = document.getElementById('userProfileGroup');
+    const avatarImg = document.getElementById('userPhoto');
+    const nameSpan = document.getElementById('userName');
 
-              if (avatarImg) avatarImg.src = user.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName || 'User');
-              if (nameSpan) nameSpan.textContent = user.fullName || user.name || 'مستخدم';
+    if (token && savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
 
-              if (user.role === 'admin') {
-                  const adminDashboard = document.getElementById('adminDashboard');
-                  if (adminDashboard) adminDashboard.classList.remove('hidden');
-                  // Charger automatiquement les données si c'est l'admin
-                  fetchRegisteredUsers();
-              }
-          } catch (e) {
-              console.error(e);
-          }
-      } else {
-          if (loginBtn) loginBtn.classList.remove('hidden');
-          if (userProfileGroup) userProfileGroup.classList.add('hidden');
-      }
-  }
+            // 1. Masquer le bouton Se connecter et afficher le profil utilisateur
+            if (loginBtn) loginBtn.classList.add('hidden');
+            if (userProfileGroup) userProfileGroup.classList.remove('hidden');
 
-  function handleLogout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.reload();
-  }
+            // 2. Formatage du nom (gère fullName, name, ou firstName + lastName)
+            const displayName = user.fullName || user.name || 
+                                (user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'مستخدم');
+            
+            if (nameSpan) nameSpan.textContent = displayName;
 
-  document.addEventListener('DOMContentLoaded', () => {
-      initLocationDropdowns();
-      checkGoogleLogin();
-      updateUI();
-  });
+            // 3. Image de profil ou Avatar par défaut
+            if (avatarImg) {
+                avatarImg.src = user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0D9488&color=fff`;
+            }
+
+            // 4. Si c'est un Admin, afficher le Dashboard Admin et charger les données
+            if (user.role === 'admin') {
+                console.log("👑 Rôle détecté : ADMIN");
+                const adminDashboard = document.getElementById('adminDashboard');
+                if (adminDashboard) {
+                    adminDashboard.classList.remove('hidden');
+                }
+                if (typeof fetchRegisteredUsers === 'function') {
+                    fetchRegisteredUsers();
+                }
+            } else {
+                console.log("👤 Rôle détecté :", user.role || 'Utilisateur standard');
+            }
+
+        } catch (e) {
+            console.error("❌ Erreur lors de la lecture des données utilisateur :", e);
+        }
+    } else {
+        // Utilisateur non connecté
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (userProfileGroup) userProfileGroup.classList.add('hidden');
+        
+        const adminDashboard = document.getElementById('adminDashboard');
+        if (adminDashboard) adminDashboard.classList.add('hidden');
+    }
+}
+
+// --- FONCTION POUR CHAPERONNER LA SOUMISSION DU FORMULAIRE ---
+async function handleProfileSubmit(event) {
+    if (event) event.preventDefault(); // EMPÊCHE LE RECHARGEMENT DE LA PAGE
+    console.log("🚀 Soumission du formulaire déclenchée !");
+    
+    // Appelle la fonction d'envoi vers le backend
+    if (typeof sendProfileAndFileToBackend === 'function') {
+        await sendProfileAndFileToBackend();
+    } else {
+        console.error("❌ La fonction sendProfileAndFileToBackend() est introuvable !");
+    }
+}
+
+// --- DÉCONNEXION ---
+function handleLogout() {
+    console.log("🚪 Déconnexion de l'utilisateur...");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('googleUserPending');
+    localStorage.removeItem('pendingProfile');
+    window.location.reload();
+}
+
+// --- INITIALISATION AU CHARGEMENT DE LA PAGE ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("🌐 Page initialisée.");
+    
+    // Attacher l'événement au formulaire de profil pour empêcher le reload classique
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.onsubmit = handleProfileSubmit;
+    }
+
+    if (typeof initLocationDropdowns === 'function') initLocationDropdowns();
+    if (typeof checkGoogleLogin === 'function') checkGoogleLogin();
+    
+    updateUI();
+});
   
   async function sendProfileAndFileToBackend() {
     try {
