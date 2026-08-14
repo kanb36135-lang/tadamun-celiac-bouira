@@ -815,6 +815,70 @@ document.addEventListener('DOMContentLoaded', checkGoogleLogin);
       checkGoogleLogin();
       updateUI();
   });
+  
+  // =========================================================
+        // 3. CODE À AJOUTER : Gestion de la soumission du formulaire
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lancer la vérification de connexion Google au chargement
+            checkGoogleLogin();
+
+            // Intercepter la soumission du formulaire pour envoyer en POST
+            const mainForm = document.querySelector('#section-formulaire form') || document.getElementById('formulaire-inscription');
+
+            if (mainForm) {
+                mainForm.addEventListener('submit', async function(e) {
+                    // Empêcher la soumission classique par défaut (qui envoie en GET et recharge la page)
+                    e.preventDefault();
+
+                    const pendingUser = JSON.parse(localStorage.getItem('googleUserPending') || '{}');
+                    
+                    const formData = new FormData();
+                    formData.append('googleId', pendingUser.id || '');
+                    formData.append('email', pendingUser.email || '');
+                    
+                    const firstNameEl = document.getElementById('firstName');
+                    const lastNameEl = document.getElementById('lastName');
+                    const phoneEl = document.getElementById('phone');
+                    const roleEl = document.getElementById('roleSelect');
+                    const wilayaEl = document.getElementById('wilayaSelect');
+                    const communeEl = document.getElementById('communeSelect');
+                    const fileInput = document.getElementById('medicalCertInput');
+
+                    if (firstNameEl) formData.append('firstName', firstNameEl.value);
+                    if (lastNameEl) formData.append('lastName', lastNameEl.value);
+                    if (phoneEl) formData.append('phone', phoneEl.value);
+                    if (roleEl) formData.append('role', roleEl.value);
+                    if (wilayaEl) formData.append('wilaya', wilayaEl.value);
+                    if (communeEl) formData.append('commune', communeEl.value);
+
+                    if (fileInput && fileInput.files[0]) {
+                        formData.append('medicalCert', fileInput.files[0]);
+                    }
+
+                    try {
+                        const response = await fetch('https://tadamun-celiac-bouira-backend.onrender.com/api/auth/finalize-signup', {
+                            method: 'POST', // Envoi explicite en POST
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            alert('تم تسجيل حسابك بنجاح!');
+                            localStorage.removeItem('googleUserPending');
+                            if (result.token) localStorage.setItem('token', result.token);
+                            showSection('section-contenu');
+                        } else {
+                            alert('خطأ: ' + (result.message || 'حدث خطأ أثناء حفظ البيانات'));
+                        }
+                    } catch (error) {
+                        console.error('Erreur lors de la finalisation:', error);
+                        alert('حدث خطأ في الاتصال بالسيرفر');
+                    }
+                });
+            }
+        });
 </script>
 </body>
 </html>
