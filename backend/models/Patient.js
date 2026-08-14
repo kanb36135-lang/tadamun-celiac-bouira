@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const patientSchema = new mongoose.Schema({
   firstName: { type: String, trim: true },
   lastName: { type: String, trim: true },
