@@ -68,7 +68,24 @@
         @media (max-width: 768px) { .step-connector { display: none; } }
     </style>
 </head>
-<body class="bg-gray-50 font-arabic text-gray-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="bg-gray-50 font-arabic text-gray-800 antialiased min-h-screen flex flex-col dir-rtl" dir="rtl">
+
+  <!-- 1. EN-TÊTE (FIXE OU NORMALE) -->
+  <header class="w-full bg-white shadow-sm z-50">
+    <!-- Votre code de Navbar actuel -->
+  </header>
+
+  <!-- 2. CONTENU PRINCIPAL (Pousse automatiquement le footer vers le bas) -->
+  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Tout le contenu de votre site (Carrousel, Cartes, Services, Partners...) -->
+  </main>
+
+  <!-- 3. PIED DE PAGE (FOOTER) -->
+  <footer class="w-full bg-emerald-900 text-white mt-auto py-8">
+    <!-- Le contenu de votre Footer (Copyright, Liens, etc.) -->
+  </footer>
+
+</body>
 
     <!-- ========================================== -->
     <!-- CONTENEUR 1 : BOUTON GOOGLE (AFFICHÉ PAR DÉFAUT) -->
