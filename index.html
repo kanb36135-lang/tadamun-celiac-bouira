@@ -598,27 +598,35 @@
 
   // Vérifier la connexion Google et le routage des conteneurs
   async function checkGoogleLogin() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      const userParam = urlParams.get('user');
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userParam = urlParams.get('user');
 
-      if (token && userParam) {
-          try {
-              const googleUser = JSON.parse(decodeURIComponent(userParam));
-              
-              localStorage.setItem('token', token);
-              localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
-              
-              window.history.replaceState({}, document.title, window.location.pathname);
-              
-              // Afficher obligatoirement le formulaire
-              showSection('section-formulaire');
-              showToast('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
-          } catch (error) {
-              console.error("Erreur checkGoogleLogin:", error);
-          }
-      }
-  }
+    if (token && userParam) {
+        try {
+            const googleUser = JSON.parse(decodeURIComponent(userParam));
+            
+            localStorage.setItem('token', token);
+            localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
+            
+            // Nettoyer l'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // 1. Afficher d'abord le formulaire (Priorité absolue)
+            showSection('section-formulaire');
+
+            // 2. Afficher la notification en toute sécurité
+            if (typeof showToast === 'function') {
+                showToast('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
+            } else {
+                console.log('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
+            }
+
+        } catch (error) {
+            console.error("Erreur checkGoogleLogin:", error);
+        }
+    }
+}
 
   // Récupérer les utilisateurs (Espace Admin)
   async function fetchRegisteredUsers() {
