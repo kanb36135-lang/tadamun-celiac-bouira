@@ -514,19 +514,47 @@
             "31 - Oran": ["وهران (Oran)", "إيساتو (Es Senia)", "أرزيو (Arzew)"],
             "25 - Constantine": ["قسنطينة (Constantine)", "الخروب (El Khroub)"]
         };
+         
+		var map = null;
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.view-section').forEach(el => {
-                el.classList.add('hidden');
+      function initMap() {
+        // Si la carte est déjà instanciée, on recalcule uniquement ses dimensions
+         if (map !== null) {
+             map.invalidateSize();
+            return;
+          }
+
+    // Centrer sur Bouira (36.3749, 3.9020)
+       map = L.map('map').setView([36.3749, 3.9020], 12);
+
+         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+         }).addTo(map);
+
+            L.marker([36.3749, 3.9020]).addTo(map)
+        .bindPopup('مقر جمعية البركة - الشرفة')
+        .openPopup();
+}
+
+       function showSection(sectionId) {
+             document.querySelectorAll('.view-section').forEach(el => {
+             el.classList.add('hidden');
                 el.classList.remove('flex');
-            });
+      }); 
 
-            const target = document.getElementById(sectionId);
-            if (target) {
-                target.classList.remove('hidden');
-                target.classList.add('flex');
-            }
-        }
+      const target = document.getElementById(sectionId);
+        if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex');
+    }
+
+    // Déclencher le rendu de la carte quand la section principale est affichée
+    if (sectionId === 'section-contenu') {
+        setTimeout(() => {
+            initMap();
+        }, 300);
+    }
+} 
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
