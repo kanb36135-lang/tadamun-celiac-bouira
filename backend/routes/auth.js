@@ -7,7 +7,7 @@ const passport = require('passport');
 const Patient = require('../models/Patient');
 const Volunteer = require('../models/Volunteer');
 const SMSLog = require('../models/SMSLog');
-const upload = require('../middleware/upload');  //  Correct (singulier) // Importation du middleware Multer (Mémoire vive)
+const upload = require('../middleware/upload'); // Middleware Multer
 
 // Generate 6-digit verification code
 const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -26,10 +26,10 @@ const sendSMS = async (phone, message, type = 'verification') => {
 };
 
 // ============================================
-// ROUTES GOOGLE OAUTH
+// ROUTES GOOGLE OAUTH (NOUVELLE MÉTHODE SÉCURISÉE)
 // ============================================
 
-// Lancer la connexion Google
+// 1. Lancer la connexion Google
 router.get('/google',
   passport.authenticate('google', { 
     scope: ['profile', 'email'],
@@ -37,29 +37,30 @@ router.get('/google',
   })
 );
 
-// Callback après connexion Google
+// 2. Callback après connexion Google (Redirection simple sans paramètres)
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
+  passport.authenticate('google', { failureRedirect: 'https://tadamun-celiac-bouira-site.onrender.com' }),
   (req, res) => {
-    const token = jwt.sign(
-      { id: req.user._id, email: req.user.email, role: req.user.role || 'user' },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-    
-    const userData = {
-      id: req.user._id,
-      fullName: req.user.fullName,
-      email: req.user.email,
-      photo: req.user.photo || null,
-      role: req.user.role || 'user'
-    };
-    
-    const userString = encodeURIComponent(JSON.stringify(userData));
-    
-    res.redirect(`https://tadamun-celiac-bouira-site.onrender.com?token=${token}&user=${userString}`);
+    // Redirection simple vers la page d'accueil (pas de paramètres dans l'URL !)
+    res.redirect('https://tadamun-celiac-bouira-site.onrender.com');
   }
 );
+
+// 3. NOUVELLE ROUTE : Le frontend interroge la session actuelle
+router.get('/me', (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+    return res.json({
+      authenticated: true,
+      user: {
+        id: req.user._id || req.user.googleId,
+        fullName: req.user.fullName || `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim(),
+        email: req.user.email,
+        photo: req.user.photo || null
+      }
+    });
+  }
+  return res.json({ authenticated: false });
+});
 
 // ============================================
 // NOUVELLE ROUTE : FINALISATION DE L'INSCRIPTION (POST)
@@ -68,7 +69,7 @@ router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) =
   try {
     const { googleId, email, lastName, firstName, phone, role, wilaya, commune } = req.body;
 
-    // 1. Vérifier si le numéro de téléphone ou le compte Google est déjà utilisé quelque part
+    // 1. Vérifier si le numéro de téléphone ou le compte Google est déjà utilisé
     const alreadyPatient = await Patient.findOne({ $or: [{ googleId }, { phone }] });
     const alreadyVolunteer = await Volunteer.findOne({ $or: [{ googleId }, { phone }] });
 
@@ -87,24 +88,22 @@ router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) =
       role: role || 'user',
       wilaya,
       commune,
-      isVerified: false // Sera vérifié par SMS plus tard si nécessaire
+      isVerified: false
     };
 
     let savedUser;
 
     // 3. Sauvegarder dans la bonne collection selon le rôle choisi
     if (role === 'patient') {
-      // Si c'est un patient, on ajoute le fichier PDF reçu en mémoire
       if (req.file) {
         baseUserData.medicalCert = {
-          data: req.file.buffer,         // Les octets (Buffer) du PDF
+          data: req.file.buffer,          // Les octets (Buffer) du PDF
           contentType: req.file.mimetype, // 'application/pdf'
           fileName: req.file.originalname // Le nom initial du fichier
         };
       }
       savedUser = new Patient(baseUserData);
     } else {
-      // Si c'est un volontaire (ou autre rôle)
       savedUser = new Volunteer(baseUserData);
     }
 
@@ -113,7 +112,7 @@ router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) =
     // 4. Générer un jeton d'accès JWT temporaire de session
     const token = jwt.sign(
       { id: savedUser._id, email: savedUser.email, role: savedUser.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'tadamun_secret_key',
       { expiresIn: '7d' }
     );
 
@@ -236,7 +235,7 @@ router.post('/verify-code', [
     res.status(500).json({ success: false, message: 'Erreur lors de la vérification' });
   }
 });
-  
+
 // Route de déconnexion
 router.get('/logout', (req, res) => {
   req.logout((err) => {

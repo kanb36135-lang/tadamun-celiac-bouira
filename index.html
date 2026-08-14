@@ -597,36 +597,41 @@
   }
 
   // Vérifier la connexion Google et le routage des conteneurs
-  async function checkGoogleLogin() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const userParam = urlParams.get('user');
+ // Nouvelle fonction de vérification d'état via API
+async function checkGoogleLogin() {
+    try {
+        // On demande directement au serveur backend si l'utilisateur vient de se connecter
+        const response = await fetch('https://tadamun-celiac-bouira-backend.onrender.com/api/auth/me', {
+            method: 'GET',
+            credentials: 'include' // Très important pour envoyer les cookies de session Google
+        });
 
-    if (token && userParam) {
-        try {
-            const googleUser = JSON.parse(decodeURIComponent(userParam));
+        const data = await response.json();
+
+        if (data.authenticated && data.user) {
+            console.log("Utilisateur connecté détecté :", data.user);
             
-            localStorage.setItem('token', token);
-            localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
-            
-            // Nettoyer l'URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // 1. Afficher d'abord le formulaire (Priorité absolue)
+            // Stocker temporairement les infos Google pour le formulaire
+            localStorage.setItem('googleUserPending', JSON.stringify(data.user));
+
+            // Pré-remplir les champs si présents
+            if (document.getElementById('googleId')) document.getElementById('googleId').value = data.user.id || '';
+            if (document.getElementById('email')) document.getElementById('email').value = data.user.email || '';
+
+            // BASCULER SUR LE FORMULAIRE
             showSection('section-formulaire');
-
-            // 2. Afficher la notification en toute sécurité
-            if (typeof showToast === 'function') {
-                showToast('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
-            } else {
-                console.log('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
-            }
-
-        } catch (error) {
-            console.error("Erreur checkGoogleLogin:", error);
+        } else {
+            // Si pas connecté, on reste sur le bouton Google
+            showSection('section-google');
         }
+    } catch (error) {
+        console.error("Erreur de vérification de session :", error);
+        showSection('section-google');
     }
 }
+
+// Exécuter la vérification au chargement de la page
+document.addEventListener('DOMContentLoaded', checkGoogleLogin);
 
   // Récupérer les utilisateurs (Espace Admin)
   async function fetchRegisteredUsers() {
