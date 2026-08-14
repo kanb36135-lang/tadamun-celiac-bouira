@@ -68,345 +68,40 @@
         @media (max-width: 768px) { .step-connector { display: none; } }
     </style>
 </head>
-<body class="bg-gray-50 font-arabic text-gray-800 antialiased">
+<body class="bg-gray-50 font-arabic text-gray-800 antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="glass-effect border-b border-gray-200/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16 lg:h-20">
-                    <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">ت</div>
-                        <div class="hidden sm:block">
-                            <h1 class="font-bold text-emerald-800 text-sm lg:text-base leading-tight" data-key="brandName">تضامن – سيلياك البويرة</h1>
-                            <p class="text-xs text-emerald-600">Tadamun Celiac Bouira</p>
-                        </div>
-                    </div>
-                    <div class="hidden lg:flex items-center gap-8">
-                        <a href="#home" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navHome">الرئيسية</a>
-                        <a href="#services" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navServices">الخدمات</a>
-                        <a href="#counter" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navCounter">العداد</a>
-                        <a href="#map-section" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navMap">الخريطة</a>
-                        <a href="#partners" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navPartners">الشركاء</a>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <select id="langSelect" onchange="changeLanguage()" class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs lg:text-sm rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer font-medium">
-                                <option value="ar">🇩🇿 العربية</option>
-                                <option value="fr">🇫🇷 Français</option>
-                                <option value="en">🇬🇧 English</option>
-                            </select>
-                        </div>
-
-                        <!-- Bouton Connexion Google unique -->
-                        <button id="loginBtn" onclick="openModal('registerModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md hover:shadow-lg">
-                            <span data-key="login">تسجيل الدخول / إنشاء حساب</span>
-                        </button>
-
-                        <!-- Infos Profil & Déconnexion (quand connecté) -->
-                        <div id="userProfileGroup" class="hidden flex items-center gap-3">
-                            <span id="userName" class="text-xs lg:text-sm font-semibold text-gray-700 hidden sm:inline-block"></span>
-                            <img id="userPhoto" src="" alt="Profile" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-emerald-500 object-cover">
-                            <button id="logoutBtn" onclick="handleLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                </svg>
-                                <span data-key="logout">تسجيل الخروج</span>
-                            </button>
-                        </div>
-
-                        <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 hover:text-emerald-600 p-1">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- ========================================== -->
+    <!-- CONTENEUR 1 : BOUTON GOOGLE (AFFICHÉ PAR DÉFAUT) -->
+    <!-- ========================================== -->
+    <div id="section-google" class="view-section flex-1 flex flex-col items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl border border-emerald-100 text-center max-w-md w-full">
+            <div class="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg">ت</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">تضامن – سيلياك البويرة</h2>
+            <p class="text-sm text-gray-500 mb-6">يرجى تسجيل الدخول عبر Google للوصول إلى المنصة</p>
+            
+            <button type="button" onclick="redirectToGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3.5 px-4 rounded-xl font-bold shadow-md hover:bg-gray-50 transition border-emerald-500">
+                <svg class="w-6 h-6" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>تسجيل الدخول عبر Google</span>
+            </button>
         </div>
-        <div id="mobileMenu" class="hidden lg:hidden glass-effect border-b border-gray-200">
-            <div class="px-4 py-3 space-y-2">
-                <a href="#home" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navHome">الرئيسية</a>
-                <a href="#services" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navServices">الخدمات</a>
-                <a href="#counter" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navCounter">العداد</a>
-                <a href="#map-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navMap">الخريطة</a>
-                <a href="#partners" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navPartners">الشركاء</a>
-            </div>
-        </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="pt-24 lg:pt-32 pb-16 lg:pb-24 gradient-hero relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="text-center lg:text-right">
-                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                        <span class="text-white text-sm font-medium" data-key="badge">منصة رقمية تضامنية</span>
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight" data-key="heroTitle">معاً لدعم<br>مرضى السيلياك</h1>
-                    <p class="text-emerald-100 text-base lg:text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed" data-key="heroSubtitle">منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="openModal('registerModal')" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
-                            <span>👨‍👩‍👧</span><span data-key="btnPatient">دخول كعائلة مريض</span>
-                        </button>
-                        <button onclick="openModal('registerModal')" class="btn-orange text-white px-8 py-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
-                            <span>🤝</span><span data-key="btnVolunteer">دخول كمتطوع</span>
-                        </button>
-                    </div>
-                    <div class="mt-10 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">350+</div>
-                            <div class="text-xs text-emerald-200" data-key="statFamilies">عائلة مسجلة</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">45</div>
-                            <div class="text-xs text-emerald-200" data-key="statVolunteers">متطوع نشط</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-                            <div class="text-2xl lg:text-3xl font-bold text-white">12</div>
-                            <div class="text-xs text-emerald-200" data-key="statCommunes">بلدية مغطاة</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hidden lg:flex justify-center items-center">
-                    <div class="relative animate-float">
-                        <div class="w-80 h-80 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl">
-                            <div class="text-center">
-                                <div class="text-8xl mb-4">🌾</div>
-                                <div class="text-white font-bold text-xl">خالٍ من الغلوتين</div>
-                                <div class="text-emerald-200 text-sm mt-2">Gluten-Free | Sans Gluten</div>
-                            </div>
-                        </div>
-                        <div class="absolute -top-4 -right-4 w-20 h-20 bg-orange-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg animate-pulse-slow">🎁</div>
-                        <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-emerald-400 rounded-2xl flex items-center justify-center text-2xl shadow-lg">🗺️</div>
-                        <div class="absolute top-1/2 -right-8 w-14 h-14 bg-white rounded-xl flex items-center justify-center text-xl shadow-lg">📱</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#f9fafb"/>
-            </svg>
-        </div>
-    </section>
 
-    <!-- ESPACE ADMINISTRATION -->
-    <section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
-            <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold flex items-center gap-2">
-                        <span>⚙️</span> Espace Administration
-                    </h2>
-                    <p class="text-emerald-100 text-sm mt-1">Gestion, modification et suivi des membres inscrits sur la plateforme</p>
-                </div>
-                <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
-                    <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
-                    <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
-                </div>
+    <!-- ========================================== -->
+    <!-- CONTENEUR 2 : FORMULAIRE COMPLÉMENTAIRE (MASQUÉ AU DÉPART) -->
+    <!-- ========================================== -->
+    <div id="section-formulaire" class="view-section hidden flex-1 flex flex-col items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-gray-100 my-8">
+            <div class="flex justify-between items-center mb-6 border-b pb-3">
+                <h3 class="text-xl font-bold text-gray-800">إكمال البيانات الشخصية للتأكيد</h3>
             </div>
 
-            <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
-                <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
-                    <span>🔄</span> Actualiser la liste
-                </button>
-                <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
-                            <th class="p-4">Utilisateur</th>
-                            <th class="p-4">Rôle</th>
-                            <th class="p-4">Téléphone</th>
-                            <th class="p-4">Wilaya / Commune</th>
-                            <th class="p-4">Certificat PDF</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
-                        <tr>
-                            <td colspan="5" class="p-6 text-center text-gray-400">Chargement des données...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Live Counter Section -->
-    <section id="counter" class="py-16 lg:py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="section-reveal bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 lg:p-6 flex justify-between items-center">
-                    <h2 class="text-white font-bold text-lg lg:text-xl flex items-center gap-2">
-                        <span class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></span>
-                        <span data-key="counterTitle">العداد الجماعي الحي</span>
-                    </h2>
-                    <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full" data-key="liveBadge">مباشر</span>
-                </div>
-                <div class="p-6 lg:p-8">
-                    <div class="grid lg:grid-cols-3 gap-6 items-center">
-                        <div class="lg:col-span-2">
-                            <div class="flex justify-between items-end mb-3">
-                                <div>
-                                    <p class="text-sm text-gray-500 mb-1" data-key="productName">دقيق الأرز — مصنع الأمل</p>
-                                    <div class="flex items-baseline gap-2">
-                                        <span class="text-3xl lg:text-4xl font-extrabold text-emerald-700">350</span>
-                                        <span class="text-gray-400">/</span>
-                                        <span class="text-xl text-gray-500">500 <span data-key="bags">كيس</span></span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm text-gray-500" data-key="priceLabel">السعر الجماعي</p>
-                                    <p class="text-2xl font-bold text-emerald-600">450 <span class="text-sm">دج</span></p>
-                                </div>
-                            </div>
-                            <div class="bg-gray-100 rounded-full h-4 lg:h-5 overflow-hidden mb-4">
-                                <div id="counterBar" class="counter-bar bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-emerald-700 font-semibold"><span data-key="ordered">تم الطلب:</span> 350 <span data-key="bags">كيس</span></span>
-                                <span class="text-orange-600 font-semibold"><span data-key="remaining">متبقي:</span> 150 <span data-key="bags">كيس</span></span>
-                            </div>
-                        </div>
-                        <div class="text-center lg:text-left">
-                            <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
-                                <div class="text-4xl font-extrabold text-emerald-700 mb-1">70%</div>
-                                <p class="text-sm text-emerald-600 mb-4" data-key="progressLabel">نسبة الإكتمال</p>
-                                <button onclick="openModal('orderModal')" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-sm shadow-md">
-                                    <span data-key="btnJoinCounter">أضف طلبك →</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="py-16 lg:py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="servicesTitle">خدماتنا الرئيسية</h2>
-                <p class="text-gray-500 max-w-2xl mx-auto" data-key="servicesSubtitle">حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة</p>
-            </div>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-emerald-100 shadow-sm cursor-pointer" onclick="openModal('orderModal')">
-                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service1Title">الشراء الجماعي</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service1Desc">اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي</p>
-                </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-orange-100 shadow-sm cursor-pointer" onclick="openModal('basketModal')">
-                    <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🎁</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service2Title">قفة السيلياك</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service2Desc">دعم تضامني مجاني للأسر المعوزة المسجلة</p>
-                </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-blue-100 shadow-sm cursor-pointer" onclick="document.getElementById('map-section').scrollIntoView({behavior:'smooth'})">
-                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🗺️</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service3Title">خريطة التوزيع</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service3Desc">اعثر على أقرب نقطة استلام معتمدة في بلديتك</p>
-                </div>
-                <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-purple-100 shadow-sm cursor-pointer" onclick="openModal('registerModal')">
-                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🤝</div>
-                    <h3 class="font-bold text-gray-800 mb-2" data-key="service4Title">التطوع</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed" data-key="service4Desc">انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Map Section -->
-    <section id="map-section" class="py-16 lg:py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="mapTitle">نقاط الاستلام واللوجستيك التضامني</h2>
-                <p class="text-gray-500">البحث عن أقرب نقطة توزيع معتمدة في بلديتك</p>
-            </div>
-            <div class="grid lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 section-reveal">
-                    <div class="map-container shadow-xl border border-gray-200">
-                        <div id="map"></div>
-                    </div>
-                </div>
-                <div class="space-y-4 section-reveal">
-                    <h3 class="font-bold text-gray-800 mb-4" data-key="pickupPoints">نقاط الاستلام</h3>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.375, 3.896)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">1</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مقر جمعية البركة</p>
-                                <p class="text-xs text-gray-500">الشرفة — المتطوع: فاطمة زهرة</p>
-                                <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer" onclick="focusMap(36.433, 3.864)">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">2</div>
-                            <div>
-                                <p class="font-bold text-sm text-gray-800">مركز التكوين المهني</p>
-                                <p class="text-xs text-gray-500">البويرة — المتطوع: أحمد بن علي</p>
-                                <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="openModal('registerModal')" class="w-full border-2 border-dashed border-emerald-300 rounded-xl p-4 text-emerald-600 font-semibold text-sm hover:bg-emerald-50 transition">
-                        + <span data-key="becomeVolunteer">كن أنت نقطة الاستلام القادمة</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Partners Section -->
-    <section id="partners" class="py-16 lg:py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 section-reveal">
-                <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="partnersTitle">شركاؤنا وداعمونا</h2>
-                <p class="text-gray-500">نفتخر بشراكاتنا المؤسساتية والمجتمعية</p>
-            </div>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏛️</div>
-                    <h3 class="font-bold text-gray-800 mb-1">CNAS / CASNOS</h3>
-                    <p class="text-sm text-gray-500" data-key="partner1Desc">اتفاقية رعاية صحية ووقائية لخفض كلفة التكفل</p>
-                </div>
-                <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
-                    <h3 class="font-bold text-gray-800 mb-1" data-key="partner2Title">مطاحن الوطنية</h3>
-                    <p class="text-sm text-gray-500" data-key="partner2Desc">رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-emerald-900 text-emerald-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="border-t border-emerald-800 pt-8 text-center text-sm text-emerald-400">
-                <p>© 2026 تضامن – سيلياك البويرة | Tadamun Celiac Bouira. <span data-key="rights">جميع الحقوق محفوظة</span></p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- MODAL UNIQUE DE FORMULAIRE & CONNEXION GOOGLE -->
-    <div id="registerModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl my-8">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">إنشاء حساب / إكمال الملف الشخصي</h3>
-                <button onclick="closeModal('registerModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-            </div>
-
-           <form id="profileForm" onsubmit="handleProfileSubmit(event);" class="space-y-4" enctype="multipart/form-data">
-                
+            <form id="profileForm" onsubmit="handleProfileSubmit(event);" class="space-y-4" enctype="multipart/form-data">
                 <!-- Identité (Nom & Prénom) -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -457,19 +152,334 @@
                     <p class="text-xs text-gray-500 mt-1">يرجى رفع ملف PDF يثبت الإصابة بمرض السيلياك.</p>
                 </div>
 
-               <!-- Bouton Connexion Google Exclusif -->
-<div class="pt-2">
-    <button type="button" onclick="redirectToGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-xl font-bold shadow-md hover:bg-gray-50 transition border-emerald-500">
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        <span>التسجيل والتأكيد عبر Google</span>
-    </button>
-</div>
-</form>
+                <div class="pt-4">
+                    <button type="submit" class="w-full btn-primary text-white py-3.5 rounded-xl font-bold shadow-lg">
+                        تأكيد وحفظ البيانات والاطلاع على الموقع
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- CONTENEUR 3 : CONTENU PRINCIPAL DU SITE (MASQUÉ AU DÉPART) -->
+    <!-- ========================================== -->
+    <div id="section-contenu" class="view-section hidden">
+        
+        <!-- Navigation -->
+        <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+            <div class="glass-effect border-b border-gray-200/50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-16 lg:h-20">
+                        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">ت</div>
+                            <div class="hidden sm:block">
+                                <h1 class="font-bold text-emerald-800 text-sm lg:text-base leading-tight" data-key="brandName">تضامن – سيلياك البويرة</h1>
+                                <p class="text-xs text-emerald-600">Tadamun Celiac Bouira</p>
+                            </div>
+                        </div>
+                        <div class="hidden lg:flex items-center gap-8">
+                            <a href="#home" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navHome">الرئيسية</a>
+                            <a href="#services" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navServices">الخدمات</a>
+                            <a href="#counter" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navCounter">العداد</a>
+                            <a href="#map-section" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navMap">الخريطة</a>
+                            <a href="#partners" class="nav-link text-gray-700 hover:text-emerald-600 font-medium text-sm transition" data-key="navPartners">الشركاء</a>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <select id="langSelect" onchange="changeLanguage()" class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs lg:text-sm rounded-lg px-2 py-1.5 lg:px-3 lg:py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer font-medium">
+                                    <option value="ar">🇩🇿 العربية</option>
+                                    <option value="fr">🇫🇷 Français</option>
+                                    <option value="en">🇬🇧 English</option>
+                                </select>
+                            </div>
+
+                            <!-- Infos Profil & Déconnexion -->
+                            <div id="userProfileGroup" class="flex items-center gap-3">
+                                <span id="userName" class="text-xs lg:text-sm font-semibold text-gray-700 hidden sm:inline-block"></span>
+                                <img id="userPhoto" src="" alt="Profile" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 border-emerald-500 object-cover">
+                                <button id="logoutBtn" onclick="handleLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg text-xs lg:text-sm font-semibold transition shadow-md flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    <span data-key="logout">تسجيل الخروج</span>
+                                </button>
+                            </div>
+
+                            <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 hover:text-emerald-600 p-1">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden glass-effect border-b border-gray-200">
+                <div class="px-4 py-3 space-y-2">
+                    <a href="#home" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navHome">الرئيسية</a>
+                    <a href="#services" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navServices">الخدمات</a>
+                    <a href="#counter" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navCounter">العداد</a>
+                    <a href="#map-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navMap">الخريطة</a>
+                    <a href="#partners" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 hover:text-emerald-600 font-medium" data-key="navPartners">الشركاء</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="home" class="pt-24 lg:pt-32 pb-16 lg:pb-24 gradient-hero relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute bottom-20 right-10 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-right">
+                        <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span class="text-white text-sm font-medium" data-key="badge">منصة رقمية تضامنية</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight" data-key="heroTitle">معاً لدعم<br>مرضى السيلياك</h1>
+                        <p class="text-emerald-100 text-base lg:text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed" data-key="heroSubtitle">منصة رقمية تضامنية للتوزيع اللوجستي والشراء الجماعي بأسعار المصنع، مخصصة لمرضى السيلياك في ولاية البويرة</p>
+                        
+                        <div class="mt-10 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                                <div class="text-2xl lg:text-3xl font-bold text-white">350+</div>
+                                <div class="text-xs text-emerald-200" data-key="statFamilies">عائلة مسجلة</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                                <div class="text-2xl lg:text-3xl font-bold text-white">45</div>
+                                <div class="text-xs text-emerald-200" data-key="statVolunteers">متطوع نشط</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                                <div class="text-2xl lg:text-3xl font-bold text-white">12</div>
+                                <div class="text-xs text-emerald-200" data-key="statCommunes">بلدية مغطاة</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden lg:flex justify-center items-center">
+                        <div class="relative animate-float">
+                            <div class="w-80 h-80 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl">
+                                <div class="text-center">
+                                    <div class="text-8xl mb-4">🌾</div>
+                                    <div class="text-white font-bold text-xl">خالٍ من الغلوتين</div>
+                                    <div class="text-emerald-200 text-sm mt-2">Gluten-Free | Sans Gluten</div>
+                                </div>
+                            </div>
+                            <div class="absolute -top-4 -right-4 w-20 h-20 bg-orange-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg animate-pulse-slow">🎁</div>
+                            <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-emerald-400 rounded-2xl flex items-center justify-center text-2xl shadow-lg">🗺️</div>
+                            <div class="absolute top-1/2 -right-8 w-14 h-14 bg-white rounded-xl flex items-center justify-center text-xl shadow-lg">📱</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0">
+                <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#f9fafb"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- ESPACE ADMINISTRATION -->
+        <section id="adminDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+                <div class="bg-emerald-700 text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <span>⚙️</span> Espace Administration
+                        </h2>
+                        <p class="text-emerald-100 text-sm mt-1">Gestion, modification et suivi des membres inscrits sur la plateforme</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-emerald-800 px-4 py-2 rounded-xl">
+                        <span class="text-xs uppercase font-semibold text-emerald-200">Total inscrits :</span>
+                        <span id="totalUsersCount" class="text-xl font-extrabold text-white">0</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+                    <button onclick="fetchRegisteredUsers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                        <span>🔄</span> Actualiser la liste
+                    </button>
+                    <span class="text-xs text-gray-500">Accès Administrateur Restreint</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
+                                <th class="p-4">Utilisateur</th>
+                                <th class="p-4">Rôle</th>
+                                <th class="p-4">Téléphone</th>
+                                <th class="p-4">Wilaya / Commune</th>
+                                <th class="p-4">Certificat PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="divide-y divide-gray-100 text-sm">
+                            <tr>
+                                <td colspan="5" class="p-6 text-center text-gray-400">Chargement des données...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Counter Section -->
+        <section id="counter" class="py-16 lg:py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="section-reveal bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 lg:p-6 flex justify-between items-center">
+                        <h2 class="text-white font-bold text-lg lg:text-xl flex items-center gap-2">
+                            <span class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></span>
+                            <span data-key="counterTitle">العداد الجماعي الحي</span>
+                        </h2>
+                        <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full" data-key="liveBadge">مباشر</span>
+                    </div>
+                    <div class="p-6 lg:p-8">
+                        <div class="grid lg:grid-cols-3 gap-6 items-center">
+                            <div class="lg:col-span-2">
+                                <div class="flex justify-between items-end mb-3">
+                                    <div>
+                                        <p class="text-sm text-gray-500 mb-1" data-key="productName">دقيق الأرز — مصنع الأمل</p>
+                                        <div class="flex items-baseline gap-2">
+                                            <span class="text-3xl lg:text-4xl font-extrabold text-emerald-700">350</span>
+                                            <span class="text-gray-400">/</span>
+                                            <span class="text-xl text-gray-500">500 <span data-key="bags">كيس</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-gray-500" data-key="priceLabel">السعر الجماعي</p>
+                                        <p class="text-2xl font-bold text-emerald-600">450 <span class="text-sm">دج</span></p>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-100 rounded-full h-4 lg:h-5 overflow-hidden mb-4">
+                                    <div id="counterBar" class="counter-bar bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 70%"></div>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-emerald-700 font-semibold"><span data-key="ordered">تم الطلب:</span> 350 <span data-key="bags">كيس</span></span>
+                                    <span class="text-orange-600 font-semibold"><span data-key="remaining">متبقي:</span> 150 <span data-key="bags">كيس</span></span>
+                                </div>
+                            </div>
+                            <div class="text-center lg:text-left">
+                                <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                                    <div class="text-4xl font-extrabold text-emerald-700 mb-1">70%</div>
+                                    <p class="text-sm text-emerald-600 mb-4" data-key="progressLabel">نسبة الإكتمال</p>
+                                    <button onclick="openModal('orderModal')" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-sm shadow-md">
+                                        <span data-key="btnJoinCounter">أضف طلبك →</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-16 lg:py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12 section-reveal">
+                    <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="servicesTitle">خدماتنا الرئيسية</h2>
+                    <p class="text-gray-500 max-w-2xl mx-auto" data-key="servicesSubtitle">حلول متكاملة لدعم مرضى السيلياك في ولاية البويرة</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-emerald-100 shadow-sm cursor-pointer" onclick="openModal('orderModal')">
+                        <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
+                        <h3 class="font-bold text-gray-800 mb-2" data-key="service1Title">الشراء الجماعي</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed" data-key="service1Desc">اطلب منتجاتك الخالية من الغلوتين بسعر المصنع من خلال العداد الجماعي</p>
+                    </div>
+                    <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-orange-100 shadow-sm cursor-pointer" onclick="openModal('basketModal')">
+                        <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🎁</div>
+                        <h3 class="font-bold text-gray-800 mb-2" data-key="service2Title">قفة السيلياك</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed" data-key="service2Desc">دعم تضامني مجاني للأسر المعوزة المسجلة</p>
+                    </div>
+                    <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-blue-100 shadow-sm cursor-pointer" onclick="document.getElementById('map-section').scrollIntoView({behavior:'smooth'})">
+                        <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🗺️</div>
+                        <h3 class="font-bold text-gray-800 mb-2" data-key="service3Title">خريطة التوزيع</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed" data-key="service3Desc">اعثر على أقرب نقطة استلام معتمدة في بلديتك</p>
+                    </div>
+                    <div class="section-reveal card-hover bg-gradient-card rounded-2xl p-6 border border-purple-100 shadow-sm cursor-pointer">
+                        <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🤝</div>
+                        <h3 class="font-bold text-gray-800 mb-2" data-key="service4Title">التطوع</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed" data-key="service4Desc">انضم لشبكة التوزيع التضامنية وساهم في خدمة المرضى</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section id="map-section" class="py-16 lg:py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10 section-reveal">
+                    <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="mapTitle">نقاط الاستلام واللوجستيك التضامني</h2>
+                    <p class="text-gray-500">البحث عن أقرب نقطة توزيع معتمدة في بلديتك</p>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 section-reveal">
+                        <div class="map-container shadow-xl border border-gray-200">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 section-reveal">
+                        <h3 class="font-bold text-gray-800 mb-4" data-key="pickupPoints">نقاط الاستلام</h3>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">1</div>
+                                <div>
+                                    <p class="font-bold text-sm text-gray-800">مقر جمعية البركة</p>
+                                    <p class="text-xs text-gray-500">الشرفة — المتطوع: فاطمة زهرة</p>
+                                    <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-emerald-300 transition cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">2</div>
+                                <div>
+                                    <p class="font-bold text-sm text-gray-800">مركز التكوين المهني</p>
+                                    <p class="text-xs text-gray-500">البويرة — المتطوع: أحمد بن علي</p>
+                                    <span class="inline-block mt-1 bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full">مفتوح الآن</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partners Section -->
+        <section id="partners" class="py-16 lg:py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12 section-reveal">
+                    <h2 class="text-2xl lg:text-4xl font-extrabold text-gray-800 mb-4" data-key="partnersTitle">شركاؤنا وداعمونا</h2>
+                    <p class="text-gray-500">نفتخر بشراكاتنا المؤسساتية والمجتمعية</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏛️</div>
+                        <h3 class="font-bold text-gray-800 mb-1">CNAS / CASNOS</h3>
+                        <p class="text-sm text-gray-500" data-key="partner1Desc">اتفاقية رعاية صحية ووقائية لخفض كلفة التكفل</p>
+                    </div>
+                    <div class="section-reveal bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-3xl mb-4">🏭</div>
+                        <h3 class="font-bold text-gray-800 mb-1" data-key="partner2Title">مطاحن الوطنية</h3>
+                        <p class="text-sm text-gray-500" data-key="partner2Desc">رعاية أخلاقية — منافذ بيع مباشرة للمنتجات الخالية من الغلوتين</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-emerald-900 text-emerald-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="border-t border-emerald-800 pt-8 text-center text-sm text-emerald-400">
+                    <p>© 2026 تضامن – سيلياك البويرة | Tadamun Celiac Bouira. <span data-key="rights">جميع الحقوق محفوظة</span></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
 
     <!-- Order Modal -->
     <div id="orderModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
@@ -478,7 +488,11 @@
                 <h3 class="text-xl font-bold text-gray-800">إضافة طلب للعداد الجماعي</h3>
                 <button onclick="closeModal('orderModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <form onsubmit="event.preventDefault(); handleOrder();" class="space-y-4">
+            <form onsubmit="event.preventDefault(); closeModal('orderModal'); showToast('تم تسجيل طلبك بنجاح');" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">عدد الأكياس</label>
+                    <input type="number" min="1" max="10" value="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
                 <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">تأكيد الطلب</button>
             </form>
         </div>
@@ -489,6 +503,7 @@
         <span class="text-emerald-400">✓</span>
         <span id="toastMessage">Notification</span>
     </div>
+
 
 <script>
   var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
@@ -501,6 +516,17 @@
       "31 - Oran": ["وهران (Oran)", "إيساتو (Es Senia)", "أرزيو (Arzew)"],
       "25 - Constantine": ["قسنطينة (Constantine)", "الخروب (El Khroub)"]
   };
+
+  // Switcher entre les conteneurs (sections)
+  function showSection(sectionId) {
+      document.querySelectorAll('.view-section').forEach(el => {
+          el.classList.add('hidden');
+      });
+      const target = document.getElementById(sectionId);
+      if (target) {
+          target.classList.remove('hidden');
+      }
+  }
 
   // Charger la liste des Wilayas au démarrage
   function initLocationDropdowns() {
@@ -552,195 +578,107 @@
       }
   }
 
-// 1. Redirection initiale vers Google (Nouveau code à insérer ici)
-function redirectToGoogle() {
-    const form = document.getElementById('profileForm');
-    if (form) {
-        const formData = new FormData(form);
-        const profileData = {
-            lastName: formData.get('lastName') || '',
-            firstName: formData.get('firstName') || '',
-            phone: formData.get('phone') || '',
-            role: formData.get('role') || 'patient',
-            wilaya: formData.get('wilaya') || '',
-            commune: formData.get('commune') || ''
-        };
-        localStorage.setItem('pendingProfile', JSON.stringify(profileData));
-    }
-    window.location.href = API_BASE_URL + '/auth/google';
-}
-  // Soumission vers Google Auth
-function handleProfileSubmit(event) {
-    if (event) event.preventDefault(); // Empêcher le rechargement de la page
+  // Redirection initiale vers Google
+  function redirectToGoogle() {
+      window.location.href = API_BASE_URL + '/auth/google';
+  }
 
-    const token = localStorage.getItem('token');
-    // CHANGER ICI : On vérifie aussi si on est en attente de finalisation Google
-    const isGooglePending = localStorage.getItem('googleUserPending'); 
+  // Soumission finale du formulaire vers Backend
+  async function handleProfileSubmit(event) {
+      if (event) event.preventDefault();
+      await sendProfileAndFileToBackend();
+  }
 
-    // Cas 1 : Si l'utilisateur revient de Google, il est en attente de finalisation.
-    // On ENVOIE directement les données au backend (Texte + Nouveau PDF sélectionné)
-    if (isGooglePending) {
-        sendProfileAndFileToBackend();
-        return;
-    }
+  // Vérifier la connexion Google et le routage des conteneurs
+  async function checkGoogleLogin() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const userParam = urlParams.get('user');
 
-    // Cas 2 : L'utilisateur n'est pas encore connecté avec Google du tout
-    if (!token) {
-        // Sauvegarder temporairement les textes saisis pour les réafficher au retour
-        const form = document.getElementById('profileForm');
-        const formData = new FormData(form);
-        const profileData = {
-            lastName: formData.get('lastName'),
-            firstName: formData.get('firstName'),
-            phone: formData.get('phone'),
-            role: formData.get('role'),
-            wilaya: formData.get('wilaya'),
-            commune: formData.get('commune')
-        };
-        localStorage.setItem('pendingProfile', JSON.stringify(profileData));
+      if (token && userParam) {
+          try {
+              const googleUser = JSON.parse(decodeURIComponent(userParam));
+              
+              localStorage.setItem('token', token);
+              localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
+              
+              window.history.replaceState({}, document.title, window.location.pathname);
+              
+              // Afficher obligatoirement le formulaire
+              showSection('section-formulaire');
+              showToast('تمت المصادقة بنجاح! يرجى إكمال بيانات التسجيل.');
+          } catch (error) {
+              console.error("Erreur checkGoogleLogin:", error);
+          }
+      }
+  }
 
-        // Aller vers Google
-        window.location.href = API_BASE_URL + '/auth/google';
-        return;
-    }
+  // Récupérer les utilisateurs (Espace Admin)
+  async function fetchRegisteredUsers() {
+      try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/admin/users`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
 
-    // Cas 3 : Connexion classique existante
-    sendProfileAndFileToBackend();
-}
+          if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
 
-  // Vérifier la connexion Google et traiter le retour
-async function checkGoogleLogin() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const userParam = urlParams.get('user');
+          const rawData = await response.json();
+          const users = Array.isArray(rawData) ? rawData : (rawData.users || []);
 
-    if (token && userParam) {
-        try {
-            const googleUser = JSON.parse(decodeURIComponent(userParam));
-            
-            // 1. Sauvegarder IMMEDIATEMENT le token et l'utilisateur dans le stockage principal
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(googleUser));
-            localStorage.setItem('googleUserPending', JSON.stringify(googleUser));
-            
-            // 2. FORCER le nettoyage de l'URL en redirigeant proprement vers la racine sans paramètres
-            // Cela coupe définitivement la boucle infinie de Render au rechargement
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // 3. Récupérer et pré-remplir les données du formulaire
-            const pendingProfile = localStorage.getItem('pendingProfile');
-            if (pendingProfile) {
-                const profileData = JSON.parse(pendingProfile);
-                
-                // Temporiser légèrement l'ouverture du modal pour laisser le DOM respirer
-                setTimeout(() => {
-                    if(document.getElementById('lastName')) document.getElementById('lastName').value = profileData.lastName || '';
-                    if(document.getElementById('firstName')) document.getElementById('firstName').value = profileData.firstName || '';
-                    if(document.getElementById('phone')) document.getElementById('phone').value = profileData.phone || '';
-                    if(document.getElementById('role')) document.getElementById('role').value = profileData.role || 'patient';
-                    if(document.getElementById('wilaya')) document.getElementById('wilaya').value = profileData.wilaya || '';
-                    if(document.getElementById('commune')) document.getElementById('commune').value = profileData.commune || '';
-                    
-                    // Ouvrir le modal d'inscription
-                    openModal('profileModal'); 
-                    showToast('تمت المصادقة بنجاح! يرجى اختيار ملف الـ PDF واضغط على تأكيد التسجيل.');
-                }, 300);
-            } else {
-                // Connexion simple d'un utilisateur déjà inscrit
-                window.location.hash = "home";
-                updateUI();
-            }
-        } catch (error) {
-            console.error("Erreur critique checkGoogleLogin:", error);
-        }
-    }
-}
-  // Récupérer et afficher tous les utilisateurs inscrits (Espace Admin)
-async function fetchRegisteredUsers() {
-    try {
-        const token = localStorage.getItem('token');
-        console.log("🔑 Token utilisé pour la requête Admin :", token);
+          const totalUsersCount = document.getElementById('totalUsersCount');
+          if (totalUsersCount) totalUsersCount.textContent = users.length;
 
-        const response = await fetch(`${API_BASE_URL}/admin/users`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+          const tbody = document.getElementById('usersTableBody');
+          if (!tbody) return;
+          
+          tbody.innerHTML = ''; 
 
-        console.log("📊 Status de la réponse Admin :", response.status);
+          if (users.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا يوجد أي مستخدم مسجل حالياً</td></tr>`;
+              return;
+          }
 
-        if (!response.ok) {
-            if(response.status === 401 || response.status === 403) {
-                showToast("Session admin expirée ou accès refusé.");
-            }
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
+          users.forEach(user => {
+              const tr = document.createElement('tr');
+              tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
 
-        const rawData = await response.json();
-        console.log("👉 Données brutes reçues par l'Admin :", rawData);
-        
-        // Gérer le cas où les utilisateurs sont encapsulés dans un objet (ex: rawData.users)
-        const users = Array.isArray(rawData) ? rawData : (rawData.users || []);
+              let certAction = '<span class="text-gray-400">Aucun (Volontaire)</span>';
+              if (user.role === 'patient') {
+                  if (user.medicalCert || user.medicalCertUrl) {
+                      certAction = `<a href="${API_BASE_URL}/admin/download-cert/${user._id}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 font-medium">📄 Consulter PDF</a>`;
+                  } else {
+                      certAction = '<span class="text-red-500 font-medium">Manquant ⚠️</span>';
+                  }
+              }
 
-        const totalUsersCount = document.getElementById('totalUsersCount');
-        if (totalUsersCount) totalUsersCount.textContent = users.length;
+              const roleBadge = user.role === 'patient' 
+                  ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">Patient 👨‍👩‍👧</span>' 
+                  : '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-semibold">Volontaire 🤝</span>';
 
-        const tbody = document.getElementById('usersTableBody');
-        if (!tbody) return;
-        
-        tbody.innerHTML = ''; 
-
-        if (users.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا يوجد أي مستخدم مسجل حالياً (Aucun inscrit)</td></tr>`;
-            return;
-        }
-
-        users.forEach(user => {
-            const tr = document.createElement('tr');
-            tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
-
-            let certAction = '<span class="text-gray-400">Aucun (Volontaire)</span>';
-            
-            if (user.role === 'patient') {
-                // Si la propriété existe, peu importe sa forme, on affiche le lien
-                if (user.medicalCert || user.medicalCertUrl) {
-                    certAction = `
-                        <a href="${API_BASE_URL}/admin/download-cert/${user._id}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 font-medium">
-                            📄 Consulter le PDF
-                        </a>`;
-                } else {
-                    certAction = '<span class="text-red-500 font-medium">Manquant ⚠️</span>';
-                }
-            }
-
-            const roleBadge = user.role === 'patient' 
-                ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">Patient 👨‍👩‍👧</span>' 
-                : '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full font-semibold">Volontaire 🤝</span>';
-
-            tr.innerHTML = `
-                <td class="p-4 font-semibold text-gray-800">${user.lastName || ''} ${user.firstName || ''}</td>
-                <td class="p-4">${roleBadge}</td>
-                <td class="p-4 text-gray-600 font-mono">${user.phone || '—'}</td>
-                <td class="p-4 text-gray-600">${user.wilaya || '—'} / ${user.commune || '—'}</td>
-                <td class="p-4">${certAction}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-    } catch (error) {
-        console.error("❌ Erreur lors du chargement des utilisateurs :", error);
-        showToast('Erreur lors du chargement des données admin.');
-    }
-}
+              tr.innerHTML = `
+                  <td class="p-4 font-semibold text-gray-800">${user.lastName || ''} ${user.firstName || ''}</td>
+                  <td class="p-4">${roleBadge}</td>
+                  <td class="p-4 text-gray-600 font-mono">${user.phone || '—'}</td>
+                  <td class="p-4 text-gray-600">${user.wilaya || '—'} / ${user.commune || '—'}</td>
+                  <td class="p-4">${certAction}</td>
+              `;
+              tbody.appendChild(tr);
+          });
+      } catch (error) {
+          console.error("Erreur admin:", error);
+      }
+  }
 
   function openModal(id) {
       const modal = document.getElementById(id);
       if (modal) {
           modal.classList.remove('hidden');
           modal.classList.add('flex');
-          document.body.style.overflow = 'hidden';
       }
   }
 
@@ -749,7 +687,6 @@ async function fetchRegisteredUsers() {
       if (modal) {
           modal.classList.add('hidden');
           modal.classList.remove('flex');
-          document.body.style.overflow = '';
       }
   }
 
@@ -762,167 +699,102 @@ async function fetchRegisteredUsers() {
       setTimeout(() => toast.classList.add('opacity-0'), 3000);
   }
 
-// --- GESTION DE L'AFFICHAGE DE L'INTERFACE ---
-function updateUI() {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+  // Mis à jour de l'interface & basculement vers le contenu principal
+  function updateUI() {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
 
-    console.log("🔄 Exécution de updateUI()...");
-    console.log("🔑 Token trouvé :", token ? "OUI" : "NON");
-    console.log("👤 Utilisateur trouvé :", savedUser);
+      if (token && savedUser && savedUser !== "undefined" && savedUser !== "null") {
+          try {
+              const user = JSON.parse(savedUser);
 
-    const loginBtn = document.getElementById('loginBtn');
-    const userProfileGroup = document.getElementById('userProfileGroup');
-    const avatarImg = document.getElementById('userPhoto');
-    const nameSpan = document.getElementById('userName');
+              const avatarImg = document.getElementById('userPhoto');
+              const nameSpan = document.getElementById('userName');
 
-    if (token && savedUser) {
-        try {
-            const user = JSON.parse(savedUser);
+              const displayName = user.fullName || user.name || 
+                                  (user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'مستخدم');
+              
+              if (nameSpan) nameSpan.textContent = displayName;
+              if (avatarImg) avatarImg.src = user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0D9488&color=fff`;
 
-            // 1. Masquer le bouton Se connecter et afficher le profil utilisateur
-            if (loginBtn) loginBtn.classList.add('hidden');
-            if (userProfileGroup) userProfileGroup.classList.remove('hidden');
+              if (user.role === 'admin') {
+                  const adminDashboard = document.getElementById('adminDashboard');
+                  if (adminDashboard) adminDashboard.classList.remove('hidden');
+                  fetchRegisteredUsers();
+              }
 
-            // 2. Formatage du nom (gère fullName, name, ou firstName + lastName)
-            const displayName = user.fullName || user.name || 
-                                (user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'مستخدم');
-            
-            if (nameSpan) nameSpan.textContent = displayName;
+              // Une fois l'utilisateur authentifié et son profil sauvegardé, on débloque le site !
+              showSection('section-contenu');
 
-            // 3. Image de profil ou Avatar par défaut
-            if (avatarImg) {
-                avatarImg.src = user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0D9488&color=fff`;
-            }
+          } catch (e) {
+              console.error(e);
+              showSection('section-google');
+          }
+      } else {
+          // Aucun utilisateur validé -> Vue Google
+          showSection('section-google');
+      }
+  }
 
-            // 4. Si c'est un Admin, afficher le Dashboard Admin et charger les données
-            if (user.role === 'admin') {
-                console.log("👑 Rôle détecté : ADMIN");
-                const adminDashboard = document.getElementById('adminDashboard');
-                if (adminDashboard) {
-                    adminDashboard.classList.remove('hidden');
-                }
-                if (typeof fetchRegisteredUsers === 'function') {
-                    fetchRegisteredUsers();
-                }
-            } else {
-                console.log("👤 Rôle détecté :", user.role || 'Utilisateur standard');
-            }
-
-        } catch (e) {
-            console.error("❌ Erreur lors de la lecture des données utilisateur :", e);
-        }
-    } else {
-        // Utilisateur non connecté
-        if (loginBtn) loginBtn.classList.remove('hidden');
-        if (userProfileGroup) userProfileGroup.classList.add('hidden');
-        
-        const adminDashboard = document.getElementById('adminDashboard');
-        if (adminDashboard) adminDashboard.classList.add('hidden');
-    }
-}
-
-// --- FONCTION POUR CHAPERONNER LA SOUMISSION DU FORMULAIRE ---
-async function handleProfileSubmit(event) {
-    if (event) event.preventDefault(); // EMPÊCHE LE RECHARGEMENT DE LA PAGE
-    console.log("🚀 Soumission du formulaire déclenchée !");
-    
-    // Appelle la fonction d'envoi vers le backend
-    if (typeof sendProfileAndFileToBackend === 'function') {
-        await sendProfileAndFileToBackend();
-    } else {
-        console.error("❌ La fonction sendProfileAndFileToBackend() est introuvable !");
-    }
-}
-
-// --- DÉCONNEXION ---
-function handleLogout() {
-    console.log("🚪 Déconnexion de l'utilisateur...");
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('googleUserPending');
-    localStorage.removeItem('pendingProfile');
-    window.location.reload();
-}
-
-// --- INITIALISATION AU CHARGEMENT DE LA PAGE ---
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("🌐 Page initialisée.");
-    
-    // Attacher l'événement au formulaire de profil pour empêcher le reload classique
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) {
-        profileForm.onsubmit = handleProfileSubmit;
-    }
-
-    if (typeof initLocationDropdowns === 'function') initLocationDropdowns();
-    if (typeof checkGoogleLogin === 'function') checkGoogleLogin();
-    
-    updateUI();
-});
-  
+  // Finalisation backend
   async function sendProfileAndFileToBackend() {
-    try {
-        const googleUser = JSON.parse(localStorage.getItem('googleUserPending'));
-        if (!googleUser) {
-            showToast('Veuillez d’abord vous connecter avec Google.');
-            return;
-        }
+      try {
+          const googleUser = JSON.parse(localStorage.getItem('googleUserPending'));
+          const token = localStorage.getItem('token');
 
-        const form = document.getElementById('profileForm');
-        const formData = new FormData(form);
+          const form = document.getElementById('profileForm');
+          const formData = new FormData(form);
 
-        // Ajout des identifiants Google récupérés
-        formData.append('googleId', googleUser.id);
-        formData.append('email', googleUser.email);
+          if (googleUser) {
+              formData.append('googleId', googleUser.id || googleUser._id);
+              formData.append('email', googleUser.email);
+          }
 
-        showToast('جاري إرسال البيانات... (Envoi en cours...)');
+          showToast('جاري إرسال البيانات...');
 
-        const response = await fetch(`${API_BASE_URL}/auth/finalize-signup`, {
-            method: 'POST',
-            body: formData
-        });
+          const response = await fetch(`${API_BASE_URL}/auth/finalize-signup`, {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              },
+              body: formData
+          });
 
-        const result = await response.json();
-        console.log("👉 Réponse brute du serveur à la finalisation :", result);
+          const result = await response.json();
 
-        // MODIFICATION ICI : On accepte response.ok OU result.success OU la présence d'un token
-        if (response.ok || result.success || result.token) {
-            
-            // Sécurité au cas où la structure de result change
-            const finalToken = result.token || localStorage.getItem('token');
-            const finalUser = result.user ? JSON.stringify(result.user) : localStorage.getItem('user');
+          if (response.ok || result.success || result.token) {
+              const finalToken = result.token || token;
+              const finalUser = result.user ? JSON.stringify(result.user) : JSON.stringify(googleUser);
 
-            if (finalToken) localStorage.setItem('token', finalToken);
-            if (finalUser) localStorage.setItem('user', finalUser);
-            
-            // Nettoyage complet des états temporaires
-            localStorage.removeItem('pendingProfile');
-            localStorage.removeItem('googleUserPending');
+              localStorage.setItem('token', finalToken);
+              localStorage.setItem('user', finalUser);
+              
+              localStorage.removeItem('googleUserPending');
 
-            // Nettoyage de l'URL
-            window.history.replaceState({}, document.title, window.location.pathname);
+              showToast('تم التسجيل بنجاح!');
+              updateUI();
+          } else {
+              showToast(result.message || 'خطأ أثناء الحفظ.');
+          }
+      } catch (error) {
+          console.error(error);
+          showToast("خطأ في الاتصال بالخادم.");
+      }
+  }
 
-            closeModal('profileModal'); 
-            showToast('تم التسجيل بنجاح! (Inscription réussie !)');
-            
-            // Forcer le hash et le rafraîchissement global
-            window.location.hash = "home";
-            
-            // Si updateUI() ne suffit pas à changer d'écran, on force un rechargement propre
-            if (typeof updateUI === 'function') {
-                updateUI();
-            } else {
-                window.location.reload();
-            }
-        } else {
-            showToast(result.message || 'Erreur lors de l’enregistrement.');
-        }
-    } catch (error) {
-        console.error("❌ Erreur critique transmission backend :", error);
-        showToast("Erreur de connexion avec le serveur.");
-    }
-}
+  // Déconnexion
+  function handleLogout() {
+      localStorage.clear();
+      showSection('section-google');
+      window.location.reload();
+  }
+
+  // Chargement DOM
+  document.addEventListener('DOMContentLoaded', () => {
+      initLocationDropdowns();
+      checkGoogleLogin();
+      updateUI();
+  });
 </script>
 </body>
 </html>
