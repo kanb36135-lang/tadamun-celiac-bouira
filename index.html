@@ -102,10 +102,21 @@
             </div>
 
             <form id="formulaire-inscription" onsubmit="enregistrerUtilisateur(event)">
-                 <!-- Vos champs de formulaire (nom, prénom, téléphone, etc.) -->
-   
-                 <button type="submit">حفظ البيانات</button>
-              </form>
+
+        <!-- Vos champs : Nom, Prénom, Téléphone, Wilaya, etc. -->
+        <input type="text" id="firstName" placeholder="الاسم" required />
+        <input type="text" id="lastName" placeholder="اللقب" required />
+        <input type="tel" id="phone" placeholder="رقم الهاتف" required />
+        
+        <!-- Sélecteurs -->
+        <select id="roleSelect">...</select>
+        <select id="wilayaSelect">...</select>
+        <select id="communeSelect">...</select>
+
+        <!-- Le bouton DOIT être À L'INTÉRIEUR du <form> -->
+        <button type="submit" class="...">تأكيد وحفظ البيانات</button>
+
+    </form>
                 <!-- Identité (Nom & Prénom) -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
