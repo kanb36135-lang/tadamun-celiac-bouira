@@ -510,6 +510,7 @@
 
 
 <script>
+
   var API_BASE_URL = 'https://tadamun-celiac-bouira-backend.onrender.com/api';
 
   // Base de données des Wilayas et Communes principales d'Algérie
@@ -521,6 +522,52 @@
       "25 - Constantine": ["قسنطينة (Constantine)", "الخروب (El Khroub)"]
   };
 
+async function enregistrerUtilisateur(event) {
+        event.preventDefault(); // Bloque le rechargement
+
+        console.log("Submit déclenché !");
+
+        const pendingUser = JSON.parse(localStorage.getItem('googleUserPending') || '{}');
+        const formData = new FormData();
+
+        const getValue = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
+
+        formData.append('googleId', pendingUser.id || '');
+        formData.append('email', pendingUser.email || '');
+        formData.append('firstName', getValue('firstName'));
+        formData.append('lastName', getValue('lastName'));
+        formData.append('phone', getValue('phone'));
+        formData.append('role', getValue('roleSelect') || 'patient');
+        formData.append('wilaya', getValue('wilayaSelect'));
+        formData.append('commune', getValue('communeSelect'));
+
+        const fileInput = document.getElementById('medicalCertInput');
+        if (fileInput && fileInput.files[0]) {
+            formData.append('medicalCert', fileInput.files[0]);
+        }
+
+        try {
+            const response = await fetch('https://tadamun-celiac-bouira-backend.onrender.com/api/auth/finalize-signup', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('تم تسجيل حسابك بنجاح!');
+                localStorage.removeItem('googleUserPending');
+                if (result.token) localStorage.setItem('token', result.token);
+                showSection('section-contenu');
+            } else {
+                alert('خطأ: ' + (result.message || 'حدث خطأ أثناء حفظ البيانات'));
+            }
+        } catch (error) {
+            console.error('Erreur lors de la finalisation:', error);
+            alert('حدث خطأ في الاتصال بالسيرفر');
+        }
+    }
+	
   // Switcher entre les conteneurs (sections)
   function showSection(sectionId) {
     // 1. Masquer toutes les sections
@@ -884,55 +931,6 @@ document.addEventListener('DOMContentLoaded', checkGoogleLogin);
             }
         });
 		
-		async function enregistrerUtilisateur(event) {
-    // 1. Bloquer IMPÉRATIVEMENT le rechargement GET de la page
-    event.preventDefault();
-
-    console.log("Tentative d'envoi du formulaire...");
-
-    const pendingUser = JSON.parse(localStorage.getItem('googleUserPending') || '{}');
-    const formData = new FormData();
-
-    // Récupération sécurisée des valeurs des champs
-    const getValue = (id) => document.getElementById(id) ? document.getElementById(id).value : '';
-
-    formData.append('googleId', pendingUser.id || '');
-    formData.append('email', pendingUser.email || '');
-    formData.append('firstName', getValue('firstName'));
-    formData.append('lastName', getValue('lastName'));
-    formData.append('phone', getValue('phone'));
-    formData.append('role', getValue('roleSelect') || 'patient');
-    formData.append('wilaya', getValue('wilayaSelect'));
-    formData.append('commune', getValue('communeSelect'));
-
-    // Certificat médical si présent
-    const fileInput = document.getElementById('medicalCertInput');
-    if (fileInput && fileInput.files[0]) {
-        formData.append('medicalCert', fileInput.files[0]);
-    }
-
-    try {
-        // Envoi explicite en POST via fetch
-        const response = await fetch('https://tadamun-celiac-bouira-backend.onrender.com/api/auth/finalize-signup', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('تم تسجيل حسابك بنجاح!');
-            localStorage.removeItem('googleUserPending');
-            if (result.token) localStorage.setItem('token', result.token);
-            showSection('section-contenu');
-        } else {
-            alert('خطأ: ' + (result.message || 'حدث خطأ أثناء حفظ البيانات'));
-        }
-    } catch (error) {
-        console.error('Erreur lors de la finalisation:', error);
-        alert('حدث خطأ في الاتصال بالسيرفر');
-    }
-}
 </script>
 </body>
 </html>
