@@ -519,14 +519,21 @@
 
   // Switcher entre les conteneurs (sections)
   function showSection(sectionId) {
-      document.querySelectorAll('.view-section').forEach(el => {
-          el.classList.add('hidden');
-      });
-      const target = document.getElementById(sectionId);
-      if (target) {
-          target.classList.remove('hidden');
-      }
-  }
+    // 1. Masquer toutes les sections
+    document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('flex'); // Retirer flex pour éviter tout conflit
+    });
+
+    // 2. Afficher la section cible
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex'); // Réactiver flex pour le centrage Tailwind
+    } else {
+        console.error("Section introuvable :", sectionId);
+    }
+}
 
   // Charger la liste des Wilayas au démarrage
   function initLocationDropdowns() {
