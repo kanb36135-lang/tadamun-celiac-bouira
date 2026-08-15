@@ -3,20 +3,23 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     googleId: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    lastName: { type: String, required: true },
-    firstName: { type: String, required: true },
-    phone: { type: String, required: true },
-    role: { type: String, enum: ['patient', 'volunteer', 'admin'], default: 'patient' },
-    wilaya: { type: String, required: true },
-    commune: { type: String, required: true },
+    lastName: { type: String },
+    firstName: { type: String },
+    fullName: { type: String },
+    phone: { type: String },
+    role: { type: String, enum: ['patient', 'volunteer', 'user', 'admin'], default: 'patient' },
+    wilaya: { type: String },
+    commune: { type: String },
     
-    // On stocke le PDF sous forme de données binaires
     medicalCert: {
         data: Buffer,
         contentType: String,
         fileName: String
     },
-    createdAt: { type: Date, default: Date.now }
+    medicalCertPath: { type: String, default: null }
+}, { 
+    timestamps: true 
 });
 
-module.exports = mongoose.model('User', UserSchema);
+// Force Mongoose à lire la collection 'patients' où sont enregistrés les comptes
+module.exports = mongoose.model('User', UserSchema, 'patients');

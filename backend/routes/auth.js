@@ -64,12 +64,21 @@ router.get('/me', (req, res) => {
 // ============================================
 // FINALISATION DE L'INSCRIPTION (POST)
 // ============================================
-router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) => {
+// On accepte 'medicalCert' et 'socialDoc' pour éviter d'échouer sur d'autres fichiers
+const cpUpload = upload.fields([
+  { name: 'medicalCert', maxCount: 1 },
+  { name: 'socialDoc', maxCount: 1 }
+]);
+
+router.post('/finalize-signup', cpUpload, async (req, res) => {
   try {
     const { googleId, email, lastName, firstName, phone, role, wilaya, commune } = req.body;
 
     if (!email) {
-      return res.status(400).json({ success: false, message: "L'adresse email est requise pour finaliser l'inscription." });
+      return res.status(400).json({ 
+        success: false, 
+        message: "L'adresse email est requise pour finaliser l'inscription." 
+      });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -78,7 +87,6 @@ router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) =
 
     // Données de base
     const baseUserData = {
-      googleId,
       email: cleanEmail,
       lastName,
       firstName,
@@ -90,46 +98,63 @@ router.post('/finalize-signup', upload.single('medicalCert'), async (req, res) =
       isVerified: true
     };
 
-    // Gestion de la pièce jointe (Certificat médical)
-    if (req.file) {
-      baseUserData.medicalCert = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype,
-        fileName: req.file.originalname
-      };
-      baseUserData.medicalCertPath = req.file.originalname;
+    if (googleId) {
+      baseUserData.googleId = googleId;
     }
+
+    // Traitement des fichiers reçus via Multer (si présents)
+    if (req.files) {
+      if (req.files.medicalCert && req.files.medicalCert[0]) {
+        const file = req.files.medicalCert[0];
+        baseUserData.medicalCert = {
+          data: file.buffer,
+          contentType: file.mimetype,
+          fileName: file.originalname
+        };
+        baseUserData.medicalCertPath = file.originalname;
+      }
+      
+      if (req.files.socialDoc && req.files.socialDoc[0]) {
+        const file = req.files.socialDoc[0];
+        baseUserData.socialDoc = {
+          data: file.buffer,
+          contentType: file.mimetype,
+          fileName: file.originalname
+        };
+        baseUserData.socialDocPath = file.originalname;
+      }
+    }
+
+    // Création du filtre de recherche (évite les erreurs avec les valeurs non définies)
+    const searchQuery = [{ email: cleanEmail }];
+    if (googleId) searchQuery.push({ googleId });
 
     let savedUser;
 
-    // A. Gestion si le rôle est 'patient'
+    // A. Gestion du rôle 'patient'
     if (userRole === 'patient') {
-      savedUser = await Patient.findOne({ $or: [{ email: cleanEmail }, { googleId }] });
+      savedUser = await Patient.findOne({ $or: searchQuery });
 
       if (savedUser) {
-        // Mettre à jour l'utilisateur existant
         Object.assign(savedUser, baseUserData);
       } else {
-        // Créer un nouveau patient
         savedUser = new Patient(baseUserData);
       }
       await savedUser.save();
 
-    // B. Gestion si le rôle est 'volunteer' ou autre
+    // B. Gestion du rôle 'volunteer' / autre
     } else {
-      savedUser = await Volunteer.findOne({ $or: [{ email: cleanEmail }, { googleId }] });
+      savedUser = await Volunteer.findOne({ $or: searchQuery });
 
       if (savedUser) {
-        // Mettre à jour le volontaire existant
         Object.assign(savedUser, baseUserData);
       } else {
-        // Créer un nouveau volontaire
         savedUser = new Volunteer(baseUserData);
       }
       await savedUser.save();
     }
 
-    // Générer un jeton JWT
+    // Génération du Token JWT
     const token = jwt.sign(
       { id: savedUser._id, email: savedUser.email, role: savedUser.role },
       process.env.JWT_SECRET || 'tadamun_secret_key',

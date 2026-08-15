@@ -74,4 +74,5 @@ const patientSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-module.exports = mongoose.model('Patient', patientSchema);
+// Forcer la liaison exacte avec la collection 'patients' dans MongoDB Atlas
+module.exports = mongoose.model('Patient', patientSchema, 'patients');

@@ -16,18 +16,20 @@ console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET ? 'OK (masqué)' : 'MANQU
 
 const app = express();
 
-// ✅ CORS : seulement les origines actives
+// ✅ CORS : Origines autorisées mises à jour (incluant localhost et sites distants)
 const allowedOrigins = [
   'https://tadamun-celiac-bouira-site.onrender.com',
   'http://localhost:3000',
   'http://localhost:5173',
-  'http://localhost:8080'
+  'http://localhost:8080',
+  'http://127.0.0.1:5500',
+  'http://127.0.0.1:8080'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Autorise les requêtes sans origin (Postman, mobile) ET les origines listées
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // Autorise les requêtes sans origin (Postman, mobile, formulaires directs) ET les origines autorisées
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.onrender.com') || origin.endsWith('.github.io')) {
       callback(null, true);
     } else {
       console.warn('❌ CORS bloqué pour origin:', origin);
@@ -40,42 +42,45 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
-// Session configuration avec connect-mongo (stockage persistant)
+// Parsers pour les données textuelles / JSON
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+app.set('trust proxy', 1);
+
+// Session configuration avec connect-mongo
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'default_tadamun_session_secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI,
-    ttl: 14 * 24 * 60 * 60,  // Sessions valides 14 jours
-    autoRemove: 'native',      // Suppression automatique des sessions expirées
-    touchAfter: 24 * 3600      // Mise à jour du TTL une fois par jour
+    ttl: 14 * 24 * 60 * 60,  // 14 jours
+    autoRemove: 'native',
+    touchAfter: 24 * 3600
   }),
   cookie: { 
-    secure: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 14  // 14 jours en millisecondes
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 14
   }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🔍 Log chaque requête (pour vérifier que CORS passe)
+// Log global des requêtes entrantes pour le débogage
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} | Origin: ${req.headers.origin || 'direct/server'}`);
   next();
 });
 
-app.use(express.json());
-app.set('trust proxy', 1);
-
-// ✅ Health check (pour tester si le serveur répond)
+// Route de santé (Healthcheck)
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Routes API
+// Enregistrement des routes de l'API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/patients', require('./routes/patients'));
@@ -86,7 +91,7 @@ app.use('/api/baskets', require('./routes/baskets'));
 app.use('/api/counter', require('./routes/counter'));
 app.use('/api/pickup-points', require('./routes/pickupPoints'));
 
-// Gestion erreur CORS explicite
+// Middleware de gestion explicite des erreurs CORS
 app.use((err, req, res, next) => {
   if (err.message === 'Not allowed by CORS') {
     return res.status(403).json({ 
@@ -98,7 +103,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// Connexion MongoDB
+// Connexion à MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Error:', err));
@@ -106,5 +111,5 @@ mongoose.connect(process.env.MONGODB_URI)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Allowed origins: ${allowedOrigins.join(', ')}`);
+  console.log(`🌐 Cors Origins configurées`);
 });
