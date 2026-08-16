@@ -25,6 +25,18 @@ const sendSMS = async (phone, message, type = 'verification') => {
   }
 };
 
+// Fonction utilitaire pour nettoyer et extraire le nom de la commune s'il est au format "NomAr (NomFr)"
+const formatCommuneName = (rawCommune) => {
+  if (!rawCommune) return '';
+  const str = rawCommune.trim();
+  // Extrait le texte entre parenthèses si disponible (ex: "Chorfa" dans "الشرفة (Chorfa)")
+  const match = str.match(/\(([^)]+)\)/);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return str;
+};
+
 // ============================================
 // ROUTES GOOGLE OAUTH
 // ============================================
@@ -64,7 +76,6 @@ router.get('/me', (req, res) => {
 // ============================================
 // FINALISATION DE L'INSCRIPTION (POST)
 // ============================================
-// On accepte 'medicalCert' et 'socialDoc' pour éviter d'échouer sur d'autres fichiers
 const cpUpload = upload.fields([
   { name: 'medicalCert', maxCount: 1 },
   { name: 'socialDoc', maxCount: 1 }
@@ -84,7 +95,9 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     const fullName = `${firstName || ''} ${lastName || ''}`.trim() || 'Utilisateur';
     const userRole = role || 'patient';
-   // Données de base
+    const cleanedCommune = formatCommuneName(commune);
+
+    // Données de base
     const baseUserData = {
       email: cleanEmail,
       lastName,
@@ -93,10 +106,10 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
       phone,
       role: userRole,
       wilaya,
-      commune,
-      // On affecte aussi les champs spécifiques aux volontaires
+      commune: cleanedCommune || commune,
+      // Champs requis par le schéma Volunteer
       activityWilaya: wilaya,
-      activityCommune: commune,
+      activityCommune: cleanedCommune || commune,
       isVerified: true
     };
 
@@ -127,7 +140,7 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
       }
     }
 
-    // Création du filtre de recherche (évite les erreurs avec les valeurs non définies)
+    // Création du filtre de recherche
     const searchQuery = [{ email: cleanEmail }];
     if (googleId) searchQuery.push({ googleId });
 
@@ -144,7 +157,7 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
       }
       await savedUser.save();
 
-    // B. Gestion du rôle 'volunteer' / autre
+    // B. Gestion du rôle 'volunteer'
     } else {
       savedUser = await Volunteer.findOne({ $or: searchQuery });
 

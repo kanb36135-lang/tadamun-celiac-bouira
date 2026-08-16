@@ -12,10 +12,15 @@ const volunteerSchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  activityWilaya: {
+    type: String,
+    trim: true
+  },
   activityCommune: {
     type: String,
-    required: [true, `La commune d'activité est requise`],  // ← backticks
-    enum: ['البويرة', 'الشرفة', 'الحيزر', 'سور الغزلان', 'مشد اللجم', 'الأخضرية']
+    required: [true, `La commune d'activité est requise`],
+    trim: true
+    // Note: suppression du champ 'enum' restreint pour éviter les échecs de validation avec les libellés multilingues.
   },
   associationName: {
     type: String,
@@ -58,7 +63,6 @@ const volunteerSchema = new mongoose.Schema({
   }
 });
 
-//volunteerSchema.index({ phone: 1 });
 volunteerSchema.index({ activityCommune: 1 });
 
 module.exports = mongoose.model('Volunteer', volunteerSchema);
