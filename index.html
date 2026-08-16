@@ -130,23 +130,23 @@
                         </select>
                     </div>
 
-                    <!-- Champ d'attestation sociale (Optionnel) -->
-                    <div id="socialDocGroup" class="mt-4">
-                        <label for="socialDocInput" class="block text-sm font-medium text-gray-700 mb-1">
-                            تحميل وثيقة إثبات الوضع الاجتماعي اختياري 
-                            <span class="text-xs text-emerald-600 block font-normal mt-0.5">
-                                (خاصة بالراغبين في الاستفادة من قفة السيلياك التضامنية للمقررين كمعوزين)
-                            </span>
-                        </label>
-                        <input 
-                            type="file" 
-                            id="socialDocInput" 
-                            name="socialDoc" 
-                            accept=".pdf,.png,.jpg,.jpeg"
-                            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer border border-gray-300 rounded-lg p-1.5 transition bg-gray-50"
-                        />
+                            <!-- Champ d'attestation sociale (Masqué par défaut, visible seulement pour Patient) -->
+                      <div id="socialDocGroup" class="mt-4 hidden">
+                       <label for="socialDocInput" class="block text-sm font-medium text-gray-700 mb-1">
+                       تحميل وثيقة إثبات الوضع الاجتماعي اختياري 
+                       <span class="text-xs text-emerald-600 block font-normal mt-0.5">
+                            (خاصة بالراغبين في الاستفادة من قفة السيلياك التضامنية للمقررين كمعوزين)
+                                  </span>
+                             </label>
+                          <input 
+                        type="file" 
+                        id="socialDocInput" 
+                        name="socialDoc" 
+                        accept=".pdf,.png,.jpg,.jpeg"
+                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer border border-gray-300 rounded-lg p-1.5 transition bg-gray-50"
+                          />
                         <p class="text-xs text-gray-400 mt-1">الصيغ المقبولة: PDF, PNG, JPG (الحجم الأقصى: 5MB)</p>
-                    </div>
+                       </div>
 
                     <!-- Sélection Dynamique Wilaya et Commune -->
                     <div class="grid grid-cols-2 gap-3">
@@ -613,18 +613,31 @@
         }
 
         function togglePatientFields() {
-            const role = document.getElementById('roleSelect').value;
-            const certGroup = document.getElementById('patientCertGroup');
-            const certInput = document.getElementById('medicalCertInput');
+    const roleSelect = document.getElementById('roleSelect');
+    const patientCertGroup = document.getElementById('patientCertGroup');
+    const socialDocGroup = document.getElementById('socialDocGroup');
+    const medicalCertInput = document.getElementById('medicalCertInput');
 
-            if (role === 'patient') {
-                certGroup.classList.remove('hidden');
-                certInput.setAttribute('required', 'required');
-            } else {
-                certGroup.classList.add('hidden');
-                certInput.removeAttribute('required');
-            }
+    if (roleSelect.value === 'patient') {
+        // Afficher les champs spécifiques aux patients
+        if (patientCertGroup) patientCertGroup.classList.remove('hidden');
+        if (socialDocGroup) socialDocGroup.classList.remove('hidden');
+        if (medicalCertInput) medicalCertInput.required = true;
+    } else {
+        // Masquer les champs si c'est un volontaire
+        if (patientCertGroup) patientCertGroup.classList.add('hidden');
+        if (socialDocGroup) socialDocGroup.classList.add('hidden');
+        if (medicalCertInput) {
+            medicalCertInput.required = false;
+            medicalCertInput.value = ''; // Réinitialiser le fichier
         }
+    }
+}
+
+// S'assurer d'exécuter la fonction au chargement initial de la page
+document.addEventListener('DOMContentLoaded', () => {
+    togglePatientFields();
+});
 
         function redirectToGoogle() {
             window.location.href = API_BASE_URL + '/auth/google';
