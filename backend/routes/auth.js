@@ -84,8 +84,7 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     const fullName = `${firstName || ''} ${lastName || ''}`.trim() || 'Utilisateur';
     const userRole = role || 'patient';
-
-    // Données de base
+   // Données de base
     const baseUserData = {
       email: cleanEmail,
       lastName,
@@ -95,6 +94,9 @@ router.post('/finalize-signup', cpUpload, async (req, res) => {
       role: userRole,
       wilaya,
       commune,
+      // On affecte aussi les champs spécifiques aux volontaires
+      activityWilaya: wilaya,
+      activityCommune: commune,
       isVerified: true
     };
 
